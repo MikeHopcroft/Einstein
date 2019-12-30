@@ -1,6 +1,6 @@
 # Einstein Architecture
 
-* [Open questions](open-questions)
+* [Open questions](open-questions.md)
 * TODO: Overview
 * TODO: Goals and Priciples
 * TODO: Concepts

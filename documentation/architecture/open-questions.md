@@ -55,7 +55,7 @@
 ## Cloud Agnostic
 
 * Clouds
-  * Docker compose for local development (with [Azurite](https://github.com/Azure/Azurite)).
+  * Docker compose for local development (possibly with [Azurite](https://github.com/Azure/Azurite)).
   * Azure
 * Abstraction layer
   * Blob manipulation
