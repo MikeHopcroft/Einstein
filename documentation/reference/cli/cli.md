@@ -4,12 +4,35 @@
 
 ### Deploying Einstein
 
+Chicken and egg problem with deployment secrets:
+* Want to use `einstein encrypt` to encrypt secrets in deployment manifest.
+* Can't run `einstein encrypt` until we're connected with a deployment that provides a public key.
+
+Deployment manifest for Azure:
 ~~~
-% einstein deploy <cloud credentials>
+azure:
+    credentials:
+        secret: xyz
+~~~
+
+Deployment manifest for local Docker Compose:
+~~~
+docker:
+    (TBD...)
+~~~
+
+~~~
+% einstein deploy <deployment manifest>
 ~~~
 
 ~~~
 % einstein show publickey
+~~~
+
+### Connecting the CLI to a specific deployment
+
+~~~
+% einstein connect <deployment>
 ~~~
 
 ### Submitting Candidates

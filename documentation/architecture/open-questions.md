@@ -1,5 +1,24 @@
 # Open Questions
 
+## Which language/platform
+* Node.JS + Typescript
+    * [pkg](https://www.npmjs.com/package/pkg)
+* Golang
+
+## Testing Approach
+* Optimizing for dev inner-loop
+* Which testing framework for unit tests?
+* Mocking strategy
+* Approach towards cloud abstraction layer testing
+* Approach towards systemwide integration testing
+
+## Directory Structure and Build System
+* lerna?
+* Multiple Node.js executables and unit tests
+* Multiple Python samples
+* Dockerfiles
+* Documentation
+
 ## RPC approach for LabratoryService
 * Callable from web client
 * Callable from CLI
@@ -34,10 +53,11 @@
 
 ## Versioning
 * For test run outputs.
+* Laboratory API and configuration and logging files.
 * For candidates. Based on container version?
-* For benchmarks. Based on container version?
+* For benchmarks. API and formats for config and output files. Based on container version?
 * For test suites.
-* Future proofing in general.
+* Future proofing (forward-compatibility).
 
 ## Candidate Secrets
 * How are candidate secrets passed to candidate?
@@ -66,9 +86,15 @@
 ## OS Agnostic
 
 * Is there any benefit to running serices on anything other than Linux containers?
+    * Possibly beneficial for developers
 * CLI should run on Linux, OSX, and Windows
 
 ## Caching and Reporting
 * Blob events trigger second system that updates database tables and reports.
 * Database only exists for queries
 * Database can be recreated at any time from blobs
+
+## Upgrading/Downgrading Services without losing data
+
+## Config file format
+* [YAML is a superset of JSON](https://stackoverflow.com/questions/1726802/what-is-the-difference-between-yaml-and-json/1729545#1729545)
