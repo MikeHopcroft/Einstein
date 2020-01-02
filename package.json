@@ -1,0 +1,31 @@
+{
+  "name": "einstein",
+  "version": "0.0.0",
+  "description": "",
+  "main": "build/src/index.js",
+  "types": "build/src/index.d.ts",
+  "files": [
+    "build/src"
+  ],
+  "license": "Apache-2.0",
+  "keywords": [],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "check": "gts check",
+    "clean": "gts clean",
+    "compile": "tsc -p .",
+    "fix": "gts fix",
+    "prepare": "npm.cmd run compile",
+    "pretest": "npm.cmd run compile",
+    "posttest": "npm.cmd run check"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^3.12.1",
+    "@types/node": "^10.0.3",
+    "gts": "^1.1.2",
+    "typescript": "~3.7.0"
+  },
+  "dependencies": {
+    "js-yaml": "^3.13.1"
+  }
+}

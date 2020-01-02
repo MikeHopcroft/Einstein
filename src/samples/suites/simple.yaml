@@ -1,0 +1,121 @@
+name: acceptance
+description: Acceptance suite for boolean evaluators
+benchmark: booleanEvaluator
+domainData: variables.yaml
+cases:
+
+  # TERM
+  - input: "a"
+    expected: true
+  - input: "b"
+    expected: true
+  - input: "x"
+    expected: false
+
+  # !TERM
+  - input: "!a"
+    expected: false
+  - input: "!b"
+    expected: false
+  - input: "!x"
+    expected: true
+
+  # (TERM)
+  - input: "(a)"
+    expected: true
+  - input: "(x)"
+    expected: false
+
+  # Simple CONJUNCTIONS
+  - input: "a & b"
+    expected: true
+  - input: "a & b & c"
+    expected: true
+  - input: "a & x"
+    expected: false
+  - input: "a & b & x"
+    expected: false
+
+  # Simple DISJUNCTIONS
+  - input: "a | b"
+    expected: true
+  - input: "a | x"
+    expected: true
+  - input: "x | y | z | a"
+    expected: true
+  - input: "x | y"
+    expected: false
+
+  # Complex NEGATIONS
+  - input: "!(x & y)"
+    expected: true
+  - input: "!(a | b)"
+    expected: false
+  - input: "!a & !x"
+    expected: false
+  - input: "!x & !y"
+    expected: true
+  - input: "!a & !b"
+    expected: false
+  - input: "!x & !b"
+    expected: false
+  - input: "!!a"
+    expected: true
+  - input: "!!!a"
+    expected: false
+
+  # Operator precedence
+  - input: "x & a | b"
+    expected: true
+  - input: "(x & a) | b"
+    expected: true
+  - input: "x & (a | b)"
+    expected: false
+
+  # Complex ()
+  - input: "((a | x) & (b | y) & ((c | x) | (d | y)))"
+    expected: true
+
+  # Multi-character suite names
+  - input: "foo"
+    expected: true
+  - input: "bar"
+    expected: true
+  - input: "foo-bar"
+    expected: true
+  - input: "foo & bar & !baz-baz"
+    expected: true
+
+  # White space
+  - input: "    a   &b & c   "
+    expected: true
+  - input: "a&b&c"
+    expected: true
+
+  # Malformed expressions
+  - input: "(a&b"
+    expected: "Expected ')'"
+  - input: "(a|b"
+    expected: "Expected ')'"
+  - input: "a&"
+    expected: "Expected a variable"
+  - input: "a |"
+    expected: "Expected a variable"
+  - input: "&"
+    expected: "Unexpected operator \"&\""
+  - input: "|"
+    expected: "Unexpected operator \"|\""
+  - input: "!"
+    expected: "Expected a variable"
+  - input: "("
+    expected: "Expected a variable"
+  - input: ")"
+    expected: "Unexpected operator \")\""
+  - input: "a b"
+    expected: "Expected '&' or '|' operator"
+  - input: "(a+b))"
+    expected: "Expected '&' or '|' operator"
+  - input: ""
+    expected: "Expected a variable"
+  - input: "   "
+    expected: "Expected a variable"
