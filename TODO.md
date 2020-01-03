@@ -1,6 +1,8 @@
 # TODO LIST
 
 ## Housekeeping
+* Remove Windows paths from true_or_false sample
+* Duplicate definitions for SymbolTable
 * Set formatting properties for VS Code
 * Travis
 * Prettier clean
@@ -29,7 +31,9 @@
     * IStorage blob metadata (e.g. creation date, size, owner)
 * gRPC prototype
 * Calculator Benchmark - verify answer
+    * Schema verification
     * Implement on IWorker
+    * Error handling for async APIs
     * Compute measures
     * Write results
     * Suite 1 - add, subtract, multiply
@@ -37,6 +41,8 @@
     * Benchmark application
 * Calculator Benchmark 2 - verify parse tree
 * Calculator Candidate
+    * Schema verification
+    * Implement on IWorker
     * Fixed point
     * Floating point
     * Typescript version

@@ -11,30 +11,17 @@ async function clientEntryPoint(worker: IWorker) {
 
     console.log('client: service.doSomething()');
     await service.doSomething();
-    // const maxTries = 5;
-    // for (let i=0; i<maxTries; ++i) {
-    //     try {
-    //         const service = await worker.connect<IService>('server1', 8080);
-    //     } catch (e) {
-
-    //     }
-    //     await sleep(1000);
-    // }
 }
-
-// type IService = () => void;
-
-// function service() {
-//     console.log('serivce invoked');
-// }
 
 async function serverEntryPoint(worker: IWorker) {
     console.log(`serverEntryPoint()`);
 
+    // Simulate server startup time.
     console.log('server: sleeping');
     await sleep(100);
     console.log('server: awoke');
 
+    // Construct and bind service RPC stub. 
     const myService = new MyService();
     worker.bind(myService, 8080);
 }
@@ -51,22 +38,27 @@ class MyService implements IService {
 }
 
 async function go() {
-    const cloudStorage = new RamDisk();
-
+    // Create orchestrator.
     const orchestrator = new LocalOrchestrator();
 
+    // Push client container image to repository.
     const clientImage = {
         tag: 'client',
         create: () => clientEntryPoint
     };
     orchestrator.pushImage(clientImage);
 
+    // Push server container image to repository.
     const serverImage = {
         tag: 'server',
         create: () => serverEntryPoint
     };
     orchestrator.pushImage(serverImage);
 
+    // Set up cloud storage.
+    const cloudStorage = new RamDisk();
+
+    // Start client and server containers.
     orchestrator.createWorker('client1', 'client', cloudStorage, []);
     orchestrator.createWorker('server1', 'server', cloudStorage, []);
 }

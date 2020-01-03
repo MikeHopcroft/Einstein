@@ -3,8 +3,8 @@ import { PeekableSequence } from './peekable_sequence';
 export type SymbolTable = Map<string, boolean>;
 export type Evaluator = (symbols: SymbolTable) => boolean;
 
-// Constructs an Evaluator from a textual boolean expression over variable
-// names. The expression can be made up of
+// Constructs an Evaluator function from a textual boolean expression over
+// variable names. The expression can be made up of
 //   TERM: a variable name - any sequence of non-space characters that
 //         does not include the symbols '(', ')', '&', '|', and '!'
 //   LOGICAL OR: '|'
@@ -12,7 +12,7 @@ export type Evaluator = (symbols: SymbolTable) => boolean;
 //   LOGICAL NEGATION: '!'
 //   PARENTHESES: '(', ')'
 //
-// The Evaluator takes a single parameter that is a MAP from TERMS to boolean
+// The Evaluator takes a single parameter that is a Map from TERMS to boolean
 // values. It returns the truth value of the expression.
 //
 // For example, if the symbols parameter of the Evaluator maps 'a' and 'b' to
@@ -38,6 +38,7 @@ export function parse(text: string): Evaluator {
     // Create a stream of tokens.
     const input = new PeekableSequence<string>(tokens.values());
 
+    // Parse the sequence of tokens.
     return parseDisjunction(input);
 }
 

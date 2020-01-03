@@ -1,13 +1,10 @@
 import * as yaml from 'js-yaml';
 import * as fs from 'fs';
 
-// TODO: IStorage
-// TODO: ICandidateFactory, HttpCandidate, LocalCandidate
-// TODO: SuiteLoader
-import { RamDisk } from '../cloud';
+import { RamDisk } from '../../cloud';
 
-import { Candidate } from './candidate';
 import { Benchmark, SymbolTable, TestSuite } from './benchmark';
+import { Candidate } from './candidate';
 
 async function go(domainDataFile: string, suiteFile: string) {
     try {
