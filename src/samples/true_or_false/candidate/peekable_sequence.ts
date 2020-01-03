@@ -1,6 +1,6 @@
 export class PeekableSequence<T> {
-    iterator: IterableIterator<T>;
-    current: IteratorResult<T>;
+    private iterator: IterableIterator<T>;
+    private current: IteratorResult<T>;
 
     constructor(iterator: IterableIterator<T>) {
         this.iterator = iterator;

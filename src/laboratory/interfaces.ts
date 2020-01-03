@@ -2,7 +2,7 @@ export interface EntityDescription {
     name: string;
     description: string;
     owner: string;
-    created: Date;
+    created: string;
 }
 
 export interface BenchmarkDescription extends EntityDescription {
@@ -30,4 +30,13 @@ export interface RunDescription extends EntityDescription {
     containerId: string;
     suiteId: string;
     results: string[];
+}
+
+export type UID = string;
+
+// tslint:disable-next-line:interface-name
+export interface ILaboratory {
+    getPublicKey(): Promise<string>;
+    createCandidate(description: CandidateDescription): Promise<UID>;
+    listCandidates(pattern: CandidateDescription): Promise<CandidateDescription[]>;
 }

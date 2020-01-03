@@ -1,10 +1,10 @@
 import { IStorage, IOrchestrator, IWorker, Volume } from '../interfaces';
 
 export class LocalWorker implements IWorker {
-    orchestrator: IOrchestrator;
-    hostname: string;
-    cloudStorage: IStorage;
-    localStorage: IStorage;
+    private orchestrator: IOrchestrator;
+    private hostname: string;
+    private cloudStorage: IStorage;
+    private localStorage: IStorage;
 
     constructor(
         orchestrator: IOrchestrator,

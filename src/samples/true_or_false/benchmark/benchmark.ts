@@ -6,8 +6,8 @@ import { sleep } from '../../../utilities';
 import { ICandidate, SymbolTable, TestSuite } from './interfaces';
 
 export class Benchmark {
-    cloudStorage: IStorage;
-    localStorage: IStorage;
+    private cloudStorage: IStorage;
+    private localStorage: IStorage;
 
     constructor(cloudStorage: IStorage, localStorage: IStorage) {
         this.cloudStorage = cloudStorage;

@@ -2,6 +2,8 @@
 
 ## Housekeeping
 * Remove Windows paths from true_or_false sample
+* Move sample code out to samples folder
+* Set up unit testing
 * Duplicate definitions for SymbolTable
 * Set formatting properties for VS Code
 * Travis
@@ -14,23 +16,29 @@
 ## Other
 * x LocalWorker.shutdown()
 * x sleep() to utilities
+* Disk based IStorage
 * Suite upload utility methods
+* Cloud storage mechanism to prevent blob overwrite - https://stackoverflow.com/questions/47716780/dont-overwrite-azure-blob-storage
 
 ## Sample Benchmark and Candidate
 * Naming utilities
     * UUID generation - https://www.npmjs.com/package/uuid
+    * CandidateDescription => blob path
+    * BenchmarkDescription => blob path
 * Secrets
-    * Encryption algorithm
+    * x Encryption algorithm
+    * Move sample out of library
+    * Unit tests
 * Cloud abstraction layer: in-memory storage emulator
     * Copy from file system
-    * List blobs matching prefix
-    * Read blob
-    * Create blob
+    * x List blobs matching prefix
+    * x Read blob
+    * x Create blob
     * IStorage blob creation/deletion/update events
     * IStorage from Volume[]
     * IStorage blob metadata (e.g. creation date, size, owner)
 * gRPC prototype
-* Calculator Benchmark - verify answer
+* True_Or_False Benchmark - verify answer
     * Schema verification
     * Implement on IWorker
     * Error handling for async APIs
@@ -52,8 +60,15 @@
 ## Laboratory Service - Configuration
 * Upload benchmark
 * Upload suite
-* Upload candidate
-* RESTful API to list candidates, benchmarks, suites, etc.
+* . Upload candidate
+* RESTful API to list candidates, benchmarks, suites, etc?
+
+## REPL
+* Sets up environment
+* Sends commands to CLI
+* ls command (files and blobs)
+* more command
+* list containers running
 
 ## CLI - Configuration
 * Deploy

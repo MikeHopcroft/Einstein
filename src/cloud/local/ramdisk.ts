@@ -7,7 +7,7 @@ interface Blob {
 }
 
 export class RamDisk implements IStorage {
-    blobs = new Map<string, Buffer>();
+    private blobs = new Map<string, Buffer>();
 
     async writeBlob(name: string, buffer: Buffer): Promise<void> {
         this.blobs.set(name, buffer);

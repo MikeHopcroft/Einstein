@@ -11,11 +11,11 @@ interface Host {
 }
 
 export class LocalOrchestrator implements IOrchestrator {
-    hosts = new Map<string, Host>();
-    images = new Map<string, Image>();
+    private hosts = new Map<string, Host>();
+    private images = new Map<string, Image>();
 
-    maxRetries = 5;
-    retryIntervalMS = 1000;
+    private maxRetries = 5;
+    private retryIntervalMS = 1000;
 
     pushImage(image: Image): void {
         if (this.images.has(image.tag)) {

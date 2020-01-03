@@ -3,8 +3,8 @@ import { ICandidate, SymbolTable } from '../benchmark';
 import { parse } from './parser';
 
 export class Candidate implements ICandidate {
-    symbols = new Map<string,boolean>();
-    readyCount = 0;
+    private symbols = new Map<string,boolean>();
+    private readyCount = 0;
 
     async ready(): Promise<boolean> {
         // Simulate a delay until ready.
