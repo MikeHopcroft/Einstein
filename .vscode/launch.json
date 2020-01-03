@@ -7,11 +7,11 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "sample",
+            "name": "true_or_false",
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\build\\src\\samples\\sample.js",
+            "program": "${workspaceFolder}\\build\\src\\samples\\true_or_false\\true_or_false.js",
             "preLaunchTask": "tsc: build - tsconfig.json",
             "outFiles": [
                 "${workspaceFolder}/build/**/*.js"
@@ -29,7 +29,19 @@
             "outFiles": [
                 "${workspaceFolder}/build/**/*.js"
             ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "secrets",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\build\\src\\secrets\\secrets.js",
+            "preLaunchTask": "tsc: build - tsconfig.json",
+            "outFiles": [
+                "${workspaceFolder}/build/**/*.js"
+            ]
         }
-
     ]
 }
