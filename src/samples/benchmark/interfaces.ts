@@ -18,20 +18,14 @@ export interface SymbolDefinition {
     value: boolean;
 }
 
-// TODO: 
 // tslint:disable-next-line:interface-name
 export interface ICandidate {
     ready(): Promise<boolean>;
     initialize(symbols: SymbolTable): Promise<void>;
     runCase(input: string): Promise<boolean | string>;
 
-    // // TODO: ISSUE: should training cases be passed one-by-one or in a batch?
+    // TODO: ISSUE: should training cases be passed one-by-one or in a batch?
     // trainingCase(input: string, expected: boolean | string): void;
 
     shutdown(): Promise<void>;
 }
-
-// // tslint:disable-next-line:interface-name
-// export interface IStorage {
-//     nop(): void;
-// }

@@ -1,13 +1,37 @@
 # TODO LIST
 
+## Housekeeping
+* Set formatting properties for VS Code
+* Travis
+* Prettier clean
+* x Move localWorker, localOrchestrator, ramDisk to local directory.
+* Prototype GRPC build with static stub generation
+* Prototype multi-language build
+* Prototype container build
+
+## Other
+* x LocalWorker.shutdown()
+* x sleep() to utilities
+* Suite upload utility methods
+
 ## Sample Benchmark and Candidate
+* Naming utilities
+    * UUID generation - https://www.npmjs.com/package/uuid
+* Secrets
+    * Encryption algorithm
 * Cloud abstraction layer: in-memory storage emulator
     * Copy from file system
     * List blobs matching prefix
     * Read blob
     * Create blob
+    * IStorage blob creation/deletion/update events
+    * IStorage from Volume[]
+    * IStorage blob metadata (e.g. creation date, size, owner)
 * gRPC prototype
 * Calculator Benchmark - verify answer
+    * Implement on IWorker
+    * Compute measures
+    * Write results
     * Suite 1 - add, subtract, multiply
     * Suite 2 - parentheses, variables
     * Benchmark application

@@ -1,9 +1,5 @@
 import { IWorker, LocalOrchestrator, RamDisk } from '../cloud';
-
-function sleep(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
+import { sleep } from '../utilities';
 
 async function clientEntryPoint(worker: IWorker) {
     // await sleep(2000);

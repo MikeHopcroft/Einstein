@@ -1,4 +1,4 @@
-import { IStorage } from './interfaces';
+import { IStorage } from '../interfaces';
 
 interface Blob {
     created: Date;

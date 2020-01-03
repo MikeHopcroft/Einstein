@@ -1,17 +1,14 @@
 import * as yaml from 'js-yaml';
-// import * as fs from 'fs';
 
 // TODO: IStorage
 // TODO: ICandidateFactory, HttpCandidate, LocalCandidate
 // TODO: SuiteLoader
 import { IStorage } from '../../cloud';
-
-import { Candidate } from '../candidate';
+import { sleep } from '../../utilities';
 
 import { ICandidate, SymbolTable, TestSuite } from './interfaces';
 
 export class Benchmark {
-    // candidate: ICandidate;
     cloudStorage: IStorage;
     localStorage: IStorage;
 
@@ -125,28 +122,3 @@ async function waitForCandidate(candidate: ICandidate): Promise<boolean> {
     }
     return ready;
 }
-
-function sleep(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-// //function go(candidateId: string, suiteId: string) {
-// async function go(domainDataFile: string, suiteFile: string) {
-//     const domainData =
-//         yaml.safeLoad(fs.readFileSync(domainDataFile, 'utf8')) as SymbolTable;
-//     // const symbols =
-//     //     new Map<string, boolean>(data.map(x => [x.name, x.value]));
-//     const suite =
-//         yaml.safeLoad(fs.readFileSync(suiteFile, 'utf8')) as TestSuite;
-
-//     const candidate = new Candidate();
-
-//     const storage = null as unknown as IStorage;
-
-//     await runBenchmark(candidate, domainData, suite, storage);
-// }
-
-// go(
-//     'd:\\git\\einstein\\src\\samples\\suites\\domain.yaml',
-//     'd:\\git\\einstein\\src\\samples\\suites\\simple.yaml'
-// );

@@ -11,42 +11,70 @@ export interface Volume {
     storage: IStorage;
 }
 
-// // tslint:disable-next-line:interface-name
-// export interface IContainer {
-//     run(): Promise<void>;
-// }
-
 export type EntryPoint = (worker: IWorker) => Promise<void>;
 
-// tslint:disable-next-line:no-any
-// type Image = () => EntryPoint;
+//
+// An Image is analogous to a container image.
+//
 export interface Image {
     tag: string;
+
+    // Factory for image EntryPoints.
+    // Analogous to creating a container.
     create(): EntryPoint;
 }
 
+//
+// An IWorker is analogous to a running container.
+//
 // tslint:disable-next-line:interface-name
 export interface IWorker {
-    // getInterface<T>(): T;
+    // Returns the cloud storage available to this worker.
     getCloudStorage(): IStorage;
+
+    // Returns this worker's local filesystem.
     getFileSystem(): IStorage;
-    shutdown(): void;
+
+    // Makes an RPC interface stub available on a specified port.
     bind<T>(stub: T, port: number): void;
+
+    // Gets an RPC stub for a port on a specified host.
     connect<T>(hostname: string, port: number): Promise<T>;
+
+    // Removes this worker from its IOrchestrator.
+    // Equvalent to a container process exiting.
+    // Note: worker should return immediately after this call.
+    // TODO: should this take an exit code?
+    shutdown(): void;
 }
 
+//
+// An IOrchestrator manages containers and images.
+// It is analogous to a container registery, paired with docker-compose or
+// kubernetes.
+//
 // tslint:disable-next-line:interface-name
 export interface IOrchestrator {
+    // Pushes an Image to the registery.
     pushImage(image: Image): void;
 
+    // Creates an IWorker running in a specified image.
+    // Analogous to running a container.
     createWorker(
         hostname: string,
-        tag: string,
+        imageTag: string,
         cloudStorage: IStorage,
         volumes: Volume[]
     ): void;
 
+    // Removes the worker from the hosts table.
+    // Analogous to killing a container process.
+    killWorker(hostname: string): void;
+
+    // Makes an RPC interface stub available on a specified port.
     bind<T>(stub: T, hostname: string, port: number): void;
+
+    // Gets an RPC stub for a port on a specified host.
     connect<T>(hostname: string, port: number): Promise<T>;
 }
 
