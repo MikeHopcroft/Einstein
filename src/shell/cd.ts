@@ -2,7 +2,7 @@ import * as path from 'path';
 
 import { Shell } from './shell';
 
-export function cdCommand(args: string[], shell: Shell): number {
+export async function cdCommand(args: string[], shell: Shell): Promise<number> {
     if (args.length === 1) {
         shell.setWorkingDirectory(shell.getHomeDirectory());
         return 0;

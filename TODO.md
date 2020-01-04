@@ -19,6 +19,12 @@
 * x Shell: cd command - proper path joining
 * Shell: better arg splitter that handles quotes. https://stackoverflow.com/questions/2817646/javascript-split-string-on-space-or-on-quotes-to-array/18647776
 * x Shell: figure out how to get cwd into prompt
+* localDisk: handle ~ in root path
+* localDisk: unit tests
+* localDisk: ensure paths exist on file create
+* IStorage: change listBlobs API to distinguish between path not found and empty directory.
+
+* IStorge:listBlobs needs to be consistent across localDisk and ramDisks
 * Naming library and loader
 * IStorage from Volume[]
 * Disk based IStorage

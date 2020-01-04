@@ -15,7 +15,13 @@ import * as replServer from 'repl';
 import { Context } from 'vm';
 
 import { CLI } from '../cli';
-import { IOrchestrator, IStorage, LocalOrchestrator, RamDisk } from '../cloud';
+import {
+    IOrchestrator,
+    IStorage,
+    LocalDisk,
+    LocalOrchestrator,
+    RamDisk
+} from '../cloud';
 
 import { cdCommand } from './cd';
 import { containersCommand } from './containers';
@@ -24,7 +30,7 @@ import { lsCommand } from './ls';
 import { moreCommand } from './more';
 import { pwdCommand } from './pwd';
 
-type CommandEntryPoint = (args: string[], shell: Shell) => number;
+type CommandEntryPoint = (args: string[], shell: Shell) => Promise<number>;
 
 const maxHistorySteps = 1000;
 const historyFile = '.repl_history';
@@ -55,7 +61,7 @@ export class Shell /* implements IRepl */ {
 
         this.orchestrator = new LocalOrchestrator();
         this.cloudStorage = new RamDisk();
-        this.localStorage = new RamDisk();
+        this.localStorage = new LocalDisk('/Users/mhop/git/temp');
         this.cli = new CLI(
             this.orchestrator, 
             this.cloudStorage,
@@ -185,6 +191,10 @@ export class Shell /* implements IRepl */ {
         // to change the prompt.
     }
 
+    getLocalStorage() {
+        return this.localStorage;
+    }
+
     private getPrompt() {
         return `einstein:${this.cwd}% `;
     }
@@ -193,14 +203,14 @@ export class Shell /* implements IRepl */ {
         (this.repl as any)['_initialPrompt'] = this.getPrompt();
     }
 
-    private processLine(line: string) {
+    private async processLine(line: string) {
         // TODO: better arg splitter that handles quotes.
         const args = line.split(/\s+/);
         const command = this.commands.get(args[0]);
         if (command === undefined) {
             console.log(`${args[0]}: command not found`)
         } else {
-            command(args, this);
+            await command(args, this);
         }
     }
 }

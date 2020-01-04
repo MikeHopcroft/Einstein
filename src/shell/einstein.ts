@@ -1,6 +1,6 @@
 import { Shell } from './shell';
 
-export function einsteinCommand(args: string[], shell: Shell): number {
+export async function einsteinCommand(args: string[], shell: Shell): Promise<number> {
     console.log(`einstein`);
     for (let i=1; i<args.length; ++i) {
         console.log(`  ${args[i]}`);
