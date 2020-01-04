@@ -98,3 +98,13 @@
 
 ## Config file format
 * [YAML is a superset of JSON](https://stackoverflow.com/questions/1726802/what-is-the-difference-between-yaml-and-json/1729545#1729545)
+
+## How are supporting files packaged with suites?
+* Domain data
+* Test cases
+* WAV files referenced by test cases
+
+## How are WAV files provided to the candidate?
+* Blob URLs?
+* Attached volume?
+* Streamed?

@@ -12,8 +12,14 @@
 * Prototype GRPC build with static stub generation
 * Prototype multi-language build
 * Prototype container build
+* Docker image parser - https://stackoverflow.com/questions/37861791/how-are-docker-image-names-parsed
 
 ## Other
+* Deal with the two Image classes.
+* Logging
+* Schema verify after all yaml loads.
+* Better ajv errors.
+* Error check FooDescription name fields. Need to be legal in blob names.
 * x LocalWorker.shutdown()
 * x sleep() to utilities
 * Disk based IStorage

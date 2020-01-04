@@ -8,10 +8,10 @@ import { Candidate } from './candidate';
 
 async function go(domainDataFile: string, suiteFile: string) {
     try {
-        const domainData =
-            yaml.safeLoad(fs.readFileSync(domainDataFile, 'utf8')) as SymbolTable;
-        const suite =
-            yaml.safeLoad(fs.readFileSync(suiteFile, 'utf8')) as TestSuite;
+        // const domainData =
+        //     yaml.safeLoad(fs.readFileSync(domainDataFile, 'utf8')) as SymbolTable;
+        // const suite =
+        //     yaml.safeLoad(fs.readFileSync(suiteFile, 'utf8')) as TestSuite;
 
         const cloudStorage = new RamDisk();
         await cloudStorage.writeBlob(

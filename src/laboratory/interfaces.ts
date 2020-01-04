@@ -6,14 +6,16 @@ export interface EntityDescription {
 }
 
 export interface BenchmarkDescription extends EntityDescription {
-    containerBaseName: string;
-    containerVersion: string;
+    image: string;
+    // containerBaseName: string;
+    // containerVersion: string;
 }
 
 export interface CandidateDescription extends EntityDescription {
     benchmarkId: string;
-    containerBaseName: string;
-    containerVersion: string;
+    image: string;
+    // containerBaseName: string;
+    // containerVersion: string;
 }
 
 // TODO: ISSUE: do suites refer to versioned or unversioned benchmark
@@ -37,6 +39,15 @@ export type UID = string;
 // tslint:disable-next-line:interface-name
 export interface ILaboratory {
     getPublicKey(): Promise<string>;
+
     createCandidate(description: CandidateDescription): Promise<UID>;
     listCandidates(pattern: CandidateDescription): Promise<CandidateDescription[]>;
+
+    createBenchmark(description: BenchmarkDescription): Promise<UID>;
+    listBenchmarks(pattern: CandidateDescription): Promise<BenchmarkDescription[]>;
+
+    createSuite(description: SuiteDescription): Promise<UID>;
+    listSuites(pattern: SuiteDescription): Promise<BenchmarkDescription[]>;
+
+    run(candidateId: UID, suiteId: UID): Promise<void>;
 }
