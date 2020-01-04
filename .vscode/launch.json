@@ -42,6 +42,20 @@
             "outFiles": [
                 "${workspaceFolder}/build/**/*.js"
             ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "shell",
+            // "skipFiles": [
+            //     "<node_internals>/**"
+            // ],
+            "program": "${workspaceFolder}\\build\\src\\shell\\shell.js",
+            "preLaunchTask": "tsc: build - tsconfig.json",
+            "outFiles": [
+                "${workspaceFolder}/build/**/*.js"
+            ]
         }
+
     ]
 }

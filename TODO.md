@@ -1,6 +1,7 @@
 # TODO LIST
 
 ## Housekeeping
+* Applications go in src/applications
 * Remove Windows paths from true_or_false sample
 * Move sample code out to samples folder
 * Set up unit testing
@@ -12,17 +13,23 @@
 * Prototype GRPC build with static stub generation
 * Prototype multi-language build
 * Prototype container build
-* Docker image parser - https://stackoverflow.com/questions/37861791/how-are-docker-image-names-parsed
 
 ## Other
-* Deal with the two Image classes.
+* Docker image parser - https://stackoverflow.com/questions/37861791/how-are-docker-image-names-parsed
+* x Shell: cd command - proper path joining
+* Shell: better arg splitter that handles quotes. https://stackoverflow.com/questions/2817646/javascript-split-string-on-space-or-on-quotes-to-array/18647776
+* x Shell: figure out how to get cwd into prompt
+* Naming library and loader
+* IStorage from Volume[]
+* Disk based IStorage
+* Wildcard matching
+* x Deal with the two Image classes.
 * Logging
 * Schema verify after all yaml loads.
 * Better ajv errors.
 * Error check FooDescription name fields. Need to be legal in blob names.
 * x LocalWorker.shutdown()
 * x sleep() to utilities
-* Disk based IStorage
 * Suite upload utility methods
 * Cloud storage mechanism to prevent blob overwrite - https://stackoverflow.com/questions/47716780/dont-overwrite-azure-blob-storage
 

@@ -32,12 +32,7 @@ export class Laboratory implements ILaboratory {
     }
 
     async createBenchmark(description: BenchmarkDescription): Promise<UID> {
-        // const uid = uuid();
         const image = new ContainerImage(description.image);
-        // const containerHash = v3(description.containerBaseName, seed);
-        // const versionHash = v3(description.containerVersion, seed);
-        // const componentHash = v3(image.component, seed);
-        // const tagHash = v3(image.tag, seed);
         const tagPart = image.tag ? '/'+image.tag : '';
         const benchmarkId = `${image.component}${tagPart}`;
 
@@ -56,13 +51,6 @@ export class Laboratory implements ILaboratory {
     }
 
     async createCandidate(description: CandidateDescription): Promise<UID> {
-        // const uid = uuid();
-        // const containerHash = v3(description.containerBaseName, seed);
-        // const versionHash = v3(
-        //     `${description.benchmarkId}:${description.containerVersion}`,
-        //     seed
-        // );
-        // const blobPath = `candidates/${containerHash}/${versionHash}`;
         const image = new ContainerImage(description.image);
         const tagPart = image.tag ? '/'+image.tag : '';
         const candidateId = `${image.component}${tagPart}`;
@@ -83,11 +71,7 @@ export class Laboratory implements ILaboratory {
     }
 
     async createSuite(description: SuiteDescription): Promise<UID> {
-        // const hash = v3(description.benchmarkId, seed);
-
         // TODO: organize suites by benchmarkId then suite hash?
-        // const blobPath = `suites/${hash}`;
-
         // TODO: use Naming library
         const blobPath = `suites/${description.benchmarkId}/${description.name}`;
         // TODO: check for attempt blob overwrite.
@@ -120,15 +104,6 @@ export class Laboratory implements ILaboratory {
         const benchmark = await this.loadBenchmark(suite.benchmarkId);
     }
 
-    // private async loadCandidate(candidateId: string): Promise<CandidateDescription> {
-    //     const suiteYaml = (
-    //         await this.cloudStorage.readBlob(candidateId)
-    //     ).toString('utf8');
-
-    //     // TODO: verify schema.
-    //     const suite = yaml.safeLoad(suiteYaml) as SuiteDescription;
-    //     return suite;
-    // }
     private async loadBenchmark(id: string): Promise<BenchmarkDescription> {
         // TODO: use Naming library
         return this.loadYaml('benchmarks/'+id);
@@ -144,7 +119,6 @@ export class Laboratory implements ILaboratory {
         return this.loadYaml('candidates/'+id);
     }
 
-
     private async loadYaml<T>(path: string): Promise<T> {
         const yamlText = (
             await this.cloudStorage.readBlob(path)
@@ -153,16 +127,6 @@ export class Laboratory implements ILaboratory {
         // TODO: verify schema.
         return yaml.safeLoad(yamlText) as T;
     }
-
-    // private async loadSuite(suiteId: string): Promise<SuiteDescription> {
-    //     const suiteYaml = (
-    //         await this.cloudStorage.readBlob(suiteId)
-    //     ).toString('utf8');
-
-    //     // TODO: verify schema.
-    //     const suite = yaml.safeLoad(suiteYaml) as SuiteDescription;
-    //     return suite;
-    // }
 }
 
 async function go() {
@@ -176,8 +140,6 @@ async function go() {
         owner: 'Mike',
         created: new Date().toISOString(),
         image: 'myregistry.azurecr.io/true_or_false_benchmark:1.0'
-        // containerBaseName: 'true_or_false_benchmark',
-        // containerVersion: '1.0'
     };
     const benchmarkId = await lab.createBenchmark(benchmark);
 
@@ -199,8 +161,6 @@ async function go() {
         created: new Date().toISOString(),
         benchmarkId,
         image: 'myregistry.azurecr.io/true_or_false_candidate:1.0'
-        // containerBaseName: 'true_or_false_candidate',
-        // containerVersion: '1.0'
     };
     const candidateId = await lab.createCandidate(candidate);
 
