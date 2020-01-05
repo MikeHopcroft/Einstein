@@ -47,16 +47,28 @@
             "type": "node",
             "request": "launch",
             "name": "shell",
-            // "skipFiles": [
-            //     "<node_internals>/**"
-            // ],
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
             "program": "${workspaceFolder}\\build\\src\\applications\\shell.js",
             "preLaunchTask": "tsc: build - tsconfig.json",
             "outFiles": [
                 "${workspaceFolder}/build/**/*.js"
             ],
             "console": "externalTerminal"
-        }
-
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "tutorial",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\build\\src\\applications\\tutorial.js",
+            "preLaunchTask": "tsc: build - tsconfig.json",
+            "outFiles": [
+                "${workspaceFolder}/build/**/*.js"
+            ]
+        },
     ]
 }

@@ -30,6 +30,7 @@
   "dependencies": {
     "js-yaml": "^3.13.1",
     "murmurhash": "0.0.2",
+    "strip-ansi": "^6.0.0",
     "uuid": "^3.3.3"
   }
 }

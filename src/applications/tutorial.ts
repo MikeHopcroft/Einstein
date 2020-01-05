@@ -1,4 +1,6 @@
 import { Readable } from "stream";
+// import * as stripAnsi from "strip-ansi";
+const stripAnsi = require('strip-ansi');
 
 import { Shell } from "../shell";
 import { sleep } from "../utilities";
@@ -41,36 +43,37 @@ no services running
 The end.
 `;
 
-function go2() {
-    const re = /einstein:[^%]*%\s+(.*)/;
-    const lines = [
-        "einstein:/a/b% pwd",
-        "no services running",
-        "einstein:/% # sleep for a while",
-        "einstein:/a/b% einstein deploy lab",
-    ];
+// Save for unit tests.
+// function go2() {
+//     const re = /einstein:[^%]*%\s+(.*)/;
+//     const lines = [
+//         "einstein:/a/b% pwd",
+//         "no services running",
+//         "einstein:/% # sleep for a while",
+//         "einstein:/a/b% einstein deploy lab",
+//     ];
 
-    for (const line of lines) {
-        const m = line.match(re);
-        console.log(m);
-    }
-}
+//     for (const line of lines) {
+//         const m = line.match(re);
+//         console.log(m);
+//     }
+// }
 
-function go3() {
-    const re = /(\d+) second/;
-    const lines = [
-        "# wait 5 seconds for",
-        "# wait 10 seconds for",
-        "# pause for 23 seconds",
-        "# wait for service to start",
-        "# wait a few seconds for service to start",
-    ];
+// function go3() {
+//     const re = /(\d+) second/;
+//     const lines = [
+//         "# wait 5 seconds for",
+//         "# wait 10 seconds for",
+//         "# pause for 23 seconds",
+//         "# wait for service to start",
+//         "# wait a few seconds for service to start",
+//     ];
 
-    for (const line of lines) {
-        const m = line.match(re);
-        console.log(m);
-    }
-}
+//     for (const line of lines) {
+//         const m = line.match(re);
+//         console.log(m);
+//     }
+// }
 
 function scriptStream(lines: string[]) {
     const nSecondsRE = /(\d+) second/;
@@ -100,23 +103,19 @@ function scriptStream(lines: string[]) {
 }
 
 async function go() {
-    const sections = text.split(/~~~/g);
-    // console.log(sections);
-
+    // Split markdown into alternating text block and code sections.
+    // TODO: BUGBUG: what if file starts with `~~~` on first line before `\n`?
+    const sections = text.split(/\n~~~\n/g);
     const textBlocks: string[] = [];
     const scriptLines: string[] = [];
     const re = /einstein:[^%]*%\s+(.*)/;
 
     for (let i=0; i<sections.length; ++i) {
         if (i%2 === 0) {
-            // console.log(`Text:`);
-            // console.log(sections[i]);
+            // This is a normal text block.
             textBlocks.push(sections[i]);
         } else {
-            // console.log(`Code:`);
-            // console.log(sections[i]);
-
-            scriptLines.push('#SECTION');
+            // This is a code block. Extract the shell input lines.
             const lines = sections[i].split(/\n/g);
             for (const line of lines) {
                 const m = line.match(re);
@@ -124,29 +123,52 @@ async function go() {
                     scriptLines.push(m[1]);
                 }
             }
+            // Start with a '#SECTION' comment to allow us to partition the
+            // Shell output.
+            scriptLines.push('#SECTION');
         }
     }
-    const script = scriptLines.join('\n');
-    // console.log(script);
 
-    // const input = new Readable();
-    // input.push(script);
-    // input.push(null);
+    // Put the script into an scriptStream to use as Shell input.
+    const script = scriptLines.join('\n');
     const input = scriptStream(scriptLines);
 
+    // Run the shell with this script, while capturing output.
     const shell = new Shell({input, capture:true});
     const finished = shell.finished();
-
     await finished;
-    console.log('???????????????????????????????????????');
-    console.log(shell.getOutput());
-}
 
-// const m = line.match(this.nSecondsRE);
-// if (m) {
-//     const seconds = Number(m[1]);
-//     await sleep(seconds * 1000);
-// }
+    // Group the captured output into code block sections.
+    const outputLines = stripAnsi(shell.getOutput()).split(/\n/g);
+    let currentSection: string[] = [];
+    const outputSections: string[][] = [currentSection];
+    for (const line of outputLines) {
+        if (line.includes('#SECTION')) {
+            currentSection = [];
+            outputSections.push(currentSection);
+        } else {
+            currentSection.push(line);
+        }
+    }
+
+    // Finally, zip together the original text blocks and the new code blocks
+    const finalLines: string[] = [];
+    for (let i=0; i<textBlocks.length; ++i) {
+        finalLines.push(textBlocks[i]);
+        if (i<outputSections.length) {
+            finalLines.push('~~~');
+            for (const line of outputSections[i]) {
+                finalLines.push(line);
+            }
+            finalLines.push('~~~');
+        }
+    }
+    finalLines.push('');
+    const final = finalLines.join('\n');
+
+    console.log('???????????????????????????????????????');
+    console.log(final);
+}
 
 
 go();

@@ -9,6 +9,15 @@
 * Prettier clean
 
 ## Easy
+* Tutorial idempotent unit test
+* Why doesn't empty line in tutorial shut down Shell?
+* Use chalk or ansi-styles in tutorial
+* Redirect recorded output to stderr to allow results on stdout
+* x Strip ANSI escape codes from recorded stdout.
+    * https://stackoverflow.com/questions/13801273/what-does-u001bj-represent
+    * https://github.com/chalk/strip-ansi
+    * https://www.npmjs.com/package/strip-ansi
+* Don't hard-code LocalDisk path in Shell
 * Remove Windows paths from true_or_false sample
 * Verfiy localDisk and ls work on Windows
 * localDisk: handle ~/tilde in root path
@@ -19,6 +28,11 @@
 * Catch errors in shell (e.g. duplicate deployments)
 
 ## Basic
+* Should CLI be a member of Shell or is it part of Einstein?
+* pass orchestrator to Shell constructor, so readline.Interface can be started as last step.
+    * Don't want to take input until shell is fully intialized
+    * Probably want to introduce concept of an execution environment or world.
+* Shell: help command
 * Shell: cloudls
     * cloud ls
     * cloud images
@@ -33,6 +47,8 @@
 * Disk based IStorage
 
 ## Research
+* What happens if the Shell's finished promise is awaited multiple times?
+* Figure out how to reintroduce persistant history in Shell
 * Cloud storage mechanism to prevent blob overwrite - https://stackoverflow.com/questions/47716780/dont-overwrite-azure-blob-storage
 * Prototype GRPC build with static stub generation
 * Prototype multi-language build
@@ -70,7 +86,6 @@
 * CLI connection to labratory based on configuration file
 * Better handling of timeouts - e.g. einstein deploy
 * Shell: exit command instead of blank line
-* Shell: help command
 * Shell: suppress dot commands?
 * Docker image parser - https://stackoverflow.com/questions/37861791/how-are-docker-image-names-parsed
 * localDisk: unit tests

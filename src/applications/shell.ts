@@ -1,22 +1,12 @@
-import { Readable } from 'stream';
-
 import { IWorker } from '../cloud';
-import { Shell, StdoutCapture } from '../shell';
-import { sleep } from '../utilities';
+import { Shell } from '../shell';
 
 async function go() {
-    const input2 = new Readable();
-    input2.push('cd a\n');
-    input2.push('cd b\n');
-    input2.push('pwd\n');
-    input2.push(null);
-
-    // const capture = new StdoutCapture();
-    // capture.start();
-
-    // TODO: pass orchestrator to shell, so shell can be started last.
+    // TODO: pass orchestrator to Shell constructor,
+    // so readline.Interface can be started as last step.
+    // Don't want to take input until shell is fully intialized
     // This will allow async awaits before starting shell.
-    const shell = new Shell({input: input2, capture: true});
+    const shell = new Shell();
     const finished = shell.finished();
     const orchestrator = shell.getOrchestrator();
 
@@ -35,32 +25,17 @@ async function go() {
     orchestrator.pushImage(serverImage);
 
     await finished;
-    // await sleep(1);
-    // console.log('exiting');
-
-    console.log('???????????????????????????????????????');
-    console.log(shell.getOutput());
-    // capture.stop();
-    // console.log('=====');
-    // console.log(capture.output);
+    console.log('exiting');
 }
 
-// async function go2()
-// {
-//     const shell = await go();
-//     // await sleep(1);
-//     console.log('exiting');
-
-//     console.log('=====');
-//     console.log(shell.getOutput());
-// }
-
 async function clientEntryPoint(worker: IWorker) {
+    // Simulate startup time.
     // await sleep(2000);
     console.log(`client: clientEntryPoint()`);
 }
 
 async function serverEntryPoint(worker: IWorker) {
+    // Simulate startup time.
     // await sleep(2000);
     console.log(`server: serverEntryPoint()`);
 }
