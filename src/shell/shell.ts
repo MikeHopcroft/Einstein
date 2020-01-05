@@ -19,6 +19,7 @@ import { lsCommand } from './ls';
 import { moreCommand } from './more';
 import { pwdCommand } from './pwd';
 import { servicesCommand } from './services';
+import { sleep } from '../utilities';
 
 type CommandEntryPoint = (args: string[], shell: Shell) => Promise<number>;
 
@@ -36,11 +37,22 @@ export class Shell {
     private cli: CLI;
 
     private rl: readline.Interface;
+    private finishedPromise: Promise<unknown>;
 
     private capture = new StdoutCapture();
 
-    constructor(input: Readable | undefined = process.stdin) {
-        this.capture.start();
+    private nSecondsRE = /.*(\d+) second/;
+
+    // constructor(input: Readable | undefined = process.stdin) {
+    constructor(options: {
+        input?: Readable
+        capture?: boolean
+    } | undefined = {}) {
+        const input = options.input || process.stdin;
+
+        if (options.capture) {
+            this.capture.start();
+        }
 
         const shell = this;
 
@@ -89,15 +101,27 @@ export class Shell {
             }
         });
 
-        rl.on('close', () => {
-            console.log();
-            console.log('bye');
-
-            this.capture.stop();
-            console.log('===============');
-            console.log(this.capture.output);
-            process.exit(0);
+        this.finishedPromise = new Promise((resolve, reject) => {
+            // console.log('this.finishedPromise');
+            rl.on('close', () => {
+                console.log();
+                console.log('bye8');
+                this.capture.stop();
+                // console.log('=====');
+                // console.log(shell.capture.output);
+                resolve();
+            });
         });
+
+        // rl.on('close', () => {
+        //     console.log();
+        //     console.log('bye');
+
+        //     this.capture.stop();
+        //     console.log('===============');
+        //     console.log(this.capture.output);
+        //     process.exit(0);
+        // });
 
         async function processOneInputLine(line: string) {
             // Need await for interactive.
@@ -158,6 +182,10 @@ export class Shell {
         }
     }
 
+    finished() {
+        return this.finishedPromise;
+    }
+
     getCLI() {
         return this.cli;
     }
@@ -183,6 +211,10 @@ export class Shell {
         return this.orchestrator;
     }
 
+    getOutput() {
+        return this.capture.output;
+    }
+
     private getPrompt() {
         return `einstein:${this.cwd}% `;
     }
@@ -192,7 +224,15 @@ export class Shell {
     }
 
     private async processLine(line: string) {
-        if (!line.trim().startsWith('#')) {
+        if (line.trim().startsWith('#')) {
+            // comment - do nothing
+
+            // const m = line.match(this.nSecondsRE);
+            // if (m) {
+            //     const seconds = Number(m[1]);
+            //     await sleep(seconds * 1000);
+            // }
+        } else {
             // TODO: better arg splitter that handles quotes.
             const args = line.split(/\s+/);
             const command = this.commands.get(args[0]);
@@ -273,11 +313,13 @@ function go() {
 }
 
 // https://medium.com/@gajus/capturing-stdout-stderr-in-node-js-using-domain-module-3c86f5b1536d
-class StdoutCapture {
+export class StdoutCapture {
     output = '';
     write = process.stdout.write.bind(process.stdout);
+    // capturing = false;
 
     start() {
+        // this.capturing = true;
         const context = this;
 
         // https://medium.com/@gajus/capturing-stdout-stderr-in-node-js-using-domain-module-3c86f5b1536d
@@ -298,6 +340,7 @@ class StdoutCapture {
     }
 
     stop() {
+        // this.capturing = false;
         process.stdout.write = this.write;
     }
 }
@@ -332,4 +375,4 @@ function go3() {
     console.log(output);
 }
 
-go();
+// go();

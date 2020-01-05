@@ -1,0 +1,4 @@
+cd a
+cd b
+pwd
+

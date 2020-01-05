@@ -50,11 +50,12 @@
             // "skipFiles": [
             //     "<node_internals>/**"
             // ],
-            "program": "${workspaceFolder}\\build\\src\\shell\\shell.js",
+            "program": "${workspaceFolder}\\build\\src\\applications\\shell.js",
             "preLaunchTask": "tsc: build - tsconfig.json",
             "outFiles": [
                 "${workspaceFolder}/build/**/*.js"
-            ]
+            ],
+            "console": "externalTerminal"
         }
 
     ]
