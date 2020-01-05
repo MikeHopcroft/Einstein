@@ -1,51 +1,88 @@
 # TODO LIST
 
 ## Housekeeping
-* Applications go in src/applications
-* Remove Windows paths from true_or_false sample
-* Move sample code out to samples folder
+* Improve top-level README.md
+* Bring over architectural documents
 * Set up unit testing
-* Duplicate definitions for SymbolTable
-* Set formatting properties for VS Code
-* Travis
+* Set up formatting properties for VS Code
+* Set up Travis
 * Prettier clean
-* x Move localWorker, localOrchestrator, ramDisk to local directory.
+
+## Easy
+* Remove Windows paths from true_or_false sample
+* Verfiy localDisk and ls work on Windows
+* localDisk: handle ~/tilde in root path
+* Duplicate definitions for SymbolTable
+* Applications go in src/applications
+* Move sample code out to samples folder
+* Convert CLIArgs class to CLIMain() function
+* Catch errors in shell (e.g. duplicate deployments)
+
+## Basic
+* Shell: cloudls
+    * cloud ls
+    * cloud images
+    * cloud services
+* Shell: pushd/popd
+* Shell: better arg splitter that handles quotes. https://stackoverflow.com/questions/2817646/javascript-split-string-on-space-or-on-quotes-to-array/18647776
+* localDisk: ensure paths exist on file create
+* services command shows image tags for services
+
+## Round-out/Finish-up
+* Disk based IStorage
+
+## Research
+* Cloud storage mechanism to prevent blob overwrite - https://stackoverflow.com/questions/47716780/dont-overwrite-azure-blob-storage
 * Prototype GRPC build with static stub generation
 * Prototype multi-language build
 * Prototype container build
 
+## Scenarios
+* Code to generate .md tutorial file from template.
+* start shell
+    * prepopulate images
+    * prepopulate yaml benchmark, suite, and candidate files
+* images
+* services
+* einstein deploy labratory
+* services
+* ls
+* more benchmark.yaml
+* einstein benchmark benchmark.yaml
+* einstein list benchmarks
+* more suite.yaml
+* einstein suite suite.yaml
+* einstine list suites
+* more candidate.yaml
+* einstein encrypt candidate.yaml
+* more candidate.yaml
+* einstein candidate candidate.yaml
+* einstein list candidates
+* einstein run candidate suite
+* services
+* einstein list runs
+* einstein show run xxxxx
+
+
 ## Other
-* Convert CLIArgs class to CLIMain() function
 * CLI connection to labratory based on configuration file
-* Verfiy localDisk and ls work on Windows
 * Better handling of timeouts - e.g. einstein deploy
 * Shell: exit command instead of blank line
 * Shell: help command
 * Shell: suppress dot commands?
-* Catch errors in shell (e.g. duplicate deployments)
 * Docker image parser - https://stackoverflow.com/questions/37861791/how-are-docker-image-names-parsed
-* x Shell: cd command - proper path joining
-* Shell: better arg splitter that handles quotes. https://stackoverflow.com/questions/2817646/javascript-split-string-on-space-or-on-quotes-to-array/18647776
-* x Shell: figure out how to get cwd into prompt
-* localDisk: handle ~ in root path
 * localDisk: unit tests
-* localDisk: ensure paths exist on file create
 * IStorage: change listBlobs API to distinguish between path not found and empty directory.
 
 * IStorge:listBlobs needs to be consistent across localDisk and ramDisks
-* Naming library and loader
+* Extract naming-library and loader
 * IStorage from Volume[]
-* Disk based IStorage
 * Wildcard matching
-* x Deal with the two Image classes.
 * Logging
 * Schema verify after all yaml loads.
 * Better ajv errors.
 * Error check FooDescription name fields. Need to be legal in blob names.
-* x LocalWorker.shutdown()
-* x sleep() to utilities
 * Suite upload utility methods
-* Cloud storage mechanism to prevent blob overwrite - https://stackoverflow.com/questions/47716780/dont-overwrite-azure-blob-storage
 
 ## Sample Benchmark and Candidate
 * Naming utilities
@@ -53,14 +90,10 @@
     * CandidateDescription => blob path
     * BenchmarkDescription => blob path
 * Secrets
-    * x Encryption algorithm
     * Move sample out of library
     * Unit tests
 * Cloud abstraction layer: in-memory storage emulator
     * Copy from file system
-    * x List blobs matching prefix
-    * x Read blob
-    * x Create blob
     * IStorage blob creation/deletion/update events
     * IStorage from Volume[]
     * IStorage blob metadata (e.g. creation date, size, owner)
@@ -111,3 +144,17 @@
 
 ## CLI - Running Tests
 * Run (candidate, suite)
+
+## Done
+* x Move localWorker, localOrchestrator, ramDisk to local directory.
+* x LocalWorker.shutdown()
+* x sleep() to utilities
+* x Shell: cd command - proper path joining
+* x Shell: figure out how to get cwd into prompt
+* x Deal with the two Image classes.
+* Servrets
+    * x Encryption algorithm
+* Cloud Abstraction Layer
+    * x List blobs matching prefix
+    * x Read blob
+    * x Create blob
