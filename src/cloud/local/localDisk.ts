@@ -8,7 +8,7 @@ export class LocalDisk implements IStorage {
 
     constructor(root: string) {
         this.root = path.normalize(root);
-        console.log(`root = "${this.root}"`);
+        // console.log(`root = "${this.root}"`);
     }
 
     async writeBlob(name: string, buffer: Buffer): Promise<void> {

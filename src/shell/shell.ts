@@ -1,18 +1,6 @@
-// TODO: implement REPL shell here.
-// Commands:
-//   einstein
-//   ls
-//   pwd
-//   more
-//   cd
-//   containers
-
-
-// import * as style from 'ansi-styles';
-// import * as Debug from 'debug';
 import * as fs from 'fs';
-import * as replServer from 'repl';
-import { Context } from 'vm';
+import * as readline from 'readline';
+import { Readable } from 'stream';
 
 import { CLI } from '../cli';
 import {
@@ -38,7 +26,7 @@ const maxHistorySteps = 1000;
 const historyFile = '.repl_history';
 const homedir = '/';
 
-export class Shell /* implements IRepl */ {
+export class Shell {
     private commands = new Map<string, CommandEntryPoint>();
     private cwd: string;
 
@@ -47,9 +35,13 @@ export class Shell /* implements IRepl */ {
     private localStorage: IStorage;
     private cli: CLI;
 
-    private repl: replServer.REPLServer;
+    private rl: readline.Interface;
 
-    constructor() {
+    private capture = new StdoutCapture();
+
+    constructor(input: Readable | undefined = process.stdin) {
+        this.capture.start();
+
         const shell = this;
 
         this.cwd = homedir;
@@ -74,96 +66,87 @@ export class Shell /* implements IRepl */ {
         // Print the welcome message.
         console.log();
         console.log('Welcome to the Einstein interactive command shell.');
-        console.log('Type your order below.');
+        console.log('Type commands below.');
         console.log('A blank line exits.');
         console.log();
-        console.log('Type .help for information on commands.');
+        console.log('Type "help" for information on commands.');
         console.log();
 
         // Start up the REPL.
-        const repl = replServer.start({
-            prompt: this.getPrompt(),
-            input: process.stdin,
+        const rl = readline.createInterface({
+            input,
             output: process.stdout,
-            eval: processReplInput,
-            writer: myWriter,
+            prompt: this.getPrompt()
         });
-        this.repl = repl;
-        this.updatePrompt();
+        this.rl = rl;
 
-        // Load REPL history from file.
-        if (fs.existsSync(historyFile)) {
-            fs.readFileSync(historyFile)
-                .toString()
-                // Split on \n (linux) or \r\n (windows)
-                .split(/\n|\r|\r\n|\n\r/g)
-                .reverse()
-                .filter((line: string) => line.trim())
-                // tslint:disable-next-line:no-any
-                .map((line: string) => (repl as any).history.push(line));
-        }
-
-        //
-        // Register core commands.
-        //
-
-        repl.on('exit', () => {
-            // tslint:disable:no-any
-            const historyItems = [...(repl as any).history].reverse();
-            const history = historyItems
-                .slice(Math.max(historyItems.length - maxHistorySteps, 0))
-                .join('\n');
-            fs.writeFileSync(historyFile, history);
-            console.log('bye');
-            process.exit();
-        });
-
-        async function processReplInput(
-            line: string,
-            context: Context,
-            filename: string,
-            // tslint:disable-next-line:no-any
-            callback: (err: Error | null, result: any) => void
-        ) {
-            console.log();
-
-            if (line === '\n') {
-                repl.close();
+        rl.prompt();
+        rl.on('line', async (line: string) => {
+            if (line === '') {
+                rl.close();
             } else {
-                await processInputLine(line);
-                callback(null, '');
+                await processOneInputLine(line);
             }
+        });
+
+        rl.on('close', () => {
+            console.log();
+            console.log('bye');
+
+            this.capture.stop();
+            console.log('===============');
+            console.log(this.capture.output);
+            process.exit(0);
+        });
+
+        async function processOneInputLine(line: string) {
+            // Need await for interactive.
+            // Need to lose await for input2 driven
+            // Perhaps need to slow down input2 with non-zero sleeps
+            await shell.processLine(line);
+            rl.prompt();
         }
 
-        async function processInputLine(line: string) {
-            const lines = line.split(/[\n\r]/);
-            if (lines[lines.length - 1].length === 0) {
-                // Remove last empty line so that we can distinguish whether
-                // we're in interactive mode or doing a .load.
-                lines.pop();
-            }
-            for (line of lines) {
-                if (line.length > 0) {
-                    // Only process lines that have content.
-                    // In an interactive session, an empty line will exit.
-                    // When using .load, empty lines are ignored.
+        // async function processInputLine(line: string) {
+        //     const lines = line.split(/[\n\r]/);
+        //     if (lines[lines.length - 1].length === 0) {
+        //         // Remove last empty line so that we can distinguish whether
+        //         // we're in interactive mode or doing a .load.
+        //         lines.pop();
+        //     }
+        //     // console.log(`lines.length=${lines.length}`);
+        //     for (line of lines) {
+        //         // console.log(`lines.length=${lines.length}`);
+        //         if (line.length > 0) {
+        //             // Only process lines that have content.
+        //             // In an interactive session, an empty line will exit.
+        //             // When using .load, empty lines are ignored.
 
-                    if (lines.length > 1) {
-                        // When we're processing multiple lines, for instance
-                        // via the .load command, print out each line before
-                        // processing.
-                        console.log(`% (batch) ${line}`);
-                        console.log();
-                    }
+        //             if (lines.length > 1) {
+        //                 // When we're processing multiple lines, for instance
+        //                 // via the .load command, print out each line before
+        //                 // processing.
+        //                 console.log(`% (batch) ${line}`);
+        //                 console.log();
+        //             }
 
-                    shell.processLine(line);
-                }
-            }
-        }
+        //             shell.processLine(line);
+        //             rl.prompt();
+        //         }
+        //     }
+        // }
 
-        function myWriter(text: string) {
-            return text;
-        }
+        // // Load REPL history from file.
+        // if (fs.existsSync(historyFile)) {
+        //     fs.readFileSync(historyFile)
+        //         .toString()
+        //         // Split on \n (linux) or \r\n (windows)
+        //         .split(/\n|\r|\r\n|\n\r/g)
+        //         .reverse()
+        //         .filter((line: string) => line.trim())
+        //         // tslint:disable-next-line:no-any
+        //         .map((line: string) => (repl as any).history.push(line));
+        // }
     }
 
     registerCommand(name: string, entryPoint: CommandEntryPoint) {
@@ -190,8 +173,6 @@ export class Shell /* implements IRepl */ {
     setWorkingDirectory(cwd: string) {
         this.cwd = cwd;
         this.updatePrompt();
-        // HACK: use knowledge of private member of ReplServer
-        // to change the prompt.
     }
 
     getLocalStorage() {
@@ -207,7 +188,7 @@ export class Shell /* implements IRepl */ {
     }
 
     private updatePrompt() {
-        (this.repl as any)['_initialPrompt'] = this.getPrompt();
+        this.rl.setPrompt(this.getPrompt());
     }
 
     private async processLine(line: string) {
@@ -237,23 +218,116 @@ async function serverEntryPoint(worker: IWorker) {
     console.log(`server: serverEntryPoint()`);
 }
 
+// https://stackoverflow.com/questions/32719923/redirecting-stdout-to-file-nodejs
+// https://stackoverflow.com/questions/43505223/a-node-shell-based-on-gnu-readline/43677273
+
 function go() {
+    const input2 = new Readable();
+    input2.push('cd a\n');
+    input2.push('cd b\n');
+    input2.push('pwd\n');
+    input2.push(null);
+
+    // const lines: string[] = [];
+    // const stopping = false;
+    // const originalWriter = process.stdout.write;
+
+    // //https://stackoverflow.com/questions/26675055/nodejs-parse-process-stdout-to-a-variable
+    // // tslint:disable-next-line:no-any
+    // function writer(data: any) {
+    //     originalWriter(data);
+    // }
+
+    // // tslint:disable-next-line:no-any
+    // process.stdout.write = writer as any;
+
+    // // process.stdout.write = (data) => {
+    // //   // mylogger.write(data);
+    // //   process.stdout._orig_write(data);
+    // // }    // process.stdout.on('data', (chunk: string) => {
+    // //     if (!stopping) {
+    // //         lines.push(chunk);
+    // //     }
+    // // });
+
+
+    // const shell = new Shell(input2);
     const shell = new Shell();
     const orchestrator = shell.getOrchestrator();
 
-        // Push client container image to repository.
-        const clientImage = {
-            tag: 'client:1.0',
-            create: () => clientEntryPoint
-        };
-        orchestrator.pushImage(clientImage);
-    
-        // Push server container image to repository.
-        const serverImage = {
-            tag: 'server:1.0',
-            create: () => serverEntryPoint
-        };
-        orchestrator.pushImage(serverImage);
+    // Push client container image to repository.
+    const clientImage = {
+        tag: 'client:1.0',
+        create: () => clientEntryPoint
+    };
+    orchestrator.pushImage(clientImage);
+
+    // Push server container image to repository.
+    const serverImage = {
+        tag: 'server:1.0',
+        create: () => serverEntryPoint
+    };
+    orchestrator.pushImage(serverImage);
+}
+
+// https://medium.com/@gajus/capturing-stdout-stderr-in-node-js-using-domain-module-3c86f5b1536d
+class StdoutCapture {
+    output = '';
+    write = process.stdout.write.bind(process.stdout);
+
+    start() {
+        const context = this;
+
+        // https://medium.com/@gajus/capturing-stdout-stderr-in-node-js-using-domain-module-3c86f5b1536d
+        function hook(
+            chunk: string | Buffer,
+            // tslint:disable-next-line:no-any
+            encoding: any,
+            callback: Function
+        ) {
+            if (typeof chunk === 'string') {
+                context.output += chunk;
+            }
+            return context.write(chunk as string, encoding, callback);
+        }
+
+        // tslint:disable-next-line:no-any
+        process.stdout.write = hook as any;
+    }
+
+    stop() {
+        process.stdout.write = this.write;
+    }
+}
+
+function go3() {
+    let output = '';
+
+    const originalStdoutWrite = process.stdout.write.bind(process.stdout);
+
+    // https://medium.com/@gajus/capturing-stdout-stderr-in-node-js-using-domain-module-3c86f5b1536d
+    function f(
+        chunk: string | Buffer,
+        // tslint:disable-next-line:no-any
+        encoding: any,
+        callback: Function
+    ) {
+        if (typeof chunk === 'string') {
+            output += chunk;
+        }
+        return originalStdoutWrite(chunk as string, encoding, callback);
+    }
+
+    // tslint:disable-next-line:no-any
+    process.stdout.write =  f as any;
+
+    console.log('foo');
+    console.log('bar');
+    console.log('baz');
+
+    process.stdout.write = originalStdoutWrite;
+    console.log('qux');
+    console.log(output);
 }
 
 go();

@@ -27,6 +27,7 @@
 * Shell: better arg splitter that handles quotes. https://stackoverflow.com/questions/2817646/javascript-split-string-on-space-or-on-quotes-to-array/18647776
 * localDisk: ensure paths exist on file create
 * services command shows image tags for services
+* services command shows volumes for services
 
 ## Round-out/Finish-up
 * Disk based IStorage
@@ -36,6 +37,7 @@
 * Prototype GRPC build with static stub generation
 * Prototype multi-language build
 * Prototype container build
+* Windows/Linux/OSX/Azure file name lengths - for blob paths
 
 ## Scenarios
 * Code to generate .md tutorial file from template.
