@@ -192,13 +192,15 @@ export class Shell {
     }
 
     private async processLine(line: string) {
-        // TODO: better arg splitter that handles quotes.
-        const args = line.split(/\s+/);
-        const command = this.commands.get(args[0]);
-        if (command === undefined) {
-            console.log(`${args[0]}: command not found`)
-        } else {
-            await command(args, this);
+        if (!line.trim().startsWith('#')) {
+            // TODO: better arg splitter that handles quotes.
+            const args = line.split(/\s+/);
+            const command = this.commands.get(args[0]);
+            if (command === undefined) {
+                console.log(`${args[0]}: command not found`)
+            } else {
+                await command(args, this);
+            }
         }
     }
 }
