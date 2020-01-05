@@ -8,6 +8,7 @@ export class CLI {
     private cloudStorage: IStorage;
     private localStorage: IStorage;
 
+    private hostName: string | undefined;
     private lab: ILaboratory | undefined;
 
     constructor(
@@ -23,10 +24,12 @@ export class CLI {
     async deploy(
         hostname: string
     ): Promise<void> {
+        const labratoryTag = 'labratory:1.0';
+
         // Push container image
         const serverImage = {
             // TODO: change tag to image or some other more appropriate name.
-            tag: 'server',
+            tag: labratoryTag,
             create: () => labratoryEntryPoint
         };
         this.orchestrator.pushImage(serverImage);
@@ -40,30 +43,49 @@ export class CLI {
         // Create worker
         await this.orchestrator.createWorker(
             hostname,
-            'server',
+            labratoryTag,
             this.cloudStorage,
             []
         );
 
-        this.lab = (await this.orchestrator.connect<ILaboratory>(hostname, 8080));
+        // TODO: this should be set through the connect mechanism
+        // that inspects a configuration file.
+        this.hostName = hostname;
+    }
+
+    async getLab(): Promise<ILaboratory> {
+        if (!this.hostName) {
+            const message = 'Not connected to a Labratory';
+            throw TypeError(message);
+        }
+        if (!this.lab) {
+            // TODO: better handling of connection timeout exception here.
+            // TODO: don't hard-code port.
+            this.lab = await this.orchestrator.connect<ILaboratory>(this.hostName, 8080);
+        }
+        return this.lab;
+    }
+
+    async encrypt(filename: string): Promise<void> {
+        // TODO: implement
     }
 
     async uploadBenchmark(filename: string): Promise<void> {
-        // TODO: Implement
+        // TODO: implement
     }
 
     // TODO: list with wildcards - what is the syntax?
 
     async uploadCandidate(filename: string): Promise<void> {
-        // TODO: Implement
+        // TODO: implement
     }
 
     async uploadSuite(filename: string): Promise<void> {
-        // TODO: Implement
+        // TODO: implement
     }
 
     async run(candidateId: string, suiteId: string): Promise<void> {
-        // TODO: Implement
+        // TODO: implement
         // TODO: probably want to use wildcard matching here.
     }
 
@@ -74,12 +96,12 @@ export class CLI {
 }
 
 async function labratoryEntryPoint(worker: IWorker) {
-    console.log(`labratoryEntryPoint()`);
+    // console.log(`labratoryEntryPoint()`);
 
     // Simulate server startup time.
-    console.log('labratory: sleeping');
-    await sleep(100);
-    console.log('labratory: awoke');
+    // console.log('labratory: sleeping');
+    await sleep(5000);
+    // console.log('labratory: awoke');
 
     // Construct and bind service RPC stub.
     // TODO: write keys to CLI local storage.

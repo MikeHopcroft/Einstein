@@ -4,7 +4,7 @@ import { Image, IOrchestrator, IStorage, Volume } from '../interfaces';
 
 import { LocalWorker } from './localWorker';
 
-interface Host {
+export interface Host {
     // Map of port numbers to RPC stubs.
     // tslint:disable-next-line:no-any
     ports: Map<number, any>;
@@ -14,7 +14,7 @@ export class LocalOrchestrator implements IOrchestrator {
     private hosts = new Map<string, Host>();
     private images = new Map<string, Image>();
 
-    private maxRetries = 5;
+    private maxRetries = 30;
     private retryIntervalMS = 1000;
 
     pushImage(image: Image): void {
@@ -23,6 +23,20 @@ export class LocalOrchestrator implements IOrchestrator {
             throw TypeError(message);
         }
         this.images.set(image.tag, image);
+    }
+
+    async listImages(): Promise<string[]> {
+        return [...this.images.values()].map(x => x.tag);
+    }
+
+    async listServices(): Promise<string[]> {
+        const services = [];
+        for (const [hostname, x] of this.hosts.entries()) {
+            for (const port of x.ports.keys()) {
+                services.push(`${hostname}:${port}`);
+            }
+        }
+        return services;
     }
 
     createWorker(
@@ -38,7 +52,7 @@ export class LocalOrchestrator implements IOrchestrator {
         }
         const image = this.images.get(tag);
         if (image === undefined) {
-            const message = "Image ${tag} not found.";
+            const message = `Image ${tag} not found.`;
             throw TypeError(message);
         }
         const worker = new LocalWorker(

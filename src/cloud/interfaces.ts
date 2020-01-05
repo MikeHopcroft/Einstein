@@ -58,6 +58,12 @@ export interface IOrchestrator {
     // Pushes an Image to the registery.
     pushImage(image: Image): void;
 
+    // Returns list of tags of images previously pushed.
+    listImages(): Promise<string[]>;
+
+    // Returns list of services currently running.
+    listServices(): Promise<string[]>;
+
     // Creates an IWorker running in a specified image.
     // Analogous to running a container.
     createWorker(

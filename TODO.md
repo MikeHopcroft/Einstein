@@ -15,6 +15,14 @@
 * Prototype container build
 
 ## Other
+* Convert CLIArgs class to CLIMain() function
+* CLI connection to labratory based on configuration file
+* Verfiy localDisk and ls work on Windows
+* Better handling of timeouts - e.g. einstein deploy
+* Shell: exit command instead of blank line
+* Shell: help command
+* Shell: suppress dot commands?
+* Catch errors in shell (e.g. duplicate deployments)
 * Docker image parser - https://stackoverflow.com/questions/37861791/how-are-docker-image-names-parsed
 * x Shell: cd command - proper path joining
 * Shell: better arg splitter that handles quotes. https://stackoverflow.com/questions/2817646/javascript-split-string-on-space-or-on-quotes-to-array/18647776

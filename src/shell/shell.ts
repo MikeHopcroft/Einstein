@@ -18,17 +18,19 @@ import { CLI } from '../cli';
 import {
     IOrchestrator,
     IStorage,
+    IWorker,
     LocalDisk,
     LocalOrchestrator,
     RamDisk
 } from '../cloud';
 
 import { cdCommand } from './cd';
-import { containersCommand } from './containers';
 import { einsteinCommand } from './einstein';
+import { imagesCommand } from './images';
 import { lsCommand } from './ls';
 import { moreCommand } from './more';
 import { pwdCommand } from './pwd';
+import { servicesCommand } from './services';
 
 type CommandEntryPoint = (args: string[], shell: Shell) => Promise<number>;
 
@@ -53,11 +55,12 @@ export class Shell /* implements IRepl */ {
         this.cwd = homedir;
 
         this.registerCommand('cd', cdCommand);
-        this.registerCommand('containers', containersCommand);
         this.registerCommand('einstein', einsteinCommand);
+        this.registerCommand('images', imagesCommand);
         this.registerCommand('ls', lsCommand);
         this.registerCommand('more', moreCommand);
         this.registerCommand('pwd', pwdCommand);
+        this.registerCommand('services', servicesCommand);
 
         this.orchestrator = new LocalOrchestrator();
         this.cloudStorage = new RamDisk();
@@ -195,6 +198,10 @@ export class Shell /* implements IRepl */ {
         return this.localStorage;
     }
 
+    getOrchestrator() {
+        return this.orchestrator;
+    }
+
     private getPrompt() {
         return `einstein:${this.cwd}% `;
     }
@@ -215,8 +222,38 @@ export class Shell /* implements IRepl */ {
     }
 }
 
+///////////////////////////////////////////////////////////////////////////////
+//
+// Sample application after this point
+//
+///////////////////////////////////////////////////////////////////////////////
+async function clientEntryPoint(worker: IWorker) {
+    // await sleep(2000);
+    console.log(`client: clientEntryPoint()`);
+}
+
+async function serverEntryPoint(worker: IWorker) {
+    // await sleep(2000);
+    console.log(`server: serverEntryPoint()`);
+}
+
 function go() {
-    const repl = new Shell();
+    const shell = new Shell();
+    const orchestrator = shell.getOrchestrator();
+
+        // Push client container image to repository.
+        const clientImage = {
+            tag: 'client:1.0',
+            create: () => clientEntryPoint
+        };
+        orchestrator.pushImage(clientImage);
+    
+        // Push server container image to repository.
+        const serverImage = {
+            tag: 'server:1.0',
+            create: () => serverEntryPoint
+        };
+        orchestrator.pushImage(serverImage);
 }
 
 go();
