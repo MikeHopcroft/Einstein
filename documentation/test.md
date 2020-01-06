@@ -29,14 +29,19 @@ Now that we've built `Einstein`, let's fire up the `Shell`.
 
 ## Introducing the Shell
 
-Invoke the `Shell` as follows:
+The `Shell` starts up a simulated cloud environment with blob storage, attached volumes, a container registry, and an orchestrator. By default, the blob storage and disk volumes reside in RAM and are initialized fresh for each session. You can use the `--localStorge` and `--cloudStorage` flags to map these stores to folders on your machine. Use this option when you want files to persist across sessions.
+
+Here's how start a session with ephermeral, in-memory stores:
 ~~~
-% node build/applications/shell.js ~/temp/einstein
+% node build/applications/shell.js
 ~~~
 
-explain path
+Here's an example of a session with backed by folders:
+~~~
+% node build/applications/shell.js --localStorage=~/temp/local --cloudStorage=~/temp/cloud
+~~~
 
-When the shell starts up, it prints a welcome message. Typing `"help"` at this point will list the available commands:
+When the shell starts up, it prints a welcome message. Typing `"help"` at this point will list a available commands:
 
 [//]: # (shell)
 ~~~
@@ -49,21 +54,102 @@ Type "help" for information on commands.
 einstein:/% help
 ~~~
 
-## Heading 1
+### Shell Commands
 
-Here is some more content.
+* Local storage
+    * ls \<path>
+    * cd \<path>
+    * pushd \<path>
+    * popd \<path>
+    * pwd
+    * more \<path>
+* Cloud storage
+    * cloud ls \<path>
+    * cloud cd \<path>
+    * cloud pwd
+    * cloud more \<path>
+* Orchestration
+    * containers
+    * services
+* Einstein
+    * einstein deploy
+    * einstein encrypt \<file>
+    * einstein benchmark \<benchmark description file>
+    * einstein suite \<suite description file>
+    * einstein candidate \<candidate description file>
+    * einstein run \<candidate id> \<suite id>
+    * einstein list \<benchmark|candidate|run|suite> \<pattern>
+    * einstein show \<benchmark|candidate|run|suite> \<id>
+
+## Deploying Einstein
+
+* Einstein service is a container
+* containers
+* Generate public and private keys
+
+Initially there are no services running in our cluster.
 
 [//]: # (shell)
 ~~~
-einstein:/a/b% services
+einstein:/% services
 no services running
-einstein:/a/b% einstein deploy lab
+~~~
+
+Deploy Einstein immediately check services. Nothing running yet.
+
+[//]: # (shell)
+~~~
+einstein:/% services
+no services running
+einstein:/% einstein deploy lab
 Deploying to lab.
-einstein:/a/b% services
+einstein:/% services
 no services running
-einstein:/a/b% # wait 1 seconds for service to start ...
-einstein:/a/b% services
+~~~
+
+Wait a few seconds and check services again. Can see that the host lab is running the Einstein service on port 8080.
+[//]: # (shell)
+~~~
+einstein:/% # wait 1 seconds for service to start ...
+einstein:/% services
 lab:8080
 ~~~
+
+## Submitting a Benchmark
+
+* Description of contest
+* Benchmark description file
+* containers
+* einstein benchmark
+* einstein list benchmarks
+
+Shell pre-provisions the container registry.
+
+[//]: # (shell)
+~~~
+einstein:/% containers
+~~~
+
+
+## Submitting a Suite
+
+* Suite description file
+* Domain data
+* einstein suite
+* einstein list suites
+
+## Submitting a Candidate
+
+* Candidate description file
+* einstein candidate
+* einstein list candidates
+
+## Running a Suite
+
+* einstein run
+* einstein list runs
+* einstein show run
+
+
 
 The end.
