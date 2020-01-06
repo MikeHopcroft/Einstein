@@ -48,6 +48,6 @@ export class LocalWorker implements IWorker {
     }
 
     async connect<T>(hostname: string, port: number): Promise<T> {
-        return this.orchestrator.connect(hostname, port);
+        return this.orchestrator.connect<T>(hostname, port);
     }
 }

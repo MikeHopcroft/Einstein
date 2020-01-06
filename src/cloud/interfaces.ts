@@ -24,6 +24,16 @@ export interface Image {
     create(): EntryPoint;
 }
 
+// tslint:disable-next-line:interface-name
+export  interface IEnvironment {
+    get(name: string): string;
+    set(name: string, value: string): void;
+    has(name: string): boolean;
+    keys(): IterableIterator<string>;
+    values(): IterableIterator<string>;
+    entries(): IterableIterator<[string, string]>;
+}
+
 //
 // An IWorker is analogous to a running container.
 //
