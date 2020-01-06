@@ -1,6 +1,7 @@
 import * as path from 'path';
 
 import { IStorage, Volume } from '../interfaces';
+import { RamDisk } from '../local';
 
 class MountedVolumes implements IStorage {
     volumes = new Map<string, IStorage>();
@@ -51,7 +52,7 @@ class MountedVolumes implements IStorage {
         }
     }
 
-    private translatePath(p: string): { storage: IStorage, relative: string} {
+    /* private */ translatePath(p: string): { storage: IStorage, relative: string} {
         const normalized = path.posix.normalize(p);
         for (const [mount, storage] of this.volumes) {
             if (normalized.startsWith(mount)) {
@@ -64,3 +65,31 @@ class MountedVolumes implements IStorage {
         throw TypeError(message);
     }
 }
+
+function go() {
+    const volumeA: Volume = {
+        // TODO: do mounts need to be at the root (ie start with /)?
+        mount: 'a',
+        storage: new RamDisk()
+    };
+    const volumeBC: Volume = {
+        mount: 'b/c',
+        storage: new RamDisk()
+    };
+    const volumes = new MountedVolumes([volumeA, volumeBC]);
+//    const t = volumes['translatePath'] as (p: string) => { storage: IStorage, relative: string};
+
+    const cases = [
+        '/a/one',
+        '/a',
+        '/b/c/two/three',
+        '/b/one'
+    ];
+
+    for (const filepath of cases) {
+        const x = volumes.translatePath(filepath);
+        console.log(`${filepath}: ${x}`);
+    }
+}
+
+go();

@@ -72,5 +72,18 @@
             "args": ["documentation/test.md"],
             "console": "externalTerminal"
         },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "mounted_volumes",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/build/src/cloud/generic/mounted_volumes.js",
+            "preLaunchTask": "tsc: build - tsconfig.json",
+            "outFiles": [
+                "${workspaceFolder}/build/**/*.js"
+            ]
+        },
     ]
 }
