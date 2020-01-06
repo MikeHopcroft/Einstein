@@ -9,7 +9,8 @@
 * Prettier clean
 
 ## Easy
-* Tutorial idempotent unit test
+* . Tutorial idempotent unit test
+* Tutorial read from file specified on command line
 * Why doesn't empty line in tutorial shut down Shell?
 * Use chalk or ansi-styles in tutorial
 * Redirect recorded output to stderr to allow results on stdout

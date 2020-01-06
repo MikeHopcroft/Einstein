@@ -1,0 +1,40 @@
+# Title
+
+~~~
+% node build/applications/shell.js
+~~~
+
+This is some sameple content.
+
+[//]: # (shell)
+~~~
+Welcome to the Einstein interactive command shell.
+Type commands below.
+A blank line exits.
+
+Type "help" for information on commands.
+
+einstein:/% cd a
+einstein:/a% cd b
+einstein:/a/b% pwd
+/a/b
+~~~
+
+## Heading 1
+
+Here is some more content.
+
+[//]: # (shell)
+~~~
+einstein:/a/b% services
+no services running
+einstein:/a/b% einstein deploy lab
+Deploying to lab.
+einstein:/a/b% services
+no services running
+einstein:/a/b% # wait 10 seconds for service to start ...
+einstein:/a/b% services
+lab:8080
+~~~
+
+The end.

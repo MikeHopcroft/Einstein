@@ -1,6 +1,8 @@
+import * as fs from 'fs';
+import * as path from 'path';
 import { Readable } from "stream";
-// import * as stripAnsi from "strip-ansi";
-const stripAnsi = require('strip-ansi');
+import stripAnsi = require('strip-ansi');
+import * as util from 'util';
 
 import { Shell } from "../shell";
 import { sleep } from "../utilities";
@@ -20,9 +22,6 @@ einstein:/% cd a
 einstein:/a% cd b
 einstein:/a/b% pwd
 /a/b
-einstein:/a/b%
-
-bye
 ~~~
 
 ## Heading 1
@@ -35,7 +34,7 @@ einstein:/% einstein deploy lab
 Deploying to lab.
 einstein:/% services
 no services running
-einstein:/% # wait 10 seconds for service to start ...
+einstein:/% # wait 1 seconds for service to start ...
 einstein:/% services
 no services running
 ~~~
@@ -102,10 +101,10 @@ function scriptStream(lines: string[]) {
     return stream;
 }
 
-async function go() {
+async function updateMarkdown(text: string) {
     // Split markdown into alternating text block and code sections.
     // TODO: BUGBUG: what if file starts with `~~~` on first line before `\n`?
-    const sections = text.split(/\n~~~\n/g);
+    const sections = text.split(/\r?\n~~~\r?\n/g);
     const textBlocks: string[] = [];
     const scriptLines: string[] = [];
     const re = /einstein:[^%]*%\s+(.*)/;
@@ -116,7 +115,7 @@ async function go() {
             textBlocks.push(sections[i]);
         } else {
             // This is a code block. Extract the shell input lines.
-            const lines = sections[i].split(/\n/g);
+            const lines = sections[i].split(/\r?\n/g);
             for (const line of lines) {
                 const m = line.match(re);
                 if (m) {
@@ -139,7 +138,8 @@ async function go() {
     await finished;
 
     // Group the captured output into code block sections.
-    const outputLines = stripAnsi(shell.getOutput()).split(/\n/g);
+    const output = shell.getOutput();
+    const outputLines = stripAnsi(output).split(/\r?\n/g);
     let currentSection: string[] = [];
     const outputSections: string[][] = [currentSection];
     for (const line of outputLines) {
@@ -155,7 +155,7 @@ async function go() {
     const finalLines: string[] = [];
     for (let i=0; i<textBlocks.length; ++i) {
         finalLines.push(textBlocks[i]);
-        if (i<outputSections.length) {
+        if (i<outputSections.length - 1) {
             finalLines.push('~~~');
             for (const line of outputSections[i]) {
                 finalLines.push(line);
@@ -163,12 +163,59 @@ async function go() {
             finalLines.push('~~~');
         }
     }
-    finalLines.push('');
+    // finalLines.push('');
     const final = finalLines.join('\n');
 
-    console.log('???????????????????????????????????????');
-    console.log(final);
+    return final;
 }
 
+function usage() {
+    // TODO: implement
+    console.log('TBD: show usage here');
+}
 
-go();
+async function main() {
+    if (process.argv.length !== 3) {
+        usage();
+        return 1;
+    }
+
+    const originalFile = path.resolve(process.argv[2]);
+    if (!fs.existsSync(originalFile)) {
+        console.log(`Cannot find file ${originalFile}.`);
+        return 1;
+    }
+
+    // Backup original file.
+    const backupFile = originalFile + '.old';
+    console.log(`Copying ${originalFile} to ${backupFile}.`);
+    fs.copyFileSync(originalFile, backupFile);
+
+    console.log(`Updating from ${backupFile} to ${originalFile}.`);
+    const text = fs.readFileSync(backupFile, 'utf8');
+    const updatedText = await updateMarkdown(text);
+    // fs.writeFileSync(originalFile, updatedText, 'utf8');
+
+    console.log('=======================================');
+    console.log(updatedText);
+
+    return 0;
+}
+
+async function go() {
+    const updated = await updateMarkdown(text);
+    const updated2 = await updateMarkdown(updated);
+    console.log('=======================================');
+    console.log(updated);
+    console.log('???????????????????????????????????????');
+    console.log(updated2);
+
+    console.log(updated === updated2);
+}
+
+// function go2() {
+//     console.log(path.resolve('documents/foobar'));
+// }
+
+// go();
+main();

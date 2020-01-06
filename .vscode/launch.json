@@ -68,7 +68,9 @@
             "preLaunchTask": "tsc: build - tsconfig.json",
             "outFiles": [
                 "${workspaceFolder}/build/**/*.js"
-            ]
+            ],
+            "args": ["documentation/test.md"],
+            "console": "externalTerminal"
         },
     ]
 }
