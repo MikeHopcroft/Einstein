@@ -1,4 +1,5 @@
 import { IStorage, IOrchestrator, IWorker, Volume } from '../interfaces';
+import { RamDisk } from './ramdisk';
 
 export class LocalWorker implements IWorker {
     private orchestrator: IOrchestrator;
@@ -18,7 +19,16 @@ export class LocalWorker implements IWorker {
         this.cloudStorage = cloudStorage;
 
         // TODO: implement Volume[] => IStorage
-        this.localStorage = (null as unknown) as IStorage;
+        // this.localStorage = (null as unknown) as IStorage;
+        // For now, just take first Volume. Ignore mount point.
+        if (volumes.length === 1) {
+            this.localStorage = volumes[0].storage;
+        } else if (volumes.length === 0) {
+            this.localStorage = new RamDisk();
+        } else {
+            const message = "LocalWorker.constructor: expected zero or one volumes";
+            throw TypeError(message);
+        }
     }
 
     getCloudStorage(): IStorage {

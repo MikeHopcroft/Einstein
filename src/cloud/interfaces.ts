@@ -32,6 +32,7 @@ export interface IWorker {
     // Returns the cloud storage available to this worker.
     getCloudStorage(): IStorage;
 
+    // TODO: rename to getLocalStorage()?
     // Returns this worker's local filesystem.
     getFileSystem(): IStorage;
 

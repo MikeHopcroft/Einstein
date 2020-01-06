@@ -1,10 +1,10 @@
 import * as yaml from 'js-yaml';
-import { v3 } from 'murmurhash';
-import * as uuid from 'uuid';
+// import { v3 } from 'murmurhash';
+// import * as uuid from 'uuid';
 
-import { IStorage, RamDisk } from '../cloud';
+import { IStorage, IWorker, RamDisk } from '../cloud';
 import { generateKeys, KeyPair } from '../secrets';
-import { ContainerImage } from '../utilities';
+import { ContainerImage, sleep } from '../utilities';
 
 import {
     BenchmarkDescription,
@@ -19,6 +19,30 @@ import { Benchmark } from '../samples/true_or_false/benchmark';
 const seed = 1234567;
 
 export class Laboratory implements ILaboratory {
+    static image = {
+        tag: 'myregistry.azurecr.io/labratory:1.0',
+        create: () => Laboratory.entryPoint
+    };
+
+    // TODO: this should do a bind, not a connect.
+    static async entryPoint(worker: IWorker) {
+        console.log(`Laboratory.entryPoint()`);
+
+        // Simulate server startup time.
+        console.log('laboratory: sleeping');
+        await sleep(1000);
+        console.log('laboratory: awoke');
+
+        // TODO: get KeyPair from local storage instead.
+        const keys: KeyPair = generateKeys();
+
+        // Construct and bind service RPC stub. 
+        const myService = new Laboratory(keys, worker.getFileSystem());
+
+        // TODO: do not hard-code port here.
+        worker.bind(myService, 8080);
+    }
+
     private keys: KeyPair;
     private cloudStorage: IStorage;
 

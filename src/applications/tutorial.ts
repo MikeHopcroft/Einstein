@@ -183,14 +183,6 @@ class Parser {
     }
 }
 
-// function segment(text: string): { textBlocks: string, scriptBlocks: string} {
-//     const lines = text.split(/\r?\n/g);
-//     const input = new PeekableSequence(lines.values());
-//     const textBlocks: string[][] = [];
-//     const codeBlocks: string[][] = [];
-
-
-// }
 async function updateMarkdown(text: string) {
     // Split markdown into alternating text block and code sections.
     const parser = new Parser(text);
@@ -214,20 +206,20 @@ async function updateMarkdown(text: string) {
 
 function makeScript(codeBlocks: string[][]) {
     const re = /einstein:[^%]*%\s+(.*)/;
-    const scriptLines: string[] = [];
+    const codeLines: string[] = [];
 
     for (const block of codeBlocks) {
         for (const line of block) {
             const m = line.match(re);
             if (m) {
-                scriptLines.push(m[1]);
+                codeLines.push(m[1]);
             }
         }
         // End block with a '#SECTION' comment to allow us to partition the
         // Shell output.
-        scriptLines.push('#SECTION');
+        codeLines.push('#SECTION');
     }
-    return scriptLines;
+    return codeLines;
 }
 
 async function runScript(scriptLines: string[]): Promise<string[]> {
@@ -251,13 +243,25 @@ function makeOutputSections(lines: string[]) {
     const outputSections: string[][] = [currentSection];
     for (const line of lines) {
         if (line.includes('#SECTION')) {
+            trimTrailingBlankLines(currentSection);
             currentSection = [];
             outputSections.push(currentSection);
         } else {
             currentSection.push(line);
         }
+    
     }
+    // NOTE: it's ok that we're dropping the last section because it is just
+    // the Shell shutting down at the end of input.
+
     return outputSections;
+}
+
+function trimTrailingBlankLines(lines: string[]) {
+    // Remove trailing blank lines.
+    while (lines.length > 1 && lines[lines.length - 1] === '') {
+        lines.pop();
+    }
 }
 
 function interleaveTextAndCodeBlocks(

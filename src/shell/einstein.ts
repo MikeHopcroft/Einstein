@@ -1,4 +1,5 @@
 import { Shell } from './shell';
+import { ClientRequest } from 'http';
 
 export async function einsteinCommand(args: string[], shell: Shell): Promise<number> {
     // console.log(`einstein`);
@@ -11,7 +12,11 @@ export async function einsteinCommand(args: string[], shell: Shell): Promise<num
         const cli = shell.getCLI();
         console.log(`Deploying to ${hostname}.`)
         cli.deploy(hostname);
-        // console.log(`Deployed successfully.`)
+    } else if (args.length === 2 && args[1]==='encrypt') {
+        const cli = shell.getCLI();
+        await cli.encrypt('filename');
+    } else {
+        console.log(`einstein: invalid command`);
     }
     return 0;
 }

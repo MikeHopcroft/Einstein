@@ -1,11 +1,36 @@
 import * as yaml from 'js-yaml';
 
+import { IWorker } from '../../../cloud';
+
 import { IStorage } from '../../../cloud';
 import { sleep } from '../../../utilities';
 
 import { ICandidate, SymbolTable, TestSuite } from './interfaces';
 
 export class Benchmark {
+    static image = {
+        tag: 'myregistry.azurecr.io/true_or_false_benchmark:1.0',
+        create: () => Benchmark.entryPoint
+    };
+
+    static async entryPoint(worker: IWorker) {
+        console.log(`Benchmark.entryPoint()`);
+
+        // Simulate startup time.
+        console.log('benchmark: sleeping');
+        await sleep(1000);
+        console.log('benchmark: awoke');
+
+        // TODO: pass worker to constructor?
+        const benchmark = new Benchmark(worker.getCloudStorage(), worker.getFileSystem());
+
+        // TODO: don't hard-code hostname and port here.
+        const candidate =
+            (await worker.connect<ICandidate>('server1', 8080)) as ICandidate;
+
+        await benchmark.run(candidate);
+    }
+
     private cloudStorage: IStorage;
     private localStorage: IStorage;
 

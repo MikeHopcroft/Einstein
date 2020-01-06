@@ -56,8 +56,10 @@ einstein:/% help
 
 ### Shell Commands
 
+Here's a cheat sheet for the shell commands:
+
 * Local storage
-    * ls \<path>
+    * ls \<path> - show pre-populated configuration files
     * cd \<path>
     * pushd \<path>
     * popd \<path>
@@ -69,9 +71,10 @@ einstein:/% help
     * cloud pwd
     * cloud more \<path>
 * Orchestration
-    * containers
-    * services
-* Einstein
+    * images - lists the images in the container registry
+    * services - lists the services currently running in the cluster
+* Einstein CLI
+    * einstein help
     * einstein deploy
     * einstein encrypt \<file>
     * einstein benchmark \<benchmark description file>
@@ -108,9 +111,10 @@ no services running
 ~~~
 
 Wait a few seconds and check services again. Can see that the host lab is running the Einstein service on port 8080.
+
 [//]: # (shell)
 ~~~
-einstein:/% # wait 1 seconds for service to start ...
+einstein:/% # wait 10 seconds for service to start ...
 einstein:/% services
 lab:8080
 ~~~
@@ -127,7 +131,7 @@ Shell pre-provisions the container registry.
 
 [//]: # (shell)
 ~~~
-einstein:/% containers
+einstein:/% images
 ~~~
 
 

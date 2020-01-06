@@ -1,6 +1,9 @@
 import { IWorker } from '../cloud';
 import { Shell } from '../shell';
 
+import { Benchmark, Candidate } from '../samples/true_or_false'
+import { Laboratory } from '../laboratory';
+
 async function go() {
     // TODO: pass orchestrator to Shell constructor,
     // so readline.Interface can be started as last step.
@@ -9,6 +12,10 @@ async function go() {
     const shell = new Shell();
     const finished = shell.finished();
     const orchestrator = shell.getOrchestrator();
+
+    orchestrator.pushImage(Benchmark.image);
+    orchestrator.pushImage(Candidate.image);
+    orchestrator.pushImage(Laboratory.image);
 
     // Push client container image to repository.
     const clientImage = {

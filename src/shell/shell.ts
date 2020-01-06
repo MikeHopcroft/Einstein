@@ -212,6 +212,7 @@ export class Shell {
             } else {
                 await command(args, this);
             }
+            console.log();
         }
     }
 }

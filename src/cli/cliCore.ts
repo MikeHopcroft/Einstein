@@ -1,4 +1,6 @@
-import { IOrchestrator, IStorage, IWorker } from '../cloud';
+import * as yaml from 'js-yaml';
+
+import { IOrchestrator, IStorage, IWorker, RamDisk, Volume } from '../cloud';
 import { Laboratory, ILaboratory } from '../laboratory';
 import { generateKeys } from '../secrets';
 import { sleep } from '../utilities';
@@ -24,28 +26,40 @@ export class CLI {
     async deploy(
         hostname: string
     ): Promise<void> {
-        const labratoryTag = 'labratory:1.0';
+        console.log('depoying');
+        // const labratoryTag = 'labratory:1.0';
+        const labratoryTag = Laboratory.image.tag;
 
+        // TODO: Container shouldn't be pushed here.
+        // It should already be in the environment.
         // Push container image
-        const serverImage = {
-            // TODO: change tag to image or some other more appropriate name.
-            tag: labratoryTag,
-            create: () => labratoryEntryPoint
-        };
-        this.orchestrator.pushImage(serverImage);
+        // const serverImage = {
+        //     // TODO: change tag to image or some other more appropriate name.
+        //     tag: labratoryTag,
+        //     create: () => labratoryEntryPoint
+        // };
+        // this.orchestrator.pushImage(serverImage);
 
         // TODO: generate keys here and store in CLI local store
         // and in worker's attached volume.
         // Two scenarios:
         //   1. Standing up a new server with new keys
         //   2. Restarting a server with existing keys
+        const keys = generateKeys();
+        const yamlText = yaml.safeDump(keys);
+        const secrets = new RamDisk();
+        secrets.writeBlob('keys', Buffer.from(yamlText, 'utf8'));
+        const volume: Volume = {
+            mount: 'secrets',
+            storage: secrets
+        };
 
         // Create worker
         await this.orchestrator.createWorker(
             hostname,
             labratoryTag,
             this.cloudStorage,
-            []
+            [volume]
         );
 
         // TODO: this should be set through the connect mechanism
@@ -67,7 +81,9 @@ export class CLI {
     }
 
     async encrypt(filename: string): Promise<void> {
-        // TODO: implement
+        const lab = await this.getLab();
+        const publicKey = await lab.getPublicKey();
+        console.log(publicKey);
     }
 
     async uploadBenchmark(filename: string): Promise<void> {

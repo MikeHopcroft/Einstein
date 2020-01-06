@@ -9,11 +9,12 @@
 * Prettier clean
 
 ## Easy
+* Rename tutorial to tutorial_builder
 * . Tutorial idempotent unit test
 * Tutorial read from file specified on command line
 * Why doesn't empty line in tutorial shut down Shell?
 * Use chalk or ansi-styles in tutorial
-* Redirect recorded output to stderr to allow results on stdout
+* - Redirect recorded output to stderr to allow results on stdout
 * x Strip ANSI escape codes from recorded stdout.
     * https://stackoverflow.com/questions/13801273/what-does-u001bj-represent
     * https://github.com/chalk/strip-ansi
@@ -29,6 +30,8 @@
 * Catch errors in shell (e.g. duplicate deployments)
 
 ## Basic
+* save keys / use keys option for einstein deploy
+* Shell command line parameters for local and cloud storage
 * Should CLI be a member of Shell or is it part of Einstein?
 * pass orchestrator to Shell constructor, so readline.Interface can be started as last step.
     * Don't want to take input until shell is fully intialized

@@ -1,8 +1,32 @@
+import { IWorker } from '../../../cloud';
+import { sleep } from '../../../utilities';
+
 import { ICandidate, SymbolTable } from '../benchmark';
 
 import { parse } from './parser';
 
 export class Candidate implements ICandidate {
+    static image = {
+        tag: 'myregistry.azurecr.io/true_or_false_candidate:1.0',
+        create: () => Candidate.entryPoint
+    };
+
+    static async entryPoint(worker: IWorker) {
+        console.log(`Candidate.entryPoint()`);
+
+        // Simulate server startup time.
+        console.log('candidate: sleeping');
+        await sleep(1000);
+        console.log('candidate: awoke');
+    
+        // Construct and bind service RPC stub. 
+        const myService = new Candidate();
+        // TODO: do not bind port here.
+        worker.bind(myService, 8080);
+
+        // TODO: auto-shutdown if no connection after a certain amount of time?
+    }
+
     private symbols = new Map<string,boolean>();
     private readyCount = 0;
 
