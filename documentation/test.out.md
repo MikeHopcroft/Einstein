@@ -9,35 +9,13 @@ Einstein provides an interactive shell for trying out concepts in a self-contain
 * Running a `Suite` for a `Benchmark` on a specified `Candidate`
 * Examining the results of the `Run`
 
-Our first step is to get a copy of `Einstein`. Currently the only way to install `Einstein` is to build it from source code.
 
-## Building Einstein
-`Einstein` is a [Node.js](https://nodejs.org/en/) project,
-written in [TypeScript](https://www.typescriptlang.org/).
-In order to use `Einstein` you must have
-[Node](https://nodejs.org/en/download/) installed on your machine.
-`Einstein` has been tested with Node version 10.15.3.
-
-Here are the steps for cloning and building `Einstein`:
+After building Einstein, invoke the shell as follows:
 ~~~
-% git clone git@github.com:MikeHopcroft/Einstein.git
-% npm run install
-% npm run compile
+% node build/applications/shell.js
 ~~~
-
-Now that we've built `Einstein`, let's fire up the `Shell`.
-
-## Introducing the Shell
-
-Invoke the `Shell` as follows:
-~~~
-% node build/applications/shell.js ~/temp/einstein
-~~~
-
-explain path
 
 When the shell starts up, it prints a welcome message. Typing `"help"` at this point will list the available commands:
-
 [//]: # (shell)
 ~~~
 Welcome to the Einstein interactive command shell.
@@ -47,6 +25,11 @@ A blank line exits.
 Type "help" for information on commands.
 
 einstein:/% help
+help: command not found
+einstein:/% cd a
+einstein:/a% cd b
+einstein:/a/b% pwd
+/a/b
 ~~~
 
 ## Heading 1
@@ -63,7 +46,13 @@ einstein:/a/b% services
 no services running
 einstein:/a/b% # wait 1 seconds for service to start ...
 einstein:/a/b% services
-lab:8080
+no services running
 ~~~
 
 The end.
+
+~~~
+einstein:/a/b% 
+bye
+
+~~~

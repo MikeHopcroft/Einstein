@@ -11,7 +11,7 @@ import {
     LocalOrchestrator,
     RamDisk
 } from '../cloud';
-import { StdoutCapture } from '../utilities';
+import { StdoutCapture, sleep } from '../utilities';
 
 import { cdCommand } from './cd';
 import { einsteinCommand } from './einstein';

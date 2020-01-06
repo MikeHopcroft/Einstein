@@ -1,4 +1,4 @@
-import { PeekableSequence } from './peekable_sequence';
+import { PeekableSequence } from '../../../utilities';
 
 export type SymbolTable = Map<string, boolean>;
 export type Evaluator = (symbols: SymbolTable) => boolean;
