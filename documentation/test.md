@@ -227,7 +227,7 @@ einstein:/% einstein list runs
 
 [//]: # (shell)
 ~~~
-einstein:/% einstein cloud ls
+einstein:/% cloud ls
 ~~~
 
 The end.
