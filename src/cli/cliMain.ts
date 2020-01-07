@@ -85,20 +85,21 @@ export class CLIMain {
     async benchmarkCommand(args: string[]): Promise<number> {
         const [manifest] = args;
         const normalized = fullPath(this.cwd, manifest);
-        console.log(`uploading benchmark ${normalized}`);
         await this.cli.uploadBenchmark(normalized);
         return 0;
     }
 
     async suiteCommand(args: string[]): Promise<number> {
         const [manifest] = args;
-        console.log(`uploading suite ${manifest}`);
+        const normalized = fullPath(this.cwd, manifest);
+        await this.cli.uploadSuite(normalized);
         return 0;
     }
 
     async candidateCommand(args: string[]): Promise<number> {
         const [manifest] = args;
-        console.log(`uploading candidate ${manifest}`);
+        const normalized = fullPath(this.cwd, manifest);
+        await this.cli.uploadCandidate(normalized);
         return 0;
     }
 

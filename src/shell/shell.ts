@@ -8,6 +8,7 @@ import { World } from '../cloud';
 import { StdoutCapture } from '../utilities';
 
 import { cdCommand } from './cd';
+import { CloudMain } from './cloud';
 import { imagesCommand } from './images';
 import { lsCommand } from './ls';
 import { moreCommand } from './more';
@@ -30,6 +31,7 @@ export class Shell {
     // Einstein CLI application. Used for the 'einstein' command.
     private cli: CLI;
     private einstein: CLIMain;
+    private cloud: CloudMain;
 
     // REPL is based on Node's readline.Interface class.
     private rl: readline.Interface;
@@ -62,6 +64,7 @@ export class Shell {
 
         // Register shell commands.
         this.registerCommand('cd', cdCommand);
+        this.registerCommand('cloud', this.cloudCommand);
         this.registerCommand('einstein', this.einsteinCommand);
         this.registerCommand('images', imagesCommand);
         this.registerCommand('ls', lsCommand);
@@ -72,6 +75,7 @@ export class Shell {
         // Construct CLI used by the einstein command.
         this.cli = new CLI(this.world);
         this.einstein = new CLIMain(this.cli, this.world);
+        this.cloud = new CloudMain(this.world);
 
         // Print the welcome message.
         console.log('Welcome to the Einstein interactive command shell.');
@@ -193,5 +197,9 @@ export class Shell {
 
     private einsteinCommand = (args: string[], shell: Shell) => {
         return this.einstein.run(args, shell);
+    }
+
+    private cloudCommand = (args: string[], shell: Shell) => {
+        return this.cloud.run(args);
     }
 }

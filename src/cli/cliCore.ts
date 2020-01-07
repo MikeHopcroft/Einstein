@@ -10,7 +10,7 @@ import {
 } from '../cloud';
 
 import { Laboratory, ILaboratory } from '../laboratory';
-import { encodeBenchmark } from '../naming';
+import { encodeBenchmark, encodeCandidate, encodeSuite } from '../naming';
 import { encryptSecrets, generateKeys } from '../secrets';
 
 export class CLI {
@@ -99,11 +99,17 @@ export class CLI {
     // TODO: list with wildcards - what is the syntax?
 
     async uploadCandidate(filename: string): Promise<void> {
-        // TODO: implement
+        const encoded = encodeCandidate(filename);
+        const buffer = await this.localStorage.readBlob(filename);
+        await this.cloudStorage.writeBlob(encoded, buffer);
+        console.log(`Uploaded to ${encoded}`);
     }
 
     async uploadSuite(filename: string): Promise<void> {
-        // TODO: implement
+        const encoded = encodeSuite(filename);
+        const buffer = await this.localStorage.readBlob(filename);
+        await this.cloudStorage.writeBlob(encoded, buffer);
+        console.log(`Uploaded to ${encoded}`);
     }
 
     async run(candidateId: string, suiteId: string): Promise<void> {

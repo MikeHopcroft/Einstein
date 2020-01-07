@@ -9,6 +9,8 @@
 * Prettier clean
 
 ## Easy
+* Combine duplicated code in cliMain and cloudMain
+* Remove shell parameter from einsteinCommand and cloudCommand
 * Combine World and IWorker
 * Move world.ts under true_or_false
 * Delete cliArgs.ts
