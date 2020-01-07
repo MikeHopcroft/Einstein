@@ -1,14 +1,13 @@
 import * as readline from 'readline';
 import { Readable } from 'stream';
 
-import { CLI } from '../cli';
+import { CLI, CLIMain } from '../cli';
 
 import { World } from '../cloud';
 
-import { StdoutCapture, sleep } from '../utilities';
+import { StdoutCapture } from '../utilities';
 
 import { cdCommand } from './cd';
-import { Einstein } from './einstein';
 import { imagesCommand } from './images';
 import { lsCommand } from './ls';
 import { moreCommand } from './more';
@@ -30,6 +29,7 @@ export class Shell {
 
     // Einstein CLI application. Used for the 'einstein' command.
     private cli: CLI;
+    private einstein: CLIMain;
 
     // REPL is based on Node's readline.Interface class.
     private rl: readline.Interface;
@@ -39,8 +39,6 @@ export class Shell {
 
     // When enabled, captures stdout to a string.
     private capture = new StdoutCapture();
-
-    private einstein: Einstein;
 
     constructor(
         world: World,
@@ -73,8 +71,7 @@ export class Shell {
 
         // Construct CLI used by the einstein command.
         this.cli = new CLI(this.world);
-
-        this.einstein = new Einstein(this.cli, this.world);
+        this.einstein = new CLIMain(this.cli, this.world);
 
         // Print the welcome message.
         console.log('Welcome to the Einstein interactive command shell.');

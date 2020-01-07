@@ -1,9 +1,8 @@
 import * as path from 'path';
 
-import { CLI } from '../cli';
+import { CLI } from '.';
 import { World } from '../cloud';
-
-import { Shell } from './shell';
+import { Shell } from '../shell';
 
 interface CommandDescription {
     name: string,
@@ -12,7 +11,7 @@ interface CommandDescription {
     command: (args: string[]) => Promise<number>
 }
 
-export class Einstein {
+export class CLIMain {
     commands: CommandDescription[];
 
     cli: CLI;

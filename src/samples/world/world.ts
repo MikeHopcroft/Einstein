@@ -34,9 +34,9 @@ export function sampleWorld(localDiskPath?: string) {
     world.orchestrator.pushImage(Laboratory.image);
 
     // TODO: copy sample yaml files to ramdisk
-    copyYaml(world.localStorage, 'benchmark.yml', benchmark);
-    copyYaml(world.localStorage, 'candidate.yml', candidate);
-    copyYaml(world.localStorage, 'suite.yml', suite);
+    copyYaml(world.localStorage, 'benchmark.yaml', benchmark);
+    copyYaml(world.localStorage, 'candidate.yaml', candidate);
+    copyYaml(world.localStorage, 'suite.yaml', suite);
 
     return world;
 }
