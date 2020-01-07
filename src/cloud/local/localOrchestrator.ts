@@ -1,13 +1,28 @@
+import { RamDisk } from '../../cloud';
 import { sleep } from '../../utilities';
 
-import { Image, IOrchestrator, IStorage, Volume, IEnvironment } from '../interfaces';
+import {
+    Image,
+    IEnvironment,
+    IOrchestrator,
+    IStorage,
+    Volume,
+    World,
+    ServiceInfo
+} from '../interfaces';
 
 import { LocalWorker } from './localWorker';
 
+export interface Service {
+    world: World;
+    port: number;
+    // tslint:disable-next-line:no-any
+    rpcStub: any;
+}
 export interface Host {
     // Map of port numbers to RPC stubs.
     // tslint:disable-next-line:no-any
-    ports: Map<number, any>;
+    ports: Map<number, Service>;
 }
 
 export class LocalOrchestrator implements IOrchestrator {
@@ -29,11 +44,15 @@ export class LocalOrchestrator implements IOrchestrator {
         return [...this.images.values()].map(x => x.tag);
     }
 
-    async listServices(): Promise<string[]> {
+    async listServices(): Promise<ServiceInfo[]> {
         const services = [];
-        for (const [hostname, x] of this.hosts.entries()) {
-            for (const port of x.ports.keys()) {
-                services.push(`${hostname}:${port}`);
+        for (const [hostname, host] of this.hosts.entries()) {
+            for (const [port, service] of host.ports.entries()) {
+                services.push({
+                    hostname,
+                    tag: service.world.tagname,
+                    port
+                });
             }
         }
         return services;
@@ -41,7 +60,7 @@ export class LocalOrchestrator implements IOrchestrator {
 
     createWorker(
         hostname: string,
-        tag: string,
+        tagname: string,
         cloudStorage: IStorage,
         volumes: Volume[],
         environment: IEnvironment
@@ -51,18 +70,36 @@ export class LocalOrchestrator implements IOrchestrator {
             const message = `Host ${hostname} already exists.`;
             throw TypeError(message);
         }
-        const image = this.images.get(tag);
+        const image = this.images.get(tagname);
         if (image === undefined) {
-            const message = `Image ${tag} not found.`;
+            const message = `Image ${tagname} not found.`;
             throw TypeError(message);
         }
-        const worker = new LocalWorker(
-            this,
+
+        // TODO: correct implementation.
+        // For now, just create LocalStorage from the first Volume. Ignore mount point.
+        let localStorage: IStorage;
+        if (volumes.length === 1) {
+            localStorage = volumes[0].storage;
+        } else if (volumes.length === 0) {
+            localStorage = new RamDisk();
+        } else {
+            const message = "createWorker(): expected zero or one volumes";
+            throw TypeError(message);
+        }
+
+        const world: World = {
             hostname,
+            tagname,
             cloudStorage,
-            volumes,
-            environment
-        );
+            localStorage,
+            orchestrator: this,
+            environment,
+            homedir: '/',
+            cwd: '/'
+        };
+
+        const worker = new LocalWorker(world);
 
         // Drop Promise<void> on the floor.
         image.create()(worker);
@@ -77,21 +114,27 @@ export class LocalOrchestrator implements IOrchestrator {
         }
     }
 
-    bind<T>(stub: T, hostname: string, port: number): void {
+    bind<T>(world: World, rpcStub: T, port: number): void {
+        const hostname = world.hostname;
         const host = this.hosts.get(hostname);
+        const service: Service = {
+            world,
+            port,
+            rpcStub
+        }
         if (host) {
             const existing = host.ports.get(port);
             if (existing) {
-                const message = `Port ${port} on host ${hostname} already in use.`
+                const message = `Port ${port} on host ${hostname} already in use.`;
                 throw TypeError(message);
             } else {
-                existing.ports.set(port, stub);
+                host.ports.set(port, service);
             }
         } else {
             this.hosts.set(
                 hostname,
                 {
-                    ports: new Map<number, T>([[port, stub]])
+                    ports: new Map<number, Service>([[port, service]])
                 }
             )
         }
@@ -99,14 +142,13 @@ export class LocalOrchestrator implements IOrchestrator {
 
     async connect<T>(hostname: string, port: number): Promise<T> {
         let host: Host | undefined = undefined;
-        let stub: T | undefined = undefined;
 
         for (let i=0; i<this.maxRetries; ++i) {
             host = this.hosts.get(hostname);
             if (host) {
-                stub = host.ports.get(port);
-                if (stub) {
-                    return stub;
+                const service = host.ports.get(port);
+                if (service) {
+                    return service.rpcStub;
                 }
             }
             await sleep(this.retryIntervalMS);

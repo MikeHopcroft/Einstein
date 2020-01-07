@@ -9,6 +9,7 @@
 * Prettier clean
 
 ## Easy
+* Combine World and IWorker
 * Move world.ts under true_or_false
 * Delete cliArgs.ts
 * Rename tutorial to tutorial_builder

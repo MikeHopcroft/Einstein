@@ -41,7 +41,7 @@ Here's an example of a session backed by folders on disk:
 % node build/applications/shell.js --localStorage=~/temp/local --cloudStorage=~/temp/cloud
 ~~~
 
-When the shell starts up, it prints a welcome message. Typing `"help"` at this point will list a available commands:
+When the shell starts up, it prints a welcome message. Typing `"help"` at this point will list available commands:
 
 [//]: # (shell)
 ~~~
@@ -120,7 +120,8 @@ Wait a few seconds and check services again. Can see that the host lab is runnin
 ~~~
 einstein:/% # wait 10 seconds for service to start ...
 einstein:/% services
-lab:8080
+image                                  host    port
+myregistry.azurecr.io/labratory:1.0    lab     8080
 ~~~
 
 ## Submitting a Benchmark
@@ -246,7 +247,7 @@ benchmarkId: 'true_or_false_benchmark:1.0'
 image: 'myregistry.azurecr.io/true_or_false_candidate:1.0'
 password:
   secret: >-
-    dZG/aIcq+kJV0Zhm5HnauPhzKLAx70BdWITrrSmezUWYLx/ysLiLdFBwonJR839BqSp2rw4iyM8mYurAuqstPnEdh0XFtaHJE0Tspaodq5aR8rrs4vj1BWl5woWAPlqhT/db5uUbS1YgAiZ+84oqGVpmxyPrsFuXU54/UP8cz0A6Q8GxYTG0oyjaWjQwg/rydrN+0nBpFUxKDPYc+qKZzq3FtVEPxdMtAo28hQhLmsbj1544/VgHvT3upMYvKTHKMcS/lbXevFOErv4ZBWY6Ay0UJCUIiG2EyT2Hfw0nKkafSsqo61ubEr+zd/gD6TKMxZKOhGfxvxqj+iStbJ7lOKAd7i/4gn3RozsMXeTirRGnXA/J4HaNrqI6LvKIF8/mD2IUyRwXwjqL+BePiGGUU//yXTxWdBsbuJm63yECGJqHne0tHmSpufK0lIAq3lf2B8xAmOT7vV7ve3ooyKbv3oSh7bEB0mNK8dFPq8MEZYYUrKnx+knBb7X4xSlroZc5CPFr6kWWYqLMi/I8Zxa2vJdc4ppi4S8qZ115BUGZ0klkNgRzAx/ACJ6ouvMo//TFiMcoZG4bWU5H4TAiKY7HEYSB9g53Fh9s1lcd7927ZFtI6sBIax9seVao6yemJfcY5/Jsr6i97san+IBQXl2FMKW/qrDjWLlRyAREYM7s/dM=:NpXjq792ZAzt1FL5pCPVKg==:xmlF8URqww1tu5d/7S8qog==
+    ND1wd3JGBqsWBKANa5dUZIXmFlQ4lR8/mrWpkTI3E1yRIxRn2Qg/uwMcY0Qd9uqIPqaul+g1IrbzBVBy4ybxGuj4kiynrayBbgvgpcVYwXzX/Mz6tmbFLqXHEIII6GnlavGM4dWJtFw0TDQe+2NA5rir1eFSN3tFptm2kdQcA6zT5IqrRNy/MH+wSi1DRHdRCjJmP+ymda43mCyRpSBNOSOmgXoDOZG7Kr3F+EHVm0tx0yc1bjekv1BphGwjT06yvRfN3mK7WfXP/hy6VNCL68/IQWDqyPjuGx4XxbeXnlTtiSdJ2nUai2jwKwMHDgol11qKRGwSZo7ho0V5MVya0UHGN2IYSBCmm6GqIqMJpfNIoaickSEfTX7/0/kwtL7JhQLqOM75iv7tCiAK2du58x3WMckUJjrb9GuwPqbefrvhzt0YnmNuMl3ILHOO9mwxdqnk4zBZFR8zlPPRkbkKudWZpiQMEIvTcEt57+l16weORd5nXdVIL6i9A3EsFxptf9VgH1gk4RZJP0hBppsOUKHC2jx9Y1T0WWCSTqGl/U3gddsTAygKi0BNwpI+JDw2B/WHUiDY0v2Hx6ApeXcYNv98eLtw8aXh5lACFi2VUCqk3GkEhArZWkPLuNilNmlbDhVorNOhV/efx9BFQPXAOs9Bpi1EzlzHa4NWAx7CMdw=:V6DM346Gt9t7Vr94M575RQ==:F17vk0o4GNoliVYY9Bsf1g==
 whitelist:
   - 'http://www.wikipedia.org'
 ~~~

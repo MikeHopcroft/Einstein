@@ -22,7 +22,7 @@ export class Candidate implements ICandidate {
         // Construct and bind service RPC stub. 
         const myService = new Candidate();
         // TODO: do not bind port here.
-        worker.bind(myService, 8080);
+        worker.bind(worker.getWorld(), myService, 8080);
 
         // TODO: auto-shutdown if no connection after a certain amount of time?
     }

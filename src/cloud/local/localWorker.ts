@@ -1,38 +1,31 @@
-import { IStorage, IOrchestrator, IWorker, Volume, IEnvironment } from '../interfaces';
-import { RamDisk } from './ramdisk';
+import {
+    IEnvironment,
+    IOrchestrator,
+    IStorage,
+    IWorker,
+    Volume,
+    World
+} from '../interfaces';
 
 export class LocalWorker implements IWorker {
+    private world: World;
     private orchestrator: IOrchestrator;
     private hostname: string;
     private cloudStorage: IStorage;
     private localStorage: IStorage;
     private environment: IEnvironment;
 
-    constructor(
-        orchestrator: IOrchestrator,
-        hostname: string,
-        cloudStorage: IStorage,
-        volumes: Volume[],
-        environment: IEnvironment
-    ) {
-        this.orchestrator = orchestrator;
-        this.hostname = hostname;
+    constructor(world: World) {
+        this.world = world;
+        this.orchestrator = world.orchestrator;
+        this.hostname = world.hostname;
+        this.cloudStorage = world.cloudStorage;
+        this.localStorage = world.localStorage;
+        this.environment = world.environment;
+    }
 
-        this.cloudStorage = cloudStorage;
-
-        // TODO: implement Volume[] => IStorage
-        // this.localStorage = (null as unknown) as IStorage;
-        // For now, just take first Volume. Ignore mount point.
-        if (volumes.length === 1) {
-            this.localStorage = volumes[0].storage;
-        } else if (volumes.length === 0) {
-            this.localStorage = new RamDisk();
-        } else {
-            const message = "LocalWorker.constructor: expected zero or one volumes";
-            throw TypeError(message);
-        }
-
-        this.environment = environment;
+    getWorld(): World {
+        return this.world;
     }
 
     getCloudStorage(): IStorage {
@@ -51,8 +44,8 @@ export class LocalWorker implements IWorker {
         // TODO: remove from orchestrator hosts table.
     }
 
-    bind<T>(stub: T, port: number): void {
-        this.orchestrator.bind(stub, this.hostname, port);
+    bind<T>(world: World, stub: T, port: number): void {
+        this.orchestrator.bind(world, stub, port);
     }
 
     async connect<T>(hostname: string, port: number): Promise<T> {

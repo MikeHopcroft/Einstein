@@ -23,7 +23,7 @@ async function serverEntryPoint(worker: IWorker) {
 
     // Construct and bind service RPC stub. 
     const myService = new MyService();
-    worker.bind(myService, 8080);
+    worker.bind(worker.getWorld(), myService, 8080);
 }
 
 // tslint:disable-next-line:interface-name

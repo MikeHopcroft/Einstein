@@ -21,6 +21,9 @@ export function sampleWorld(localDiskPath?: string) {
         localDiskPath ? new LocalDisk(localDiskPath) : new RamDisk();
     const world: World = {
         hostname:'console',
+         // The sampleWorld is not modelled as running in a container
+         // so just supply bogus tagname.
+        tagname: 'unused',
         cloudStorage: new RamDisk(),
         localStorage,
         orchestrator: new LocalOrchestrator(),

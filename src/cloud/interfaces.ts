@@ -39,6 +39,8 @@ export  interface IEnvironment {
 //
 // tslint:disable-next-line:interface-name
 export interface IWorker {
+    getWorld(): World;
+
     // Returns the cloud storage available to this worker.
     getCloudStorage(): IStorage;
 
@@ -49,7 +51,7 @@ export interface IWorker {
     getEnvironment(): IEnvironment;
 
     // Makes an RPC interface stub available on a specified port.
-    bind<T>(stub: T, port: number): void;
+    bind<T>(world: World, stub: T, port: number): void;
 
     // Gets an RPC stub for a port on a specified host.
     connect<T>(hostname: string, port: number): Promise<T>;
@@ -59,6 +61,12 @@ export interface IWorker {
     // Note: worker should return immediately after this call.
     // TODO: should this take an exit code?
     shutdown(): void;
+}
+
+export interface ServiceInfo {
+    hostname: string;
+    tag: string;
+    port: number;
 }
 
 //
@@ -75,7 +83,7 @@ export interface IOrchestrator {
     listImages(): Promise<string[]>;
 
     // Returns list of services currently running.
-    listServices(): Promise<string[]>;
+    listServices(): Promise<ServiceInfo[]>;
 
     // Creates an IWorker running in a specified image.
     // Analogous to running a container.
@@ -92,7 +100,7 @@ export interface IOrchestrator {
     killWorker(hostname: string): void;
 
     // Makes an RPC interface stub available on a specified port.
-    bind<T>(stub: T, hostname: string, port: number): void;
+    bind<T>(world: World, stub: T, port: number): void;
 
     // Gets an RPC stub for a port on a specified host.
     connect<T>(hostname: string, port: number): Promise<T>;
@@ -106,6 +114,7 @@ export interface ICloud {
 
 export interface World {
     hostname: string;
+    tagname: string;
     cloudStorage: IStorage;
     localStorage: IStorage;
     orchestrator: IOrchestrator;

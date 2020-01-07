@@ -40,7 +40,7 @@ export class Laboratory implements ILaboratory {
         const myService = new Laboratory(keys, worker.getFileSystem());
 
         // TODO: do not hard-code port here.
-        worker.bind(myService, 8080);
+        worker.bind(worker.getWorld(), myService, 8080);
     }
 
     private keys: KeyPair;
