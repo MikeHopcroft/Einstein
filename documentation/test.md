@@ -41,7 +41,7 @@ Here's an example of a session backed by folders on disk:
 % node build/applications/shell.js --localStorage=~/temp/local --cloudStorage=~/temp/cloud
 ~~~
 
-When the shell starts up, it prints a welcome message. Typing `"help"` at this point will list a available commands:
+When the shell starts up, it prints a welcome message. Typing `"help"` at this point will list available commands:
 
 [//]: # (shell)
 ~~~
