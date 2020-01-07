@@ -10,7 +10,6 @@ import {
 } from '../laboratory';
 
 import { formatTable, ContainerImage } from '../utilities';
-import { Candidate } from '../samples';
 
 export async function listCommandInternal(
     storage: IStorage,
@@ -18,23 +17,15 @@ export async function listCommandInternal(
 ): Promise<number> {
     const prefix = getPrefix(collection);
     const blobs = await storage.listBlobs(prefix);
-
+    
     const formatter = createFormatter(collection);
-    // new BenchmarkFormatter();
-    // const alignments = ['left', 'left', 'left', 'left'];
-    // const headers = ['image', 'name', 'owner', 'created'];
-    // const rows = [headers];
+
     for (const blob of blobs) {
         const buffer = await storage.readBlob(blob);
         const yamlText = buffer.toString('utf8');
         formatter.formatBlob(yamlText);
-        // const item = yaml.safeLoad(yamlText) as BenchmarkDescription;
-
-        // const image = new ContainerImage(item.image);
-        // const tag = `${image.component}:${image.tag}`;
-
-        // rows.push([tag, item.name, item.owner, item.created]);
     }
+
     for (const line of formatTable(formatter.alignments, formatter.rows)) {
         console.log(line);
     }
@@ -47,7 +38,6 @@ interface IFormatter {
     alignments: string[];
     rows: string[][];
     formatBlob(yamlText: string): void;
-    // lines(): IterableIterator<string>;
 }
 
 class BenchmarkFormatter implements IFormatter {

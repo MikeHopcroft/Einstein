@@ -120,7 +120,7 @@ Wait a few seconds and check services again. Can see that the host lab is runnin
 ~~~
 einstein:/% # wait 10 seconds for service to start ...
 einstein:/% services
-image123                              host   port
+image                                 host   port
 myregistry.azurecr.io/labratory:1.0   lab    8080
 ~~~
 
@@ -249,7 +249,7 @@ benchmarkId: 'true_or_false_benchmark:1.0'
 image: 'myregistry.azurecr.io/true_or_false_candidate:1.0'
 password:
   secret: >-
-    Ph8u3fKHknim0l79GdEILPeEYBXXrboqZQr/RWVzpkpDASyeMDSDk5LuiEtOITA7EOn6k6bQpUKSZCq6xJyOBo/js5N0zYXExeGNyfMfQQNdj31fuNFFclzURYhdmsLjxw4TdFgHmPjC4F9X/2+dpBFaMOj+gytUvcIqsjFDLlP3W0Y6kso4qLZ4fbRJd5a4ef/qOWxtU+0zfjm/JFD/yH6twaiso/z20O/KnMk6kbQjyYSdB9vAfJPWhe//FNdV7Z66S+naGtrnzMpmEW1zdrYHLaf4QNa0d4Y2bj1/b+cfSsDZCgINJob+dhf2S/WZmDRAR395SRGQP2bmXtn85N+1bza0Onj51dgvpZeO5IxziwvGFfqhHT3kbEJJEa+4v7xiow8Hc1rJzJUUo3+gIFMDZlIuLjla2CB1bP637qvlbAQI1XouJE6R7m5HIMfoAQLYXE1DO7BRnK9so1E/HiBH8nfIKHZr2NoPrSbDx/VXJhu1ikatfYzeX5a4q3vv1c8OaER8tgeYNXR2Jo83sDmoFeiqB3w4tQ0PTBuSqkMzBm+7hYAluq+6e4JFjq+ap5g6ppC2d3IxQ8mVD3drDnen81AbVlN+CtvpwzqvNVVAGrZrwamu0wNHdM9ioq9TRgWAXbNdWTeIDDhM9XN5mH8wS0eVd4Eo8HnPqaFTDuM=:+SQtdvc5z7pNcgrgh6IVyA==:kYlpICAiPBoCXlnPMYoOQg==
+    AAyoHSxh81DHnmHGHsD/WIqB9tMxcX+clUtBe43ZIQUsggB4NhOmgJH4LZkClvu4XUv8cjc+NLAehE3VWvs9ICgJyzlo70oFoFz8D61dEfnWVivJEDM3+6d87O1lUg9RTb1QycNetAK8v7Muk+Rn0qU7mmwsb9kaoyUmAS/DvjmDQkxAqJhZpyvf1stXgZQCJ6DGkOysDqwCATX2jrARlkGdbLlZeN6T6UcqpMQrvDAhjPPPoq27lf4VrGE8jaLKe6KoyPhgg8zNsigy2mLl1ZTWG0U9QS9wskKnbkEBctmzyuLyuW3Pr3+HZYi0gVbBgmvs5tbebrlE7aAHfHqA7dB9+3KbB92hQR/9frGv15edusy7OW+gdT5ZUjUfJkXwsWT1aEbfMwomC88Elc91GoeB2G7S1XJU/MxpGowM2XLzHKP8g4DSPP6CkKtBkeCi4RWazN4eZ3rYnikG7mu6Uw85VL8G0AAPk1mY19rRN0ym7+Iq8NG4Xrxv1V1zJJEDSn44p96az/zGionQaerralTvou74jkq+m1QAptwVDThUxnlqUDkcNZsX1/seXmTzHFflHoj1pZ3YBRHYsutyFwfKvls/iCZ1QNQ+ymHnTBPPMgYS3Xq7NNpQ59FSVx/jcv9HUFRiXzdmk9yZxk3xA3EYWNTUAFc3T3KmEYpNoZQ=:ucdbnmYqM13mUO+p1Fjp7w==:InDkjfR1JhWiULaXDmUokw==
 whitelist:
   - 'http://www.wikipedia.org'
 ~~~
@@ -284,6 +284,13 @@ einstein:/% einstein list runs
 Bad collection "runs"
 ~~~
 
+## Examining Cloud Storage
+
+[//]: # (shell)
+~~~
+einstein:/% einstein cloud ls
+einstein: unknown command 'cloud'
+~~~
 
 The end.
 

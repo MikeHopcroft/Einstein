@@ -38,6 +38,9 @@
 * Catch errors in shell (e.g. duplicate deployments)
 
 ## Basic
+* Tutorial should not spit out final code block
+* Tutorial feature to limit number of lines in a block (to show first n lines of test case...)
+* Tutorial feature to suppress salutation
 * CLIMain connects to analysis service as well as laboratory service.
 * cloud ls should take one optional parameter - right now has one required
 * Write design issue/note about databases vs canonical naming

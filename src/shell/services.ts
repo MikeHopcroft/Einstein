@@ -1,4 +1,4 @@
-import { leftJustify, formatTable } from '../utilities';
+import { formatTable } from '../utilities';
 
 import { Shell } from './shell';
 
@@ -7,7 +7,7 @@ export async function servicesCommand(args: string[], shell: Shell): Promise<num
     const services = await orchestrator.listServices();
 
     const alignments = ['left', 'left', 'left'];
-    const headers = ['image123', 'host', 'port'];
+    const headers = ['image', 'host', 'port'];
     const rows = [headers];
     if (services.length > 0) {
         for (const service of services) {

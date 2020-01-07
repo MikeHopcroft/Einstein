@@ -223,5 +223,11 @@ einstein:/% einstein run candidateId suiteID
 einstein:/% einstein list runs
 ~~~
 
+## Examining Cloud Storage
+
+[//]: # (shell)
+~~~
+einstein:/% einstein cloud ls
+~~~
 
 The end.
