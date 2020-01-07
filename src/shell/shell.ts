@@ -3,18 +3,21 @@ import * as readline from 'readline';
 import { Readable } from 'stream';
 
 import { CLI } from '../cli';
+
 import {
     IOrchestrator,
     IStorage,
     IWorker,
     LocalDisk,
     LocalOrchestrator,
-    RamDisk
+    RamDisk,
+    World
 } from '../cloud';
+
 import { StdoutCapture, sleep } from '../utilities';
 
 import { cdCommand } from './cd';
-import { einsteinCommand } from './einstein';
+import { Einstein } from './einstein';
 import { imagesCommand } from './images';
 import { lsCommand } from './ls';
 import { moreCommand } from './more';
@@ -33,12 +36,14 @@ export class Shell {
     // Map of shell commands (e.g. cd, ls, pwd, einstein, etc.)
     private commands = new Map<string, CommandEntryPoint>();
 
-    // Current working directory for localStorage.
-    private cwd: string;
+    private world: World;
 
-    private orchestrator: IOrchestrator;
-    private cloudStorage: IStorage;
-    private localStorage: IStorage;
+    // // Current working directory for localStorage.
+    // private cwd: string;
+
+    // private orchestrator: IOrchestrator;
+    // private cloudStorage: IStorage;
+    // private localStorage: IStorage;
 
     // Einstein CLI application. Used for the 'einstein' command.
     private cli: CLI;
@@ -52,10 +57,17 @@ export class Shell {
     // When enabled, captures stdout to a string.
     private capture = new StdoutCapture();
 
-    constructor(options: {
-        input?: Readable
-        capture?: boolean
-    } | undefined = {}) {
+    private einstein: Einstein;
+
+    constructor(
+        world: World,
+        options: {
+            input?: Readable
+            capture?: boolean
+        } | undefined = {}
+    ) {
+        this.world = world;
+
         const input = options.input || process.stdin;
 
         // Start capturing stdout.
@@ -67,29 +79,31 @@ export class Shell {
         // `this` is bound differntly.
         const shell = this;
 
-        this.cwd = homedir;
+        // this.cwd = homedir;
 
         // Register shell commands.
         this.registerCommand('cd', cdCommand);
-        this.registerCommand('einstein', einsteinCommand);
+        this.registerCommand('einstein', this.einsteinCommand);
         this.registerCommand('images', imagesCommand);
         this.registerCommand('ls', lsCommand);
         this.registerCommand('more', moreCommand);
         this.registerCommand('pwd', pwdCommand);
         this.registerCommand('services', servicesCommand);
 
-        // Set up emulated execution environment.
-        this.orchestrator = new LocalOrchestrator();
-        this.cloudStorage = new RamDisk();
-        // this.localStorage = new LocalDisk('/Users/mhop/git/temp');
-        this.localStorage = new LocalDisk('c:/temp/einstein');
+        // // Set up emulated execution environment.
+        // this.orchestrator = new LocalOrchestrator();
+        // this.cloudStorage = new RamDisk();
+        // // this.localStorage = new LocalDisk('/Users/mhop/git/temp');
+        // this.localStorage = new LocalDisk('c:/temp/einstein');
 
         // Construct CLI used by the einstein command.
-        this.cli = new CLI(
-            this.orchestrator, 
-            this.cloudStorage,
-            this.localStorage
-        );
+        this.cli = new CLI(this.world);
+        //     this.orchestrator, 
+        //     this.cloudStorage,
+        //     this.localStorage
+        // );
+
+        this.einstein = new Einstein(this.cli, this.world);
 
         // Print the welcome message.
         console.log('Welcome to the Einstein interactive command shell.');
@@ -175,20 +189,24 @@ export class Shell {
     }
 
     getWorkingDirectory() {
-        return this.cwd;
+        return this.world.cwd;
     }
 
     setWorkingDirectory(cwd: string) {
-        this.cwd = cwd;
+        this.world.cwd = cwd;
         this.updatePrompt();
     }
 
+    getWorld() {
+        return this.world;
+    }
+
     getLocalStorage() {
-        return this.localStorage;
+        return this.world.localStorage;
     }
 
     getOrchestrator() {
-        return this.orchestrator;
+        return this.world.orchestrator;
     }
 
     getOutput() {
@@ -196,7 +214,7 @@ export class Shell {
     }
 
     private getPrompt() {
-        return `einstein:${this.cwd}% `;
+        return `einstein:${this.world.cwd}% `;
     }
 
     private updatePrompt() {
@@ -215,5 +233,9 @@ export class Shell {
             }
             console.log();
         }
+    }
+
+    private einsteinCommand = (args: string[], shell: Shell) => {
+        return this.einstein.run(args, shell);
     }
 }

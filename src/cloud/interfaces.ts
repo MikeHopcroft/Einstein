@@ -103,3 +103,13 @@ export interface ICloud {
     storage: IStorage;
     orchestrator: IOrchestrator;
 };
+
+export interface World {
+    hostname: string;
+    cloudStorage: IStorage;
+    localStorage: IStorage;
+    orchestrator: IOrchestrator;
+    environment: IEnvironment;
+    homedir: string;
+    cwd: string;
+}

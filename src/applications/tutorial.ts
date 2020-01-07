@@ -4,6 +4,7 @@ import { Readable } from "stream";
 import stripAnsi = require('strip-ansi');
 import * as util from 'util';
 
+import { sampleWorld } from '../samples';
 import { Shell } from "../shell";
 import { sleep, PeekableSequence } from "../utilities";
 
@@ -227,7 +228,11 @@ async function runScript(scriptLines: string[]): Promise<string[]> {
     const inputStream = scriptStream(scriptLines);
 
     // Run the shell with this script, while capturing output.
-    const shell = new Shell({input: inputStream, capture: true});
+    const world = sampleWorld();
+    const shell = new Shell(
+        world,
+        {input: inputStream, capture: true}
+    );
     const finished = shell.finished();
     await finished;
 
@@ -284,82 +289,82 @@ function interleaveTextAndCodeBlocks(
     return finalLines;
 }
 
-async function updateMarkdown2(text: string) {
-    // Split markdown into alternating text block and code sections.
-    // TODO: BUGBUG: what if file starts with `~~~` on first line before `\n`?
-    const sections = text.split(/\r?\n~~~\r?\n/g);
-    const textBlocks: string[] = [];
-    const scriptLines: string[] = [];
-    const re = /einstein:[^%]*%\s+(.*)/;
+// async function updateMarkdown2(text: string) {
+//     // Split markdown into alternating text block and code sections.
+//     // TODO: BUGBUG: what if file starts with `~~~` on first line before `\n`?
+//     const sections = text.split(/\r?\n~~~\r?\n/g);
+//     const textBlocks: string[] = [];
+//     const scriptLines: string[] = [];
+//     const re = /einstein:[^%]*%\s+(.*)/;
 
-    for (let i=0; i<sections.length; ++i) {
-        if (i%2 === 0) {
-            // This is a normal text block.
-            textBlocks.push(sections[i]);
-        } else {
-            // const lastTextBlock = textBlocks[textBlocks.length - 1];
-            // if (lastTextBlock.endsWith('[//]: # (shell)')) {
-            // This is a code block. Extract the shell input lines.
-            const lines = sections[i].split(/\r?\n/g);
-            for (const line of lines) {
-                const m = line.match(re);
-                if (m) {
-                    scriptLines.push(m[1]);
-                }
-            }
-            // Start with a '#SECTION' comment to allow us to partition the
-            // Shell output.
-            scriptLines.push('#SECTION');
-            // } else {
-            //     textBlocks[textBlocks.length - 1] = 
-            //         lastTextBlock +
-            //         '\n~~~\n' +
-            //         sections[i] +
-            //         '\n~~~\n' 
-            // }
-        }
-    }
+//     for (let i=0; i<sections.length; ++i) {
+//         if (i%2 === 0) {
+//             // This is a normal text block.
+//             textBlocks.push(sections[i]);
+//         } else {
+//             // const lastTextBlock = textBlocks[textBlocks.length - 1];
+//             // if (lastTextBlock.endsWith('[//]: # (shell)')) {
+//             // This is a code block. Extract the shell input lines.
+//             const lines = sections[i].split(/\r?\n/g);
+//             for (const line of lines) {
+//                 const m = line.match(re);
+//                 if (m) {
+//                     scriptLines.push(m[1]);
+//                 }
+//             }
+//             // Start with a '#SECTION' comment to allow us to partition the
+//             // Shell output.
+//             scriptLines.push('#SECTION');
+//             // } else {
+//             //     textBlocks[textBlocks.length - 1] = 
+//             //         lastTextBlock +
+//             //         '\n~~~\n' +
+//             //         sections[i] +
+//             //         '\n~~~\n' 
+//             // }
+//         }
+//     }
 
-    // Put the script into an scriptStream to use as Shell input.
-    const script = scriptLines.join('\n');
-    const input = scriptStream(scriptLines);
+//     // Put the script into an scriptStream to use as Shell input.
+//     const script = scriptLines.join('\n');
+//     const input = scriptStream(scriptLines);
 
-    // Run the shell with this script, while capturing output.
-    const shell = new Shell({input, capture:true});
-    const finished = shell.finished();
-    await finished;
+//     // Run the shell with this script, while capturing output.
+//     const shell = new Shell({input, capture:true});
+//     const finished = shell.finished();
+//     await finished;
 
-    // Group the captured output into code block sections.
-    const output = shell.getOutput();
-    const outputLines = stripAnsi(output).split(/\r?\n/g);
-    let currentSection: string[] = [];
-    const outputSections: string[][] = [currentSection];
-    for (const line of outputLines) {
-        if (line.includes('#SECTION')) {
-            currentSection = [];
-            outputSections.push(currentSection);
-        } else {
-            currentSection.push(line);
-        }
-    }
+//     // Group the captured output into code block sections.
+//     const output = shell.getOutput();
+//     const outputLines = stripAnsi(output).split(/\r?\n/g);
+//     let currentSection: string[] = [];
+//     const outputSections: string[][] = [currentSection];
+//     for (const line of outputLines) {
+//         if (line.includes('#SECTION')) {
+//             currentSection = [];
+//             outputSections.push(currentSection);
+//         } else {
+//             currentSection.push(line);
+//         }
+//     }
 
-    // Finally, zip together the original text blocks and the new code blocks
-    const finalLines: string[] = [];
-    for (let i=0; i<textBlocks.length; ++i) {
-        finalLines.push(textBlocks[i]);
-        if (i<outputSections.length - 1) {
-            finalLines.push('~~~');
-            for (const line of outputSections[i]) {
-                finalLines.push(line);
-            }
-            finalLines.push('~~~');
-        }
-    }
-    // finalLines.push('');
-    const final = finalLines.join('\n');
+//     // Finally, zip together the original text blocks and the new code blocks
+//     const finalLines: string[] = [];
+//     for (let i=0; i<textBlocks.length; ++i) {
+//         finalLines.push(textBlocks[i]);
+//         if (i<outputSections.length - 1) {
+//             finalLines.push('~~~');
+//             for (const line of outputSections[i]) {
+//                 finalLines.push(line);
+//             }
+//             finalLines.push('~~~');
+//         }
+//     }
+//     // finalLines.push('');
+//     const final = finalLines.join('\n');
 
-    return final;
-}
+//     return final;
+// }
 
 function usage() {
     // TODO: implement

@@ -1,8 +1,17 @@
 import * as yaml from 'js-yaml';
 
-import { Environment, IOrchestrator, IStorage, IWorker, RamDisk, Volume } from '../cloud';
+import {
+    Environment,
+    IOrchestrator,
+    IStorage,
+    IWorker,
+    RamDisk,
+    Volume,
+    World
+} from '../cloud';
+
 import { Laboratory, ILaboratory } from '../laboratory';
-import { generateKeys } from '../secrets';
+import { encryptSecrets, generateKeys } from '../secrets';
 import { sleep } from '../utilities';
 
 export class CLI {
@@ -13,14 +22,10 @@ export class CLI {
     private hostName: string | undefined;
     private lab: ILaboratory | undefined;
 
-    constructor(
-        orchestrator: IOrchestrator,
-        cloudStorage: IStorage,
-        localStorage: IStorage
-    ) {
-        this.orchestrator = orchestrator;
-        this.cloudStorage = cloudStorage;
-        this.localStorage = localStorage;
+    constructor(world: World) {
+        this.orchestrator = world.orchestrator;
+        this.cloudStorage = world.cloudStorage;
+        this.localStorage = world.localStorage;
     }
 
     async deploy(
@@ -86,7 +91,13 @@ export class CLI {
     async encrypt(filename: string): Promise<void> {
         const lab = await this.getLab();
         const publicKey = await lab.getPublicKey();
-        console.log(publicKey);
+
+        const yamlText =
+            (await this.localStorage.readBlob(filename)).toString('utf8');
+        const data = yaml.safeLoad(yamlText);
+        encryptSecrets(data, publicKey);
+        const yamlText2 = yaml.safeDump(data);
+        console.log(yamlText2);
     }
 
     async uploadBenchmark(filename: string): Promise<void> {
