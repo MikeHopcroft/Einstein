@@ -11,6 +11,7 @@ import { Laboratory } from '../../laboratory';
 import { Benchmark, Candidate } from '../true_or_false'
 
 // TODO: suppress localStorage initialization on disk.
+// Don't want to overwrite yaml files on disk.
 export function sampleWorld(localDiskPath?: string) {
     const localStorage = 
         localDiskPath ? new LocalDisk(localDiskPath) : new RamDisk();
@@ -28,7 +29,7 @@ export function sampleWorld(localDiskPath?: string) {
     world.orchestrator.pushImage(Candidate.image);
     world.orchestrator.pushImage(Laboratory.image);
 
-    // TODO: copy yaml files to ramdisk
+    // TODO: copy sample yaml files to ramdisk
 
     return world;
 }

@@ -3,8 +3,8 @@ import * as path from 'path';
 import { Shell } from './shell';
 
 export async function lsCommand(args: string[], shell: Shell): Promise<number> {
-    const cwd = shell.getWorkingDirectory();
-    const storage = shell.getLocalStorage();
+    const cwd = shell.getWorld().cwd;
+    const storage = shell.getWorld().localStorage;
 
     let p = cwd;
     if (args.length > 1) {

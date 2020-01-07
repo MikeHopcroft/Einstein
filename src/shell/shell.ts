@@ -1,18 +1,9 @@
-import * as fs from 'fs';
 import * as readline from 'readline';
 import { Readable } from 'stream';
 
 import { CLI } from '../cli';
 
-import {
-    IOrchestrator,
-    IStorage,
-    IWorker,
-    LocalDisk,
-    LocalOrchestrator,
-    RamDisk,
-    World
-} from '../cloud';
+import { World } from '../cloud';
 
 import { StdoutCapture, sleep } from '../utilities';
 
@@ -30,20 +21,12 @@ type CommandEntryPoint = (args: string[], shell: Shell) => Promise<number>;
 
 const maxHistorySteps = 1000;
 const historyFile = '.repl_history';
-const homedir = '/';
 
 export class Shell {
     // Map of shell commands (e.g. cd, ls, pwd, einstein, etc.)
     private commands = new Map<string, CommandEntryPoint>();
 
     private world: World;
-
-    // // Current working directory for localStorage.
-    // private cwd: string;
-
-    // private orchestrator: IOrchestrator;
-    // private cloudStorage: IStorage;
-    // private localStorage: IStorage;
 
     // Einstein CLI application. Used for the 'einstein' command.
     private cli: CLI;
@@ -79,8 +62,6 @@ export class Shell {
         // `this` is bound differntly.
         const shell = this;
 
-        // this.cwd = homedir;
-
         // Register shell commands.
         this.registerCommand('cd', cdCommand);
         this.registerCommand('einstein', this.einsteinCommand);
@@ -90,18 +71,8 @@ export class Shell {
         this.registerCommand('pwd', pwdCommand);
         this.registerCommand('services', servicesCommand);
 
-        // // Set up emulated execution environment.
-        // this.orchestrator = new LocalOrchestrator();
-        // this.cloudStorage = new RamDisk();
-        // // this.localStorage = new LocalDisk('/Users/mhop/git/temp');
-        // this.localStorage = new LocalDisk('c:/temp/einstein');
-
         // Construct CLI used by the einstein command.
         this.cli = new CLI(this.world);
-        //     this.orchestrator, 
-        //     this.cloudStorage,
-        //     this.localStorage
-        // );
 
         this.einstein = new Einstein(this.cli, this.world);
 
@@ -184,13 +155,13 @@ export class Shell {
         return this.cli;
     }
 
-    getHomeDirectory() {
-        return homedir;
-    }
+    // getHomeDirectory() {
+    //     return this.world.homedir;
+    // }
 
-    getWorkingDirectory() {
-        return this.world.cwd;
-    }
+    // getWorkingDirectory() {
+    //     return this.world.cwd;
+    // }
 
     setWorkingDirectory(cwd: string) {
         this.world.cwd = cwd;

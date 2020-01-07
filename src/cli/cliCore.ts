@@ -4,7 +4,6 @@ import {
     Environment,
     IOrchestrator,
     IStorage,
-    IWorker,
     RamDisk,
     Volume,
     World
@@ -31,19 +30,7 @@ export class CLI {
     async deploy(
         hostname: string
     ): Promise<void> {
-        console.log('depoying');
-        // const labratoryTag = 'labratory:1.0';
-        const labratoryTag = Laboratory.image.tag;
-
-        // TODO: Container shouldn't be pushed here.
-        // It should already be in the environment.
-        // Push container image
-        // const serverImage = {
-        //     // TODO: change tag to image or some other more appropriate name.
-        //     tag: labratoryTag,
-        //     create: () => labratoryEntryPoint
-        // };
-        // this.orchestrator.pushImage(serverImage);
+        console.log(`depoying einstein to ${hostname}`);
 
         // TODO: generate keys here and store in CLI local store
         // and in worker's attached volume.
@@ -64,7 +51,7 @@ export class CLI {
         // Create worker
         await this.orchestrator.createWorker(
             hostname,
-            labratoryTag,
+            Laboratory.image.tag,
             this.cloudStorage,
             [volume],
             environment
@@ -125,19 +112,4 @@ export class CLI {
     //     // Read hostname from connection file.
     //     this.lab = (await this.orchestrator.connect<ILaboratory>(hostname, 8080));
     // }
-}
-
-async function labratoryEntryPoint(worker: IWorker) {
-    // console.log(`labratoryEntryPoint()`);
-
-    // Simulate server startup time.
-    // console.log('labratory: sleeping');
-    await sleep(5000);
-    // console.log('labratory: awoke');
-
-    // Construct and bind service RPC stub.
-    // TODO: write keys to CLI local storage.
-    const keys = generateKeys();
-    const lab = new Laboratory(keys, worker.getCloudStorage());
-    worker.bind(lab, 8080);
 }

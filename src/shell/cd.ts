@@ -4,11 +4,11 @@ import { Shell } from './shell';
 
 export async function cdCommand(args: string[], shell: Shell): Promise<number> {
     if (args.length === 1) {
-        shell.setWorkingDirectory(shell.getHomeDirectory());
+        shell.setWorkingDirectory(shell.getWorld().homedir);
         return 0;
     } else if (args.length === 2) {
         shell.setWorkingDirectory(
-            path.posix.resolve(shell.getWorkingDirectory(),args[1])
+            path.posix.resolve(shell.getWorld().cwd, args[1])
         );
         return 0;
     } else {

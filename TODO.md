@@ -30,6 +30,8 @@
 * Catch errors in shell (e.g. duplicate deployments)
 
 ## Basic
+* cd command should not allow cd into non-existant directory
+* consider reimplementing RamDisk and IStorage as a folder tree
 * move cwd from shell to some sort of process abstraction
 * auto-completing in shell
 * save keys / use keys option for einstein deploy

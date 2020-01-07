@@ -17,14 +17,10 @@ export class Einstein {
 
     cli: CLI;
     cwd: string;
-    // localStorage: IStorage;
-    // cloudStorage: IStorage;
 
     constructor(cli: CLI, world: World) {
         this.cli = cli;
         this.cwd = world.cwd;
-        // this.localStorage = shell.getLocalStorage();
-        // this.cloudStorage = shell.getCloudStorage();
 
         const context = this;
         this.commands = [
@@ -83,7 +79,6 @@ export class Einstein {
     async encryptCommand(args: string[]): Promise<number> {
         const [filename] = args;
         const p = fullPath(this.cwd, filename);
-        // console.log(`encrypting ${p}`);
         await this.cli.encrypt(p);
         return 0;
     }
@@ -128,7 +123,6 @@ export class Einstein {
             this.usage();
             return 0;
         } else {
-            const cli = shell.getCLI();
             const cmdText = args[1];
             for (const command of this.commands) {
                 if (cmdText === command.name) {
@@ -168,26 +162,3 @@ function formatArgs(args: string[]) {
 function fullPath(cwd: string, relative: string) {
     return path.posix.join(cwd, relative);
 }
-
-// class A {
-//     a = [ this.f, this.g ];
-
-//     x() {
-//         this.a[1]();
-//     }
-
-//     f() {
-//         console.log('f');
-//     }
-
-//     g() {
-//         console.log('g');
-//     }
-// }
-
-// function go() {
-//     const foo = new A();
-//     foo.x();
-// }
-
-// go();

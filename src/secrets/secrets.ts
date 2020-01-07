@@ -173,36 +173,37 @@ function d3(text: string, privateKey: string): string {
     return decrypted;
 }
 
-const sample = {
-    version: '1.2.0',
-    services: [
-        {
-            name: 'service1',
-            password: {secret: 'password1'}
-        },
-        {
-            name: 'service2',
-            password: {secret: 'password2'}
-        }
-    ]
-};
+// Save for unit test
+// const sample = {
+//     version: '1.2.0',
+//     services: [
+//         {
+//             name: 'service1',
+//             password: {secret: 'password1'}
+//         },
+//         {
+//             name: 'service2',
+//             password: {secret: 'password2'}
+//         }
+//     ]
+// };
 
-function go() {
-    const keys = generateKeys();
+// function go() {
+//     const keys = generateKeys();
 
-    console.log(yaml.safeDump(sample));
+//     console.log(yaml.safeDump(sample));
 
-    console.log('----------');
+//     console.log('----------');
 
-    encryptSecrets(sample, keys.publicKey);
+//     encryptSecrets(sample, keys.publicKey);
 
-    console.log('----------');
-    console.log(yaml.safeDump(sample));
+//     console.log('----------');
+//     console.log(yaml.safeDump(sample));
 
-    decryptSecrets(sample, keys.privateKey);
+//     decryptSecrets(sample, keys.privateKey);
 
-    console.log('----------');
-    console.log(yaml.safeDump(sample));
-}
+//     console.log('----------');
+//     console.log(yaml.safeDump(sample));
+// }
 
-// go();
+// // go();
