@@ -81,7 +81,8 @@ export class Shell {
         // Set up emulated execution environment.
         this.orchestrator = new LocalOrchestrator();
         this.cloudStorage = new RamDisk();
-        this.localStorage = new LocalDisk('/Users/mhop/git/temp');
+        // this.localStorage = new LocalDisk('/Users/mhop/git/temp');
+        this.localStorage = new LocalDisk('c:/temp/einstein');
 
         // Construct CLI used by the einstein command.
         this.cli = new CLI(

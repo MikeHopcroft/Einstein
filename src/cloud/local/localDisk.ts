@@ -16,24 +16,12 @@ export class LocalDisk implements IStorage {
     }
 
     async readBlob(name: string): Promise<Buffer> {
-        // const buffer = this.blobs.get(name);
-        // if (buffer === undefined) {
-        //     const message = `RamDisk: file ${name} not found.`;
-        //     throw TypeError(message);
-        // } else {
-        //     return buffer;
-        // }
-        return null as unknown as Buffer;
+        const fullpath = path.join(this.root, name);
+        return fs.readFileSync(fullpath);
     }
 
     async listBlobs(prefix = ''): Promise<string[]> {
         const results: string[] = [];
-        // for (const name of this.blobs.keys()) {
-        //     // console.log(`checking ${name}`);
-        //     if (name.startsWith(prefix)) {
-        //         results.push(name);
-        //     }
-        // }
 
         // TODO: May want to modify this to a recursive directory walk.
         const translated = this.translatePath(prefix);

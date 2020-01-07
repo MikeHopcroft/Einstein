@@ -30,6 +30,8 @@
 * Catch errors in shell (e.g. duplicate deployments)
 
 ## Basic
+* move cwd from shell to some sort of process abstraction
+* auto-completing in shell
 * save keys / use keys option for einstein deploy
 * Shell command line parameters for local and cloud storage
 * Should CLI be a member of Shell or is it part of Einstein?
