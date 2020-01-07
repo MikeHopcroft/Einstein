@@ -11,7 +11,6 @@ import {
 
 import { Laboratory, ILaboratory } from '../laboratory';
 import { encryptSecrets, generateKeys } from '../secrets';
-import { sleep } from '../utilities';
 
 export class CLI {
     private orchestrator: IOrchestrator;
@@ -84,7 +83,9 @@ export class CLI {
         const data = yaml.safeLoad(yamlText);
         encryptSecrets(data, publicKey);
         const yamlText2 = yaml.safeDump(data);
-        console.log(yamlText2);
+        const buffer = Buffer.from(yamlText2, 'utf8');
+
+        await this.localStorage.writeBlob(filename, buffer);
     }
 
     async uploadBenchmark(filename: string): Promise<void> {

@@ -3,7 +3,7 @@ import { Shell } from '../shell';
 
 async function go() {
     // TODO: remove hard-coded path.
-    const world = sampleWorld('c:/temp/einstein');
+    const world = sampleWorld();
     const shell = new Shell(world);
     const finished = shell.finished();
     await finished;

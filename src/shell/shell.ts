@@ -155,14 +155,6 @@ export class Shell {
         return this.cli;
     }
 
-    // getHomeDirectory() {
-    //     return this.world.homedir;
-    // }
-
-    // getWorkingDirectory() {
-    //     return this.world.cwd;
-    // }
-
     setWorkingDirectory(cwd: string) {
         this.world.cwd = cwd;
         this.updatePrompt();
@@ -170,10 +162,6 @@ export class Shell {
 
     getWorld() {
         return this.world;
-    }
-
-    getLocalStorage() {
-        return this.world.localStorage;
     }
 
     getOrchestrator() {

@@ -18,7 +18,8 @@ export async function lsCommand(args: string[], shell: Shell): Promise<number> {
         console.log(`ls: ${args[1]}: No such file or directory`);
     } else {
         for (const blob of blobs) {
-            console.log(blob);
+            const relative = path.relative(cwd, blob);
+            console.log(relative);
         }
     }
 

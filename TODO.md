@@ -9,6 +9,7 @@
 * Prettier clean
 
 ## Easy
+* Delete cliArgs.ts
 * Rename tutorial to tutorial_builder
 * . Tutorial idempotent unit test
 * Tutorial read from file specified on command line
@@ -55,6 +56,7 @@
 * Disk based IStorage
 
 ## Research
+* Figure out pattern for file name combination
 * What happens if the Shell's finished promise is awaited multiple times?
 * Figure out how to reintroduce persistant history in Shell
 * Cloud storage mechanism to prevent blob overwrite - https://stackoverflow.com/questions/47716780/dont-overwrite-azure-blob-storage

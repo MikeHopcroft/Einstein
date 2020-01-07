@@ -26,12 +26,12 @@ export class Laboratory implements ILaboratory {
 
     // TODO: this should do a bind, not a connect.
     static async entryPoint(worker: IWorker) {
-        console.log(`Laboratory.entryPoint()`);
+        // console.log(`Laboratory.entryPoint()`);
 
         // Simulate server startup time.
-        console.log('laboratory: sleeping');
+        // console.log('laboratory: sleeping');
         await sleep(1000);
-        console.log('laboratory: awoke');
+        // console.log('laboratory: awoke');
 
         // TODO: get KeyPair from local storage instead.
         const keys: KeyPair = generateKeys();

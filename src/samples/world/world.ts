@@ -1,9 +1,13 @@
+import * as yaml from 'js-yaml';
+import * as path from 'path';
+
 import {
     Environment,
-    World,
+    IStorage,
     RamDisk,
     LocalOrchestrator,
-    LocalDisk
+    LocalDisk,
+    World,
 } from '../../cloud';
 
 import { Laboratory } from '../../laboratory';
@@ -30,6 +34,46 @@ export function sampleWorld(localDiskPath?: string) {
     world.orchestrator.pushImage(Laboratory.image);
 
     // TODO: copy sample yaml files to ramdisk
+    copyYaml(world.localStorage, 'benchmark.yml', benchmark);
+    copyYaml(world.localStorage, 'candidate.yml', candidate);
+    copyYaml(world.localStorage, 'suite.yml', suite);
 
     return world;
 }
+
+// tslint:disable-next-line:no-any
+function copyYaml(storage: IStorage, filename: string, data: any) {
+    const normalized = path.posix.join('/', filename);
+    const yamlText = yaml.safeDump(data);
+    storage.writeBlob(normalized, Buffer.from(yamlText, 'utf8'));
+}
+
+const benchmark = {
+    name: 'True_Or_False',
+    description: 'A sample benchmark for boolean expressions evaluation.',
+    owner: 'Mike',
+    created: '2020-01-07T04:09:18.721Z',
+    image: 'myregistry.azurecr.io/true_or_false_benchmark:1.0'
+};
+
+const candidate = {
+    name: 'True_Or_False',
+    description: 'A sample candidate that implements a boolean expression parser.',
+    owner: 'Mike',
+    created: '2020-01-07T04:09:18.721Z',
+    benchmarkId: 'true_or_false_benchmark:1.0',
+    image: 'myregistry.azurecr.io/true_or_false_candidate:1.0',
+    password: {
+        secret: 'my-password'
+    }
+};
+
+const suite = {
+    name: 'True_Or_False',
+    description: 'A sample suite.',
+    owner: 'Mike',
+    created: '2020-01-07T04:09:18.721Z',
+    benchmarkId: 'true_or_false_benchmark:1.0',
+    domainData: [],
+    testDate: []
+};
