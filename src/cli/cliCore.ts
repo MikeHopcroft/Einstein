@@ -1,6 +1,6 @@
 import * as yaml from 'js-yaml';
 
-import { IOrchestrator, IStorage, IWorker, RamDisk, Volume } from '../cloud';
+import { Environment, IOrchestrator, IStorage, IWorker, RamDisk, Volume } from '../cloud';
 import { Laboratory, ILaboratory } from '../laboratory';
 import { generateKeys } from '../secrets';
 import { sleep } from '../utilities';
@@ -54,12 +54,15 @@ export class CLI {
             storage: secrets
         };
 
+        const environment = new Environment();
+
         // Create worker
         await this.orchestrator.createWorker(
             hostname,
             labratoryTag,
             this.cloudStorage,
-            [volume]
+            [volume],
+            environment
         );
 
         // TODO: this should be set through the connect mechanism
@@ -88,6 +91,8 @@ export class CLI {
 
     async uploadBenchmark(filename: string): Promise<void> {
         // TODO: implement
+        // Get canonical name
+        // Upload file
     }
 
     // TODO: list with wildcards - what is the syntax?

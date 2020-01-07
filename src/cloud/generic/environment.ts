@@ -1,6 +1,6 @@
 import { IEnvironment } from '../interfaces';
 
-class Environment implements IEnvironment {
+export class Environment implements IEnvironment {
     private variables: Map<string, string>;
 
     constructor(values: Array<[string,string]> = []) {

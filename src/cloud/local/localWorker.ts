@@ -1,4 +1,4 @@
-import { IStorage, IOrchestrator, IWorker, Volume } from '../interfaces';
+import { IStorage, IOrchestrator, IWorker, Volume, IEnvironment } from '../interfaces';
 import { RamDisk } from './ramdisk';
 
 export class LocalWorker implements IWorker {
@@ -6,12 +6,14 @@ export class LocalWorker implements IWorker {
     private hostname: string;
     private cloudStorage: IStorage;
     private localStorage: IStorage;
+    private environment: IEnvironment;
 
     constructor(
         orchestrator: IOrchestrator,
         hostname: string,
         cloudStorage: IStorage,
-        volumes: Volume[]
+        volumes: Volume[],
+        environment: IEnvironment
     ) {
         this.orchestrator = orchestrator;
         this.hostname = hostname;
@@ -29,6 +31,8 @@ export class LocalWorker implements IWorker {
             const message = "LocalWorker.constructor: expected zero or one volumes";
             throw TypeError(message);
         }
+
+        this.environment = environment;
     }
 
     getCloudStorage(): IStorage {
@@ -37,6 +41,10 @@ export class LocalWorker implements IWorker {
 
     getFileSystem(): IStorage {
         return this.localStorage;
+    }
+
+    getEnvironment(): IEnvironment {
+        return this.environment;
     }
 
     shutdown(): void {

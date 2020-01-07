@@ -1,6 +1,6 @@
 import { sleep } from '../../utilities';
 
-import { Image, IOrchestrator, IStorage, Volume } from '../interfaces';
+import { Image, IOrchestrator, IStorage, Volume, IEnvironment } from '../interfaces';
 
 import { LocalWorker } from './localWorker';
 
@@ -43,11 +43,12 @@ export class LocalOrchestrator implements IOrchestrator {
         hostname: string,
         tag: string,
         cloudStorage: IStorage,
-        volumes: Volume[]
+        volumes: Volume[],
+        environment: IEnvironment
     ): void {
         const host = this.hosts.get(hostname);
         if (host !== undefined) {
-            const message = "Host ${hostname} already exists.";
+            const message = `Host ${hostname} already exists.`;
             throw TypeError(message);
         }
         const image = this.images.get(tag);
@@ -59,7 +60,8 @@ export class LocalOrchestrator implements IOrchestrator {
             this,
             hostname,
             cloudStorage,
-            volumes
+            volumes,
+            environment
         );
 
         // Drop Promise<void> on the floor.

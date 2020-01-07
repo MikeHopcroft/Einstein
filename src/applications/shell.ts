@@ -17,19 +17,19 @@ async function go() {
     orchestrator.pushImage(Candidate.image);
     orchestrator.pushImage(Laboratory.image);
 
-    // Push client container image to repository.
-    const clientImage = {
-        tag: 'client:1.0',
-        create: () => clientEntryPoint
-    };
-    orchestrator.pushImage(clientImage);
+    // // Push client container image to repository.
+    // const clientImage = {
+    //     tag: 'client:1.0',
+    //     create: () => clientEntryPoint
+    // };
+    // orchestrator.pushImage(clientImage);
 
-    // Push server container image to repository.
-    const serverImage = {
-        tag: 'server:1.0',
-        create: () => serverEntryPoint
-    };
-    orchestrator.pushImage(serverImage);
+    // // Push server container image to repository.
+    // const serverImage = {
+    //     tag: 'server:1.0',
+    //     create: () => serverEntryPoint
+    // };
+    // orchestrator.pushImage(serverImage);
 
     await finished;
     console.log('exiting');

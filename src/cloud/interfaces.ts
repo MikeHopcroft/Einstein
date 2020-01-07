@@ -46,6 +46,8 @@ export interface IWorker {
     // Returns this worker's local filesystem.
     getFileSystem(): IStorage;
 
+    getEnvironment(): IEnvironment;
+
     // Makes an RPC interface stub available on a specified port.
     bind<T>(stub: T, port: number): void;
 
@@ -81,7 +83,8 @@ export interface IOrchestrator {
         hostname: string,
         imageTag: string,
         cloudStorage: IStorage,
-        volumes: Volume[]
+        volumes: Volume[],
+        environment: IEnvironment
     ): void;
 
     // Removes the worker from the hosts table.

@@ -1,4 +1,4 @@
-import { IWorker, LocalOrchestrator, RamDisk } from '../cloud';
+import { Environment, IWorker, LocalOrchestrator, RamDisk } from '../cloud';
 import { sleep } from '../utilities';
 
 async function clientEntryPoint(worker: IWorker) {
@@ -43,14 +43,14 @@ async function go() {
 
     // Push client container image to repository.
     const clientImage = {
-        tag: 'client',
+        tag: 'myregistry.azurecr.io/client:1.0',
         create: () => clientEntryPoint
     };
     orchestrator.pushImage(clientImage);
 
     // Push server container image to repository.
     const serverImage = {
-        tag: 'server',
+        tag: 'myregistry.azurecr.io/server:1.0',
         create: () => serverEntryPoint
     };
     orchestrator.pushImage(serverImage);
@@ -59,8 +59,21 @@ async function go() {
     const cloudStorage = new RamDisk();
 
     // Start client and server containers.
-    orchestrator.createWorker('client1', 'client', cloudStorage, []);
-    orchestrator.createWorker('server1', 'server', cloudStorage, []);
+    orchestrator.createWorker(
+        'client1',
+        'myregistry.azurecr.io/client:1.0',
+        cloudStorage,
+        [],
+        new Environment()
+    );
+
+    orchestrator.createWorker(
+        'server1',
+        'myregistry.azurecr.io/server:1.0',
+        cloudStorage,
+        [],
+        new Environment()
+    );
 }
 
 go();
