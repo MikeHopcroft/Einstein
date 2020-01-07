@@ -120,8 +120,8 @@ Wait a few seconds and check services again. Can see that the host lab is runnin
 ~~~
 einstein:/% # wait 10 seconds for service to start ...
 einstein:/% services
-image                                  host    port
-myregistry.azurecr.io/labratory:1.0    lab     8080
+image123                              host   port
+myregistry.azurecr.io/labratory:1.0   lab    8080
 ~~~
 
 ## Submitting a Benchmark
@@ -169,10 +169,11 @@ Uploading the benchmark:
 [//]: # (shell)
 ~~~
 einstein:/% einstein benchmark benchmark.yaml
-uploading benchmark benchmark.yaml
+Uploaded to /benchmarks/5xh6avk3d1pp2wkb5twp2vbc
 
 einstein:/% einstein list benchmarks
-einstein: unknown command 'list'
+image                         name            owner   created                 
+true_or_false_benchmark:1.0   True_Or_False   Mike    2020-01-07T04:09:18.721Z
 ~~~
 
 We can even see the blob has been written.
@@ -180,7 +181,7 @@ We can even see the blob has been written.
 [//]: # (shell)
 ~~~
 einstein:/% cloud ls
-cloud: command not found
+benchmarks/5xh6avk3d1pp2wkb5twp2vbc
 ~~~
 
 ## Submitting a Suite
@@ -207,10 +208,11 @@ Uploading the suite:
 [//]: # (shell)
 ~~~
 einstein:/% einstein suite suite.yaml
-uploading suite suite.yaml
+Uploaded to /suites/5xtqaubmcmq7jrbddg
 
 einstein:/% einstein list suites
-einstein: unknown command 'list'
+name            benchmark                     owner   created                 
+True_Or_False   true_or_false_benchmark:1.0   Mike    2020-01-07T04:09:18.721Z
 ~~~
 
 ## Submitting a Candidate
@@ -247,7 +249,7 @@ benchmarkId: 'true_or_false_benchmark:1.0'
 image: 'myregistry.azurecr.io/true_or_false_candidate:1.0'
 password:
   secret: >-
-    ND1wd3JGBqsWBKANa5dUZIXmFlQ4lR8/mrWpkTI3E1yRIxRn2Qg/uwMcY0Qd9uqIPqaul+g1IrbzBVBy4ybxGuj4kiynrayBbgvgpcVYwXzX/Mz6tmbFLqXHEIII6GnlavGM4dWJtFw0TDQe+2NA5rir1eFSN3tFptm2kdQcA6zT5IqrRNy/MH+wSi1DRHdRCjJmP+ymda43mCyRpSBNOSOmgXoDOZG7Kr3F+EHVm0tx0yc1bjekv1BphGwjT06yvRfN3mK7WfXP/hy6VNCL68/IQWDqyPjuGx4XxbeXnlTtiSdJ2nUai2jwKwMHDgol11qKRGwSZo7ho0V5MVya0UHGN2IYSBCmm6GqIqMJpfNIoaickSEfTX7/0/kwtL7JhQLqOM75iv7tCiAK2du58x3WMckUJjrb9GuwPqbefrvhzt0YnmNuMl3ILHOO9mwxdqnk4zBZFR8zlPPRkbkKudWZpiQMEIvTcEt57+l16weORd5nXdVIL6i9A3EsFxptf9VgH1gk4RZJP0hBppsOUKHC2jx9Y1T0WWCSTqGl/U3gddsTAygKi0BNwpI+JDw2B/WHUiDY0v2Hx6ApeXcYNv98eLtw8aXh5lACFi2VUCqk3GkEhArZWkPLuNilNmlbDhVorNOhV/efx9BFQPXAOs9Bpi1EzlzHa4NWAx7CMdw=:V6DM346Gt9t7Vr94M575RQ==:F17vk0o4GNoliVYY9Bsf1g==
+    Ph8u3fKHknim0l79GdEILPeEYBXXrboqZQr/RWVzpkpDASyeMDSDk5LuiEtOITA7EOn6k6bQpUKSZCq6xJyOBo/js5N0zYXExeGNyfMfQQNdj31fuNFFclzURYhdmsLjxw4TdFgHmPjC4F9X/2+dpBFaMOj+gytUvcIqsjFDLlP3W0Y6kso4qLZ4fbRJd5a4ef/qOWxtU+0zfjm/JFD/yH6twaiso/z20O/KnMk6kbQjyYSdB9vAfJPWhe//FNdV7Z66S+naGtrnzMpmEW1zdrYHLaf4QNa0d4Y2bj1/b+cfSsDZCgINJob+dhf2S/WZmDRAR395SRGQP2bmXtn85N+1bza0Onj51dgvpZeO5IxziwvGFfqhHT3kbEJJEa+4v7xiow8Hc1rJzJUUo3+gIFMDZlIuLjla2CB1bP637qvlbAQI1XouJE6R7m5HIMfoAQLYXE1DO7BRnK9so1E/HiBH8nfIKHZr2NoPrSbDx/VXJhu1ikatfYzeX5a4q3vv1c8OaER8tgeYNXR2Jo83sDmoFeiqB3w4tQ0PTBuSqkMzBm+7hYAluq+6e4JFjq+ap5g6ppC2d3IxQ8mVD3drDnen81AbVlN+CtvpwzqvNVVAGrZrwamu0wNHdM9ioq9TRgWAXbNdWTeIDDhM9XN5mH8wS0eVd4Eo8HnPqaFTDuM=:+SQtdvc5z7pNcgrgh6IVyA==:kYlpICAiPBoCXlnPMYoOQg==
 whitelist:
   - 'http://www.wikipedia.org'
 ~~~
@@ -257,10 +259,11 @@ Uploading the candidate:
 [//]: # (shell)
 ~~~
 einstein:/% einstein candidate benchmark.yaml
-uploading candidate benchmark.yaml
+Uploaded to /candidates/5xh6avk3d1pp2wkb5twp2vbc
 
 einstein:/% einstein list candidates
-einstein: unknown command 'list'
+image                         name            owner   created                 
+true_or_false_benchmark:1.0   True_Or_False   Mike    2020-01-07T04:09:18.721Z
 ~~~
 
 * einstein candidate
@@ -278,7 +281,7 @@ einstein:/% einstein run candidateId suiteID
 running suite suiteID on candidate candidateId
 
 einstein:/% einstein list runs
-einstein: unknown command 'list'
+Bad collection "runs"
 ~~~
 
 

@@ -17,3 +17,28 @@ export function rightJustify(text: string, width: number) {
         return padding + text;
     }
 }
+
+export function* formatTable(
+    alignments: string[],
+    rows: string[][]
+): IterableIterator<string> {
+    const widths = new Array(alignments.length).fill(0);
+    for (const row of rows) {
+        for (let i = 0; i < row.length; ++i) {
+            widths[i] = Math.max(widths[i], row[i].length);
+        }
+    }
+    for (const row of rows) {
+        const fields = row.map((column, i) => {
+            if (alignments[i] === 'left') {
+                return leftJustify(row[i], widths[i]);
+            } else if (alignments[i] === 'right') {
+                return rightJustify(row[i], widths[i]);
+            } else {
+                return row[i];
+            }
+        });
+
+        yield fields.join('   ');
+    }
+}

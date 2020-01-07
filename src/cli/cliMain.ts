@@ -1,8 +1,9 @@
 import * as path from 'path';
 
 import { CLI } from '.';
-import { World } from '../cloud';
+import { World, IStorage } from '../cloud';
 import { Shell } from '../shell';
+import { listCommandInternal } from './list';
 
 interface CommandDescription {
     name: string,
@@ -17,9 +18,14 @@ export class CLIMain {
     cli: CLI;
     cwd: string;
 
+    // TODO: remove this temporary hack.
+    // Code should connect to analysis service.
+    cloudStorage: IStorage;
+
     constructor(cli: CLI, world: World) {
         this.cli = cli;
         this.cwd = world.cwd;
+        this.cloudStorage = world.cloudStorage;
 
         const context = this;
         this.commands = [
@@ -52,6 +58,12 @@ export class CLIMain {
                 args: ['candidateId', 'suiteId'],
                 description: 'Run specified suite <suiteId> on candidate <candidateId>',
                 command: context.runCommand
+            },
+            {
+                name: 'list',
+                args: ['benchmarks|candidates|runs|suites'],
+                description: 'List benchmarks, candidates, runs, or suites',
+                command: context.listCommand
             },
             {
                 name: 'help',
@@ -106,6 +118,12 @@ export class CLIMain {
     async runCommand(args: string[]): Promise<number> {
         const [candidateId, suiteId] = args;
         console.log(`running suite ${suiteId} on candidate ${candidateId}`);
+        return 0;
+    }
+
+    async listCommand(args: string[]): Promise<number> {
+        const [collection] = args;
+        await listCommandInternal(this.cloudStorage, collection);
         return 0;
     }
 

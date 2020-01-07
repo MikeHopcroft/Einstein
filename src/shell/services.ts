@@ -1,4 +1,4 @@
-import { leftJustify } from '../utilities';
+import { leftJustify, formatTable } from '../utilities';
 
 import { Shell } from './shell';
 
@@ -6,25 +6,15 @@ export async function servicesCommand(args: string[], shell: Shell): Promise<num
     const orchestrator = shell.getOrchestrator();
     const services = await orchestrator.listServices();
 
-    const hostHeader = 'host';
-    const tagHeader = 'image';
+    const alignments = ['left', 'left', 'left'];
+    const headers = ['image123', 'host', 'port'];
+    const rows = [headers];
     if (services.length > 0) {
-        let hostWidth = hostHeader.length;
-        let tagWidth = tagHeader.length;
         for (const service of services) {
-            hostWidth = Math.max(hostWidth, service.hostname.length);
-            tagWidth = Math.max(tagWidth, service.tag.length);
+            rows.push([service.tag, service.hostname, service.port.toString()]);
         }
-
-        const hostname = leftJustify(hostHeader, hostWidth);
-        const tag = leftJustify(tagHeader, tagWidth);
-        const port = 'port';
-        console.log(`${tag}    ${hostname}    ${port}`);
-
-        for (const service of services) {
-            const hostname = leftJustify(service.hostname, hostWidth);
-            const tag = leftJustify(service.tag, tagWidth);
-            console.log(`${tag}    ${hostname}    ${service.port}`);
+        for (const line of formatTable(alignments, rows)) {
+            console.log(line);
         }
     } else {
         console.log('no services running');
