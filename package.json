@@ -28,6 +28,7 @@
     "typescript": "~3.7.0"
   },
   "dependencies": {
+    "base32": "0.0.6",
     "js-yaml": "^3.13.1",
     "murmurhash": "0.0.2",
     "strip-ansi": "^6.0.0",
