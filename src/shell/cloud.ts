@@ -40,6 +40,7 @@ export class CloudMain {
         }
 
         const blobs = await storage.listBlobs(p);
+        blobs.sort();
         if (blobs.length === 0) {
             // TODO: BUGBUG: args[1] is not always defined.
             // Can get to this case after cd to bad directory.

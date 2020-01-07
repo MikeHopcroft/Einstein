@@ -38,6 +38,7 @@
 * Catch errors in shell (e.g. duplicate deployments)
 
 ## Basic
+* x ls and cloud ls should sort. Lexigraphical? Tree order? Are they the same?
 * Tutorial should not spit out final code block
 * Tutorial feature to limit number of lines in a block (to show first n lines of test case...)
 * Tutorial feature to suppress salutation

@@ -249,7 +249,7 @@ benchmarkId: 'true_or_false_benchmark:1.0'
 image: 'myregistry.azurecr.io/true_or_false_candidate:1.0'
 password:
   secret: >-
-    vRcAubHGF5ECxjfur28iF6Nx/qNeQlLCJfrlndx0XUedsHQsJcm71oxRBIQmR1L4Vyd+WoLk1K560obgN1nYlCYLUr4BSyrX6xSV7HHkIMBpI+bJ+FG6jpzNMBxEBMCMdqBQa/uAIQjT+Fo+DbqFgo3ANUI6yLZdsr+Hy7FQW+vrx8HcFbMz4h3bYA/iAFzJHgH6c5qhUAH58qIdDkJUl42M/x6dLl1L40BEbsfr6+L4MqcrDhGWN8RuhqkKij8ARI6N1uUj6+BvwPMWE1L6OiWfDWdETuP92VCtQlh4so+6nLM/zaHwwlew5jwtRnSBOidp5nI+9UQ0YJxaG/7KZz0l1vYp1lESwQ7buOPluYLHzV3kkcVTtW3fGAJO+SBx340U9/n1SwfX2PjGL/AdOdU5zURovEbtx/h9Phl53IpDupvHzWLH1RREwcx7t8ZtM4kcQ3rnG7IlTMMdoJc3CWEG2NsHReSkyviUUyqXuywxOyn0PjXSS7CF8xs9A6lOw4b6/Oe2o5cDG+NEH9/Kw1uXsAOnKQ8OVrISXcRwyiQv0VRBn7x5G5pCd36fC3xogjQ6yqh0X/ChGL+aoR9Jez5CZ9mxKBV4O4fpc6dmK7URomy1aam4dZaheBSMu05rhI0FkFtcTx/YU9J2VF47njnzBTubjm/qb8HPxNbPyFs=:fwe9RKWfGaZxUjNZrGUnwg==:gb7zzqRTwIAyMIDx0GJLZA==
+    UXGLRHSszEKyDQn61j9pjWvvjPmirNjbl9qyojB8erPOlSioYXQyKNGFkzaocT+hkecgJ/l0W7u7JvY+B8LKaR1ljgvnnxSoiujz9O+HFh8GEEQK4+ImSip3+FEvCKVxRyb/cTlpsGCqgkmH56zpUE1JGNdB/sAho6JJKWDb142/vsErV+n598nMBdf//bbXTH23aFvJ3aeJWiKeOMW6E9A5Btv0dUOZ1COWCgT35+BADm0KJYSnnJ93jIC86u5g2+k8um+PnZnoDBWutoUX83Jm8Wh18Qx+N2BIanEpzgsvgxqBilAN2BjqWgYeykuxz9Tjrv8C/oEgW7STBbE/Toy5xcoE8SlBzPTDlVPhRxS4LSXuL/niLEc0a1Rsimb6vz7sB9LjZWlahqt4xM4rTim6/DYELrXLLnPsvDGj/z8YmiziwwIvdkcnL1InYejPVcPscw5i4GaY9oesVHFDZwVptod5Pfl+fZd95o3tiRS+/TWy6ZUahWs7ggf+Sm6Fj3BzgPcqNUkNbFqWtdPnXcw4RFukGIaoSP5hNILyX8GAMheujbgj+sFzgI3e14wRt+glIWhDEmcl0zR0hBG+5FEbNqpAaKkmNfPEgCPe8HGjq/hoHkE4R9YBqj/6GR7c+btoHDnYfviaNGodnyMQx9qXM2FB/emyIdTmc1fYna4=:WLcMAKxoezUBxTUGnJ4y0Q==:3vGxtYrXtUs8MdqXEcMmRg==
 whitelist:
   - 'http://www.wikipedia.org'
 ~~~
@@ -290,8 +290,8 @@ Bad collection "runs"
 ~~~
 einstein:/% cloud ls
 benchmarks/5xh6avk3d1pp2wkb5twp2vbc
-suites/5xtqaubmcmq7jrbddg
 candidates/5xh6avk3d1pp2wkb5twp2vbc
+suites/5xtqaubmcmq7jrbddg
 ~~~
 
 The end.
