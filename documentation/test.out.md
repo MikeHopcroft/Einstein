@@ -1,6 +1,6 @@
 # Einstein Shell Tutorial
 
-Einstein provides an interactive shell for trying out concepts in a self-contained, simulated cloud environement that runs on the local machine. This tutorial introduces the `Shell` and then walks through the process of
+Einstein provides an interactive shell for trying out concepts in a self-contained, simulated cloud environement that runs on the local machine. This tutorial introduces the `Shell` and then uses it to walk through the following concepts
 
 * Deploying the `Einstein Service`
 * Uploading a `Benchmark`
@@ -36,7 +36,7 @@ Here's how start a session with ephermeral, in-memory stores:
 % node build/applications/shell.js
 ~~~
 
-Here's an example of a session with backed by folders:
+Here's an example of a session backed by folders on disk:
 ~~~
 % node build/applications/shell.js --localStorage=~/temp/local --cloudStorage=~/temp/cloud
 ~~~
@@ -108,6 +108,7 @@ no services running
 
 einstein:/% einstein deploy lab
 Deploying to lab.
+depoying einstein to lab
 
 einstein:/% services
 no services running
@@ -135,9 +136,51 @@ Shell pre-provisions the container registry.
 [//]: # (shell)
 ~~~
 einstein:/% images
-labratory:1.0
+myregistry.azurecr.io/true_or_false_benchmark:1.0
+myregistry.azurecr.io/true_or_false_candidate:1.0
+myregistry.azurecr.io/labratory:1.0
 ~~~
 
+Shell also pre-provisions yaml configuration files:
+
+[//]: # (shell)
+~~~
+einstein:/% ls
+benchmark.yaml
+candidate.yaml
+suite.yaml
+~~~
+
+Here's the benchmark configuration file:
+
+[//]: # (shell)
+~~~
+einstein:/% more benchmark.yaml
+name: True_Or_False
+description: A sample benchmark for boolean expressions evaluation.
+owner: Mike
+created: '2020-01-07T04:09:18.721Z'
+image: 'myregistry.azurecr.io/true_or_false_benchmark:1.0'
+~~~
+
+Uploading the benchmark:
+
+[//]: # (shell)
+~~~
+einstein:/% einstein benchmark benchmark.yaml
+uploading benchmark benchmark.yaml
+
+einstein:/% einstein list benchmarks
+einstein: unknown command 'list'
+~~~
+
+We can even see the blob has been written.
+
+[//]: # (shell)
+~~~
+einstein:/% cloud ls
+cloud: command not found
+~~~
 
 ## Submitting a Suite
 
@@ -146,9 +189,79 @@ labratory:1.0
 * einstein suite
 * einstein list suites
 
+[//]: # (shell)
+~~~
+einstein:/% more suite.yaml
+name: True_Or_False
+description: A sample suite.
+owner: Mike
+created: '2020-01-07T04:09:18.721Z'
+benchmarkId: 'true_or_false_benchmark:1.0'
+domainData: []
+testData: []
+~~~
+
+Uploading the suite:
+
+[//]: # (shell)
+~~~
+einstein:/% einstein suite suite.yaml
+uploading suite suite.yaml
+
+einstein:/% einstein list suites
+einstein: unknown command 'list'
+~~~
+
 ## Submitting a Candidate
 
 * Candidate description file
+
+[//]: # (shell)
+~~~
+einstein:/% more candidate.yaml
+name: True_Or_False
+description: A sample candidate that implements a boolean expression parser.
+owner: Mike
+created: '2020-01-07T04:09:18.721Z'
+benchmarkId: 'true_or_false_benchmark:1.0'
+image: 'myregistry.azurecr.io/true_or_false_candidate:1.0'
+password:
+  secret: my-password
+whitelist:
+  - 'http://www.wikipedia.org'
+~~~
+
+Encrypting secrets
+
+[//]: # (shell)
+~~~
+einstein:/% einstein encrypt candidate.yaml
+
+einstein:/% more candidate.yaml
+name: True_Or_False
+description: A sample candidate that implements a boolean expression parser.
+owner: Mike
+created: '2020-01-07T04:09:18.721Z'
+benchmarkId: 'true_or_false_benchmark:1.0'
+image: 'myregistry.azurecr.io/true_or_false_candidate:1.0'
+password:
+  secret: >-
+    dZG/aIcq+kJV0Zhm5HnauPhzKLAx70BdWITrrSmezUWYLx/ysLiLdFBwonJR839BqSp2rw4iyM8mYurAuqstPnEdh0XFtaHJE0Tspaodq5aR8rrs4vj1BWl5woWAPlqhT/db5uUbS1YgAiZ+84oqGVpmxyPrsFuXU54/UP8cz0A6Q8GxYTG0oyjaWjQwg/rydrN+0nBpFUxKDPYc+qKZzq3FtVEPxdMtAo28hQhLmsbj1544/VgHvT3upMYvKTHKMcS/lbXevFOErv4ZBWY6Ay0UJCUIiG2EyT2Hfw0nKkafSsqo61ubEr+zd/gD6TKMxZKOhGfxvxqj+iStbJ7lOKAd7i/4gn3RozsMXeTirRGnXA/J4HaNrqI6LvKIF8/mD2IUyRwXwjqL+BePiGGUU//yXTxWdBsbuJm63yECGJqHne0tHmSpufK0lIAq3lf2B8xAmOT7vV7ve3ooyKbv3oSh7bEB0mNK8dFPq8MEZYYUrKnx+knBb7X4xSlroZc5CPFr6kWWYqLMi/I8Zxa2vJdc4ppi4S8qZ115BUGZ0klkNgRzAx/ACJ6ouvMo//TFiMcoZG4bWU5H4TAiKY7HEYSB9g53Fh9s1lcd7927ZFtI6sBIax9seVao6yemJfcY5/Jsr6i97san+IBQXl2FMKW/qrDjWLlRyAREYM7s/dM=:NpXjq792ZAzt1FL5pCPVKg==:xmlF8URqww1tu5d/7S8qog==
+whitelist:
+  - 'http://www.wikipedia.org'
+~~~
+
+Uploading the candidate:
+
+[//]: # (shell)
+~~~
+einstein:/% einstein candidate benchmark.yaml
+uploading candidate benchmark.yaml
+
+einstein:/% einstein list candidates
+einstein: unknown command 'list'
+~~~
+
 * einstein candidate
 * einstein list candidates
 
@@ -158,6 +271,14 @@ labratory:1.0
 * einstein list runs
 * einstein show run
 
+[//]: # (shell)
+~~~
+einstein:/% einstein run candidateId suiteID
+running suite suiteID on candidate candidateId
+
+einstein:/% einstein list runs
+einstein: unknown command 'list'
+~~~
 
 
 The end.

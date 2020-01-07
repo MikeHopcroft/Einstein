@@ -65,7 +65,10 @@ const candidate = {
     image: 'myregistry.azurecr.io/true_or_false_candidate:1.0',
     password: {
         secret: 'my-password'
-    }
+    },
+    whitelist: [
+        'http://www.wikipedia.org'
+    ]
 };
 
 const suite = {
@@ -75,5 +78,5 @@ const suite = {
     created: '2020-01-07T04:09:18.721Z',
     benchmarkId: 'true_or_false_benchmark:1.0',
     domainData: [],
-    testDate: []
+    testData: []
 };

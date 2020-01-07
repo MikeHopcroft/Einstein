@@ -1,6 +1,6 @@
 # Einstein Shell Tutorial
 
-Einstein provides an interactive shell for trying out concepts in a self-contained, simulated cloud environement that runs on the local machine. This tutorial introduces the `Shell` and then walks through the process of
+Einstein provides an interactive shell for trying out concepts in a self-contained, simulated cloud environement that runs on the local machine. This tutorial introduces the `Shell` and then uses it to walk through the following concepts
 
 * Deploying the `Einstein Service`
 * Uploading a `Benchmark`
@@ -36,7 +36,7 @@ Here's how start a session with ephermeral, in-memory stores:
 % node build/applications/shell.js
 ~~~
 
-Here's an example of a session with backed by folders:
+Here's an example of a session backed by folders on disk:
 ~~~
 % node build/applications/shell.js --localStorage=~/temp/local --cloudStorage=~/temp/cloud
 ~~~
@@ -134,6 +134,34 @@ Shell pre-provisions the container registry.
 einstein:/% images
 ~~~
 
+Shell also pre-provisions yaml configuration files:
+
+[//]: # (shell)
+~~~
+einstein:/% ls
+~~~
+
+Here's the benchmark configuration file:
+
+[//]: # (shell)
+~~~
+einstein:/% more benchmark.yaml
+~~~
+
+Uploading the benchmark:
+
+[//]: # (shell)
+~~~
+einstein:/% einstein benchmark benchmark.yaml
+einstein:/% einstein list benchmarks
+~~~
+
+We can even see the blob has been written.
+
+[//]: # (shell)
+~~~
+einstein:/% cloud ls
+~~~
 
 ## Submitting a Suite
 
@@ -142,9 +170,44 @@ einstein:/% images
 * einstein suite
 * einstein list suites
 
+[//]: # (shell)
+~~~
+einstein:/% more suite.yaml
+~~~
+
+Uploading the suite:
+
+[//]: # (shell)
+~~~
+einstein:/% einstein suite suite.yaml
+einstein:/% einstein list suites
+~~~
+
 ## Submitting a Candidate
 
 * Candidate description file
+
+[//]: # (shell)
+~~~
+einstein:/% more candidate.yaml
+~~~
+
+Encrypting secrets
+
+[//]: # (shell)
+~~~
+einstein:/% einstein encrypt candidate.yaml
+einstein:/% more candidate.yaml
+~~~
+
+Uploading the candidate:
+
+[//]: # (shell)
+~~~
+einstein:/% einstein candidate benchmark.yaml
+einstein:/% einstein list candidates
+~~~
+
 * einstein candidate
 * einstein list candidates
 
@@ -154,6 +217,11 @@ einstein:/% images
 * einstein list runs
 * einstein show run
 
+[//]: # (shell)
+~~~
+einstein:/% einstein run candidateId suiteID
+einstein:/% einstein list runs
+~~~
 
 
 The end.

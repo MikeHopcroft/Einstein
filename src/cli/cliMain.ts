@@ -144,7 +144,7 @@ export class CLIMain {
                     }
                 }
             }
-            console.log(`einstein: unknown command ${cmdText}`);
+            console.log(`einstein: unknown command '${cmdText}'`);
             return 1;
         }
     }
