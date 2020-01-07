@@ -84,7 +84,9 @@ export class CLIMain {
 
     async benchmarkCommand(args: string[]): Promise<number> {
         const [manifest] = args;
-        console.log(`uploading benchmark ${manifest}`);
+        const normalized = fullPath(this.cwd, manifest);
+        console.log(`uploading benchmark ${normalized}`);
+        await this.cli.uploadBenchmark(normalized);
         return 0;
     }
 

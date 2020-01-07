@@ -10,6 +10,7 @@ import {
 } from '../cloud';
 
 import { Laboratory, ILaboratory } from '../laboratory';
+import { encodeBenchmark } from '../naming';
 import { encryptSecrets, generateKeys } from '../secrets';
 
 export class CLI {
@@ -89,9 +90,10 @@ export class CLI {
     }
 
     async uploadBenchmark(filename: string): Promise<void> {
-        // TODO: implement
-        // Get canonical name
-        // Upload file
+        const encoded = encodeBenchmark(filename);
+        const buffer = await this.localStorage.readBlob(filename);
+        await this.cloudStorage.writeBlob(encoded, buffer);
+        console.log(`Uploaded to ${encoded}`);
     }
 
     // TODO: list with wildcards - what is the syntax?
