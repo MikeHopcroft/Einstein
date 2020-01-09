@@ -138,7 +138,7 @@ export class CLIMain {
         return 0;
     }
 
-    async run(args: string[], shell: Shell): Promise<number> {
+    async run(args: string[]): Promise<number> {
         if (args.length < 2) {
             this.usage();
             return 0;

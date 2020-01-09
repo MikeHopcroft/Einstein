@@ -22,9 +22,17 @@ type CommandEntryPoint = (args: string[], shell: Shell) => Promise<number>;
 const maxHistorySteps = 1000;
 const historyFile = '.repl_history';
 
+function completer2(line: string) {
+    const completions = 'einstein cloud ls pwd'.split(' ');
+    const hits = completions.filter((c) => c.startsWith(line));
+    // Show all completions if none found
+    return [hits.length ? hits : completions, line];
+}
+
 export class Shell {
     // Map of shell commands (e.g. cd, ls, pwd, einstein, etc.)
     private commands = new Map<string, CommandEntryPoint>();
+    private completions: string[] = [];
 
     private world: World;
 
@@ -89,7 +97,8 @@ export class Shell {
         const rl = readline.createInterface({
             input,
             output: process.stdout,
-            prompt: this.getPrompt()
+            prompt: this.getPrompt(),
+            completer: this.completer
         });
         this.rl = rl;
 
@@ -144,6 +153,7 @@ export class Shell {
             throw TypeError(message);
         } else {
             this.commands.set(name, entryPoint);
+            this.completions.push(name + ' ');
         }
     }
 
@@ -173,6 +183,22 @@ export class Shell {
         return this.capture.output;
     }
 
+    completer = (line: string) => {
+        // const completions = 'einstein cloud ls pwd'.split(' ');
+        const completions = [
+            'einstein ',
+            'einstein benchmark',
+            'einstein candidate',
+            'einstein suite',
+            'einstein run',
+            'cloud',
+            'ls'
+        ];
+        const hits = this.completions.filter((c) => c.startsWith(line));
+        return [hits, line];
+    }
+    
+
     private getPrompt() {
         return `einstein:${this.world.cwd}% `;
     }
@@ -196,7 +222,7 @@ export class Shell {
     }
 
     private einsteinCommand = (args: string[], shell: Shell) => {
-        return this.einstein.run(args, shell);
+        return this.einstein.run(args);
     }
 
     private cloudCommand = (args: string[], shell: Shell) => {
