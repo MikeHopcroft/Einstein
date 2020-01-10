@@ -85,5 +85,18 @@
                 "${workspaceFolder}/build/**/*.js"
             ]
         },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "commands",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/build/src/utilities/commands.js",
+            "preLaunchTask": "tsc: build - tsconfig.json",
+            "outFiles": [
+                "${workspaceFolder}/build/**/*.js"
+            ]
+        },
     ]
 }

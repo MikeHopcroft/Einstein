@@ -1,9 +1,11 @@
 # TODO LIST
 
+## Next
+* Set up unit testing
+
 ## Housekeeping
 * Improve top-level README.md
 * Bring over architectural documents
-* Set up unit testing
 * Set up formatting properties for VS Code
 * Set up Travis
 * Prettier clean
