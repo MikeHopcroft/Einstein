@@ -17,6 +17,12 @@ class MountedVolumes implements IStorage {
         }
     }
 
+    async appendBlob(name: string, buffer: Buffer): Promise<void> {
+        // TODO: implement
+        const message = "MountedVolumes: appendBlob() not implemented";
+        throw TypeError(message);
+    }
+
     async writeBlob(name: string, buffer: Buffer): Promise<void> {
         const { storage, relative } = this.translatePath(name);
         storage.writeBlob(relative, buffer);

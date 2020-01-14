@@ -13,6 +13,7 @@ export class Candidate implements ICandidate {
     };
 
     static async entryPoint(worker: IWorker) {
+        worker.log(`Candidate.entryPoint()`);
         console.log(`Candidate.entryPoint()`);
 
         // Simulate server startup time.
@@ -64,6 +65,9 @@ export class Candidate implements ICandidate {
     }
 
     async shutdown(): Promise<void> {
+        // Simulate delay in shutting down
+        await sleep(10000);
+
         console.log('Candidate: shutdown()');
         this.worker.shutdown();
         // process.exit(0);

@@ -5,7 +5,7 @@ import { Shell } from './shell';
 export async function moreCommand(args: string[], shell: Shell): Promise<number> {
     if (args.length !== 2) {
         console.log('more: expected a filename');
-        return 0;
+        return 1;
     } else {
         const cwd = shell.getWorld().cwd;
         const storage = shell.getWorld().localStorage;

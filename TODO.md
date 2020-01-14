@@ -13,12 +13,14 @@
 * Prettier clean
 
 ## Easy
+* Cloud commands (ls, more) should not be relative to filesystem cwd
 * Shell print list of commands
 * world.ts: suppress localStorage initialization on disk.
 * Remove dead code files and debug configurations
   * junk2.ts
   * true_or_false.ts
   * go()
+  * samples/container.ts
 * Unify EntityDescription with SuiteDescription
 * Blob append logger
 * Move code from CLICore to Laboratory

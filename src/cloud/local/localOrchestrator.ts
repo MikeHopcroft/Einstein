@@ -4,6 +4,7 @@ import { sleep } from '../../utilities';
 import {
     Image,
     IEnvironment,
+    ILogger,
     IOrchestrator,
     IStorage,
     Volume,
@@ -11,8 +12,8 @@ import {
     ServiceInfo
 } from '../interfaces';
 
+import { ConsoleLogger } from './consoleLogger';
 import { LocalWorker } from './localWorker';
-import { ConsoleLogger } from './localConsoleLogger';
 
 export interface Service {
     world: World;
@@ -64,7 +65,8 @@ export class LocalOrchestrator implements IOrchestrator {
         tagname: string,
         cloudStorage: IStorage,
         volumes: Volume[],
-        environment: IEnvironment
+        environment: IEnvironment,
+        logger: ILogger
     ): void {
         const host = this.hosts.get(hostname);
         if (host !== undefined) {
@@ -96,7 +98,7 @@ export class LocalOrchestrator implements IOrchestrator {
             localStorage,
             orchestrator: this,
             environment,
-            logger: new ConsoleLogger(hostname),
+            logger,
             homedir: '/',
             cwd: '/'
         };

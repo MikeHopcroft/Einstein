@@ -41,7 +41,9 @@ export class LocalWorker implements IWorker {
     }
 
     shutdown(): void {
-        // TODO: remove from orchestrator hosts table.
+        // TODO: REVIEW: this kills the entire host instead of the port binding. Is this correct?
+        // Remove from orchestrator hosts table.
+        this.orchestrator.killWorker(this.world.hostname);
     }
 
     bind<T>(world: World, stub: T, port: number): void {
@@ -50,5 +52,9 @@ export class LocalWorker implements IWorker {
 
     async connect<T>(hostname: string, port: number): Promise<T> {
         return this.orchestrator.connect<T>(hostname, port);
+    }
+
+    log(message: string) {
+        this.world.logger.log(message);
     }
 }

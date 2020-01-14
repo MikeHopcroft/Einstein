@@ -37,43 +37,43 @@ class MyService implements IService {
     }
 }
 
-async function go() {
-    // Create orchestrator.
-    const orchestrator = new LocalOrchestrator();
+// async function go() {
+//     // Create orchestrator.
+//     const orchestrator = new LocalOrchestrator();
 
-    // Push client container image to repository.
-    const clientImage = {
-        tag: 'myregistry.azurecr.io/client:1.0',
-        create: () => clientEntryPoint
-    };
-    orchestrator.pushImage(clientImage);
+//     // Push client container image to repository.
+//     const clientImage = {
+//         tag: 'myregistry.azurecr.io/client:1.0',
+//         create: () => clientEntryPoint
+//     };
+//     orchestrator.pushImage(clientImage);
 
-    // Push server container image to repository.
-    const serverImage = {
-        tag: 'myregistry.azurecr.io/server:1.0',
-        create: () => serverEntryPoint
-    };
-    orchestrator.pushImage(serverImage);
+//     // Push server container image to repository.
+//     const serverImage = {
+//         tag: 'myregistry.azurecr.io/server:1.0',
+//         create: () => serverEntryPoint
+//     };
+//     orchestrator.pushImage(serverImage);
 
-    // Set up cloud storage.
-    const cloudStorage = new RamDisk();
+//     // Set up cloud storage.
+//     const cloudStorage = new RamDisk();
 
-    // Start client and server containers.
-    orchestrator.createWorker(
-        'client1',
-        'myregistry.azurecr.io/client:1.0',
-        cloudStorage,
-        [],
-        new Environment()
-    );
+//     // Start client and server containers.
+//     orchestrator.createWorker(
+//         'client1',
+//         'myregistry.azurecr.io/client:1.0',
+//         cloudStorage,
+//         [],
+//         new Environment()
+//     );
 
-    orchestrator.createWorker(
-        'server1',
-        'myregistry.azurecr.io/server:1.0',
-        cloudStorage,
-        [],
-        new Environment()
-    );
-}
+//     orchestrator.createWorker(
+//         'server1',
+//         'myregistry.azurecr.io/server:1.0',
+//         cloudStorage,
+//         [],
+//         new Environment()
+//     );
+// }
 
-go();
+// go();

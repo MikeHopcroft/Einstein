@@ -40,6 +40,10 @@ export function encodeRun(uid: string): string {
     return `/${runs}/${uid}`
 }
 
+export function encodeLog(name: string): string {
+    return `/logs/${name}`;
+}
+
 // NOTE: run encoding differs from benchmarks, candidates, and suites.
 export function decodeRun(encoded: string): string {
     const parts = encoded.split('/');

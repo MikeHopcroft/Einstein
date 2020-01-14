@@ -1,6 +1,7 @@
 // tslint:disable-next-line:interface-name
 export interface IStorage {
     // TODO: blob creation/update/delete events
+    appendBlob(name: string, buffer: Buffer): Promise<void>;
     writeBlob(name: string, buffer: Buffer): Promise<void>;
     readBlob(name: string): Promise<Buffer>;
     listBlobs(prefix?: string): Promise<string[]>;
@@ -66,6 +67,8 @@ export interface IWorker {
     // Note: worker should return immediately after this call.
     // TODO: should this take an exit code?
     shutdown(): void;
+
+    log(message: string): void;
 }
 
 export interface ServiceInfo {
@@ -97,7 +100,8 @@ export interface IOrchestrator {
         imageTag: string,
         cloudStorage: IStorage,
         volumes: Volume[],
-        environment: IEnvironment
+        environment: IEnvironment,
+        logger: ILogger
     ): void;
 
     // Removes the worker from the hosts table.

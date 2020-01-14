@@ -9,8 +9,20 @@ interface Blob {
 export class RamDisk implements IStorage {
     private blobs = new Map<string, Buffer>();
 
+    async appendBlob(name: string, buffer: Buffer): Promise<void> {
+        const blob = this.blobs.get(name);
+        if (blob === undefined) {
+            // TODO: copy buffer here?
+            this.blobs.set(name, buffer);
+        } else {
+            // TODO: find more efficient way of appending.
+            this.blobs.set(name, Buffer.concat([blob, buffer]))
+        }
+    }
+
     async writeBlob(name: string, buffer: Buffer): Promise<void> {
-        this.blobs.set(name, buffer);
+            // TODO: copy buffer here?
+            this.blobs.set(name, buffer);
     }
 
     async readBlob(name: string): Promise<Buffer> {

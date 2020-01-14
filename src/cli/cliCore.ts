@@ -7,12 +7,15 @@ import {
     IStorage,
     RamDisk,
     Volume,
-    World
+    World,
+    ConsoleLogger,
+    BlobLogger
 } from '../cloud';
 
 import { Laboratory, ILaboratory, SuiteDescription } from '../laboratory';
-import { encodeBenchmark, encodeCandidate, encodeSuite } from '../naming';
+import { encodeBenchmark, encodeCandidate, encodeSuite, encodeLog } from '../naming';
 import { encryptSecrets, generateKeys } from '../secrets';
+import { worker } from 'cluster';
 
 export class CLI {
     private orchestrator: IOrchestrator;
@@ -55,7 +58,8 @@ export class CLI {
             Laboratory.image.tag,
             this.cloudStorage,
             [volume],
-            environment
+            environment,
+            new BlobLogger(this.cloudStorage, hostname, encodeLog(hostname))
         );
 
         // TODO: this should be set through the connect mechanism
@@ -140,7 +144,8 @@ export class CLI {
             candidateId,
             this.cloudStorage,
             [],
-            new Environment()
+            new Environment(),
+            new BlobLogger(this.cloudStorage, candidateHost, encodeLog(candidateHost))
         );
 
         // Start the benchmark container.
@@ -154,7 +159,8 @@ export class CLI {
             new Environment([
                 ['host', candidateHost],
                 ['suite', suiteId],
-            ])
+            ]),
+            new BlobLogger(this.cloudStorage, benchmarkHost, encodeLog(benchmarkHost))
         );
     }
 

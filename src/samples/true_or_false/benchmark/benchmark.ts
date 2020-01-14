@@ -1,6 +1,6 @@
 import * as yaml from 'js-yaml';
 
-import { IStorage, IWorker } from '../../../cloud';
+import { IStorage, IWorker, ILogger } from '../../../cloud';
 import { encodeSuite } from '../../../naming';
 import { sleep } from '../../../utilities';
 
@@ -14,6 +14,7 @@ export class Benchmark {
     };
 
     static async entryPoint(worker: IWorker) {
+        worker.log(`Benchmark.entryPoint()`);
         console.log(`Benchmark.entryPoint()`);
         const env =  worker.getEnvironment();
         const candidateHost = env.get('host');
@@ -28,7 +29,7 @@ export class Benchmark {
         console.log('benchmark: awoke');
 
         // TODO: pass worker to constructor?
-        const benchmark = new Benchmark(worker.getCloudStorage(), worker.getFileSystem());
+        const benchmark = new Benchmark(worker);
 
         // TODO: don't hard-code hostname and port here.
         const candidate =
@@ -37,12 +38,14 @@ export class Benchmark {
         await benchmark.run(candidate, suiteId);
     }
 
+    private worker: IWorker;
     private cloudStorage: IStorage;
     private localStorage: IStorage;
 
-    constructor(cloudStorage: IStorage, localStorage: IStorage) {
-        this.cloudStorage = cloudStorage;
-        this.localStorage = localStorage;
+    constructor(worker: IWorker) {
+        this.worker = worker;
+        this.cloudStorage = worker.getCloudStorage();
+        this.localStorage = worker.getFileSystem();
     }
 
     async run(candidate: ICandidate, suiteId: string) {
@@ -82,9 +85,11 @@ export class Benchmark {
                 const result = await candidate.runCase(testCase.input);
                 const success = (result === testCase.expected);
                 if (success) {
+                    this.worker.log(`passed: "${testCase.input}"\n`)
                     console.log(`passed: "${testCase.input}"`)
                 } else {
-                    console.log(`failed: "${testCase.input}" ==> "${result}"`)
+                    this.worker.log(`failed: "${testCase.input}" ==> "${result}"\n`);
+                    console.log(`failed: "${testCase.input}" ==> "${result}"`);
                 }
             }
 
@@ -100,6 +105,9 @@ export class Benchmark {
                 Buffer.from('benchmark results', 'utf-8')
             );
         }
+
+        // // Simulate delay in shutting down
+        // await sleep(10000);
 
         console.log('Benchmark: return');
         return;

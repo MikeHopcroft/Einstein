@@ -27,10 +27,17 @@ export class CloudMain {
                 description: 'List blobs',
                 command: context.lsCommand
             },
+            {
+                name: 'more',
+                args: ['blob'],
+                description: 'Display content of a blob',
+                command: context.moreCommand
+            },
         ];
     }
 
     async lsCommand(args: string[]): Promise<number> {
+        // TODO: BUGBUG: this should not be the filesystem cwd.
         const cwd = this.cwd;
         const storage = this.world.cloudStorage;
 
@@ -44,7 +51,11 @@ export class CloudMain {
         if (blobs.length === 0) {
             // TODO: BUGBUG: args[1] is not always defined.
             // Can get to this case after cd to bad directory.
-            console.log(`cloud ls: ${args[1]}: No such file or directory`);
+            if (args.length > 1) {
+                console.log(`cloud ls: ${args[1]}: No such file or directory`);
+            } else {
+                console.log(`cloud ls: empty`);
+            }
         } else {
             for (const blob of blobs) {
                 const relative = path.posix.relative(cwd, blob);
@@ -54,6 +65,21 @@ export class CloudMain {
 
         return 0;
     }
+
+    // export async function moreCommand(args: string[], shell: Shell): Promise<number> {
+    async moreCommand(args: string[]): Promise<number> {
+        if (args.length !== 1) {
+            console.log(`cloud more: expected a filename: ${args}`);
+            return 1;
+        } else {
+            const storage = this.world.cloudStorage;
+            const filePath = path.posix.join('/', args[0]);
+            const fileData = await storage.readBlob(filePath);
+            console.log(fileData.toString('utf8'));
+            return 0;
+        }
+    }
+    
 
 
     async helpCommand(args: string[]): Promise<number> {

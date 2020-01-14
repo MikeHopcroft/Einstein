@@ -2,6 +2,7 @@ import * as yaml from 'js-yaml';
 import * as path from 'path';
 
 import {
+    ConsoleLogger,
     Environment,
     IStorage,
     RamDisk,
@@ -13,7 +14,6 @@ import {
 import { Laboratory } from '../../laboratory';
 
 import { Benchmark, Candidate } from '../true_or_false'
-import { ConsoleLogger } from '../../cloud/local/localConsoleLogger';
 
 // TODO: suppress localStorage initialization on disk.
 // Don't want to overwrite yaml files on disk.
