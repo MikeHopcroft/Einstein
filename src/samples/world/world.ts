@@ -13,6 +13,7 @@ import {
 import { Laboratory } from '../../laboratory';
 
 import { Benchmark, Candidate } from '../true_or_false'
+import { ConsoleLogger } from '../../cloud/local/localConsoleLogger';
 
 // TODO: suppress localStorage initialization on disk.
 // Don't want to overwrite yaml files on disk.
@@ -28,6 +29,7 @@ export function sampleWorld(localDiskPath?: string) {
         localStorage,
         orchestrator: new LocalOrchestrator(),
         environment: new Environment(),
+        logger: new ConsoleLogger('shell'),
         homedir: '/',
         cwd: '/'
     };
@@ -80,6 +82,64 @@ const suite = {
     owner: 'Mike',
     created: '2020-01-07T04:09:18.721Z',
     benchmarkId: 'true_or_false_benchmark:1.0',
-    domainData: [],
-    testData: []
+    domainData: [
+        { name: 'a', value: true },
+        { name: 'b', value: true },
+        { name: 'c', value: true },
+        { name: 'x', value: false },
+        { name: 'y', value: false },
+        { name: 'z', value: false }
+    ],
+    testCases: [
+        { input: 'a', expected: true },
+        { input: 'b', expected: true },
+        { input: 'x', expected: false },
+        { input: '!a', expected: false },
+        { input: '!b', expected: false },
+        { input: '!x', expected: true },
+        { input: '(a)', expected: true },
+        { input: '(x)', expected: false },
+        { input: 'a & b', expected: true },
+        { input: 'a & b & c', expected: true },
+        { input: 'a & x', expected: false },
+        { input: 'a & b & x', expected: false },
+        { input: 'a | b', expected: true },
+        { input: 'a | x', expected: true },
+        { input: 'x | y | z | a', expected: true },
+        { input: 'x | y', expected: false },
+        { input: '!(x & y)', expected: true },
+        { input: '!(a | b)', expected: false },
+        { input: '!a & !x', expected: false },
+        { input: '!x & !y', expected: true },
+        { input: '!a & !b', expected: false },
+        { input: '!x & !b', expected: false },
+        { input: '!!a', expected: true },
+        { input: '!!!a', expected: false },
+        { input: 'x & a | b', expected: true },
+        { input: '(x & a) | b', expected: true },
+        { input: 'x & (a | b)', expected: false },
+        {
+            input: '((a | x) & (b | y) & ((c | x) | (d | y)))',
+            expected: true
+        },
+        { input: 'foo', expected: true },
+        { input: 'bar', expected: true },
+        { input: 'foo-bar', expected: true },
+        { input: 'foo & bar & !baz-baz', expected: true },
+        { input: '    a   &b & c   ', expected: true },
+        { input: 'a&b&c', expected: true },
+        { input: '(a&b', expected: "Expected ')'" },
+        { input: '(a|b', expected: "Expected ')'" },
+        { input: 'a&', expected: 'Expected a variable' },
+        { input: 'a |', expected: 'Expected a variable' },
+        { input: '&', expected: 'Unexpected operator "&"' },
+        { input: '|', expected: 'Unexpected operator "|"' },
+        { input: '!', expected: 'Expected a variable' },
+        { input: '(', expected: 'Expected a variable' },
+        { input: ')', expected: 'Unexpected operator ")"' },
+        { input: 'a b', expected: "Expected '&' or '|' operator" },
+        { input: '(a+b))', expected: "Expected '&' or '|' operator" },
+        { input: '', expected: 'Expected a variable' },
+        { input: '   ', expected: 'Expected a variable' }
+    ]
 };

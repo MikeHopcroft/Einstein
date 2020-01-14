@@ -153,43 +153,44 @@ export class Laboratory implements ILaboratory {
     }
 }
 
-async function go() {
-    const keys = generateKeys();
-    const cloudStorage = new RamDisk();
-    const lab = new Laboratory(keys, cloudStorage);
+// TODO: save for unit tests
+// async function go() {
+//     const keys = generateKeys();
+//     const cloudStorage = new RamDisk();
+//     const lab = new Laboratory(keys, cloudStorage);
 
-    const benchmark: BenchmarkDescription = {
-        name: 'Sample True_Or_False Benchmark',
-        description: 'A sample benchmark for boolean expressions evaluation.',
-        owner: 'Mike',
-        created: new Date().toISOString(),
-        image: 'myregistry.azurecr.io/true_or_false_benchmark:1.0'
-    };
-    const benchmarkId = await lab.createBenchmark(benchmark);
+//     const benchmark: BenchmarkDescription = {
+//         name: 'Sample True_Or_False Benchmark',
+//         description: 'A sample benchmark for boolean expressions evaluation.',
+//         owner: 'Mike',
+//         created: new Date().toISOString(),
+//         image: 'myregistry.azurecr.io/true_or_false_benchmark:1.0'
+//     };
+//     const benchmarkId = await lab.createBenchmark(benchmark);
 
-    const suite: SuiteDescription = {
-        name: 'Sample True_Or_False Suite',
-        description: 'A sample benchmark for boolean expressions evaluation.',
-        owner: 'Mike',
-        created: new Date().toISOString(),
-        benchmarkId,
-        domainData: [],
-        testData: []
-    };
-    const suiteId = await lab.createSuite(suite);
+//     const suite: SuiteDescription = {
+//         name: 'Sample True_Or_False Suite',
+//         description: 'A sample benchmark for boolean expressions evaluation.',
+//         owner: 'Mike',
+//         created: new Date().toISOString(),
+//         benchmarkId,
+//         // domainData: [],
+//         // testData: []
+//     };
+//     const suiteId = await lab.createSuite(suite);
 
-    const candidate: CandidateDescription = {
-        name: 'Sample True_Or_False Candidate',
-        description: 'A sample candidate that implements a boolean expression parser.',
-        owner: 'Mike',
-        created: new Date().toISOString(),
-        benchmarkId,
-        image: 'myregistry.azurecr.io/true_or_false_candidate:1.0'
-    };
-    const candidateId = await lab.createCandidate(candidate);
+//     const candidate: CandidateDescription = {
+//         name: 'Sample True_Or_False Candidate',
+//         description: 'A sample candidate that implements a boolean expression parser.',
+//         owner: 'Mike',
+//         created: new Date().toISOString(),
+//         benchmarkId,
+//         image: 'myregistry.azurecr.io/true_or_false_candidate:1.0'
+//     };
+//     const candidateId = await lab.createCandidate(candidate);
 
-    lab.run(candidateId, suiteId);
-}
+//     lab.run(candidateId, suiteId);
+// }
 
 // go();
 

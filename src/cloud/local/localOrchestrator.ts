@@ -12,6 +12,7 @@ import {
 } from '../interfaces';
 
 import { LocalWorker } from './localWorker';
+import { ConsoleLogger } from './localConsoleLogger';
 
 export interface Service {
     world: World;
@@ -95,6 +96,7 @@ export class LocalOrchestrator implements IOrchestrator {
             localStorage,
             orchestrator: this,
             environment,
+            logger: new ConsoleLogger(hostname),
             homedir: '/',
             cwd: '/'
         };

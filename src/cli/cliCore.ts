@@ -1,4 +1,5 @@
 import * as yaml from 'js-yaml';
+import * as uuid from 'uuid';
 
 import {
     Environment,
@@ -9,7 +10,7 @@ import {
     World
 } from '../cloud';
 
-import { Laboratory, ILaboratory } from '../laboratory';
+import { Laboratory, ILaboratory, SuiteDescription } from '../laboratory';
 import { encodeBenchmark, encodeCandidate, encodeSuite } from '../naming';
 import { encryptSecrets, generateKeys } from '../secrets';
 
@@ -90,6 +91,7 @@ export class CLI {
     }
 
     async uploadBenchmark(filename: string): Promise<void> {
+        // TODO: use ILaboratory instead of uploading directly.
         const encoded = encodeBenchmark(filename);
         const buffer = await this.localStorage.readBlob(filename);
         await this.cloudStorage.writeBlob(encoded, buffer);
@@ -99,6 +101,7 @@ export class CLI {
     // TODO: list with wildcards - what is the syntax?
 
     async uploadCandidate(filename: string): Promise<void> {
+        // TODO: use ILaboratory instead of uploading directly.
         const encoded = encodeCandidate(filename);
         const buffer = await this.localStorage.readBlob(filename);
         await this.cloudStorage.writeBlob(encoded, buffer);
@@ -106,15 +109,53 @@ export class CLI {
     }
 
     async uploadSuite(filename: string): Promise<void> {
-        const encoded = encodeSuite(filename);
+        // TODO: use ILaboratory instead of uploading directly.
         const buffer = await this.localStorage.readBlob(filename);
+        const yamlText = buffer.toString('utf8');
+        const data = yaml.safeLoad(yamlText) as SuiteDescription;
+
+        const encoded = encodeSuite(data.name);
         await this.cloudStorage.writeBlob(encoded, buffer);
         console.log(`Uploaded to ${encoded}`);
     }
 
     async run(candidateId: string, suiteId: string): Promise<void> {
-        // TODO: implement
-        // TODO: probably want to use wildcard matching here.
+        // TODO: use ILaboratory instead of manipulating orchestrator directly.
+
+        // Load the suite manifest from cloud storage in order to get the
+        // benchmarkId.
+        const encoded = encodeSuite(suiteId);
+        console.log(`Reading suite ${suiteId} from ${encoded}`);
+        const buffer = await this.cloudStorage.readBlob(encoded);
+        const yamlText = buffer.toString('utf8');
+        const suiteData = yaml.safeLoad(yamlText) as SuiteDescription;
+
+        // TODO: verify the candidate's benchmarkId
+
+        // Start the candidate container.
+        const candidateHost = uuid();
+        console.log(`Starting candidate ${candidateId} on ${candidateHost}`);
+        this.orchestrator.createWorker(
+            candidateHost,
+            candidateId,
+            this.cloudStorage,
+            [],
+            new Environment()
+        );
+
+        // Start the benchmark container.
+        const benchmarkHost = uuid();
+        console.log(`Starting benchmark ${suiteData.benchmarkId} on ${benchmarkHost}`);
+        this.orchestrator.createWorker(
+            benchmarkHost,
+            suiteData.benchmarkId,
+            this.cloudStorage,
+            [],
+            new Environment([
+                ['host', candidateHost],
+                ['suite', suiteId],
+            ])
+        );
     }
 
     // async connect(hostname: string) {

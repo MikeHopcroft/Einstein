@@ -7,7 +7,7 @@ async function go() {
     const shell = new Shell(world);
     const finished = shell.finished();
     await finished;
-    console.log('exiting');
+    // console.log('exiting');
 }
 
 go();

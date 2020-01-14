@@ -117,7 +117,7 @@ export class CLIMain {
 
     async runCommand(args: string[]): Promise<number> {
         const [candidateId, suiteId] = args;
-        console.log(`running suite ${suiteId} on candidate ${candidateId}`);
+        await this.cli.run(candidateId, suiteId);
         return 0;
     }
 

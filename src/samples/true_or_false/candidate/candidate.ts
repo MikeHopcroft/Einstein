@@ -7,7 +7,8 @@ import { parse } from './parser';
 
 export class Candidate implements ICandidate {
     static image = {
-        tag: 'myregistry.azurecr.io/true_or_false_candidate:1.0',
+        // tag: 'myregistry.azurecr.io/true_or_false_candidate:1.0',
+        tag: 'true_or_false_candidate:1.0',
         create: () => Candidate.entryPoint
     };
 
@@ -20,15 +21,20 @@ export class Candidate implements ICandidate {
         console.log('candidate: awoke');
     
         // Construct and bind service RPC stub. 
-        const myService = new Candidate();
+        const myService = new Candidate(worker);
         // TODO: do not bind port here.
         worker.bind(worker.getWorld(), myService, 8080);
 
         // TODO: auto-shutdown if no connection after a certain amount of time?
     }
 
+    private worker: IWorker;
     private symbols = new Map<string,boolean>();
     private readyCount = 0;
+
+    constructor(worker: IWorker) {
+        this.worker = worker;
+    }
 
     async ready(): Promise<boolean> {
         // Simulate a delay until ready.
@@ -59,6 +65,7 @@ export class Candidate implements ICandidate {
 
     async shutdown(): Promise<void> {
         console.log('Candidate: shutdown()');
+        this.worker.shutdown();
         // process.exit(0);
     }
 }

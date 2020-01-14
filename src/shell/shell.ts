@@ -22,12 +22,12 @@ type CommandEntryPoint = (args: string[], shell: Shell) => Promise<number>;
 const maxHistorySteps = 1000;
 const historyFile = '.repl_history';
 
-function completer2(line: string) {
-    const completions = 'einstein cloud ls pwd'.split(' ');
-    const hits = completions.filter((c) => c.startsWith(line));
-    // Show all completions if none found
-    return [hits.length ? hits : completions, line];
-}
+// function completer2(line: string) {
+//     const completions = 'einstein cloud ls pwd'.split(' ');
+//     const hits = completions.filter((c) => c.startsWith(line));
+//     // Show all completions if none found
+//     return [hits.length ? hits : completions, line];
+// }
 
 export class Shell {
     // Map of shell commands (e.g. cd, ls, pwd, einstein, etc.)
@@ -74,6 +74,8 @@ export class Shell {
         this.registerCommand('cd', cdCommand);
         this.registerCommand('cloud', this.cloudCommand);
         this.registerCommand('einstein', this.einsteinCommand);
+        this.registerCommand('exit', this.exitCommand);
+        this.registerCommand('help', this.helpCommand);
         this.registerCommand('images', imagesCommand);
         this.registerCommand('ls', lsCommand);
         this.registerCommand('more', moreCommand);
@@ -107,7 +109,8 @@ export class Shell {
 
         // Register line input handler.
         rl.on('line', async (line: string) => {
-            if (line === '') {
+            if (line.trim() === 'exit') {
+            // if (line === '') {
                 rl.close();
             } else {
                 await processOneInputLine(line);
@@ -125,8 +128,10 @@ export class Shell {
         });
 
         async function processOneInputLine(line: string) {
-            // Process the current line.
-            await shell.processLine(line);
+            if (line.trim() !== '') {
+                // Process the current line.
+                await shell.processLine(line);
+            }
 
             // Show next prompt.
             rl.prompt();
@@ -184,17 +189,43 @@ export class Shell {
     }
 
     completer = (line: string) => {
+        // console.log('completing');
         // const completions = 'einstein cloud ls pwd'.split(' ');
         const completions = [
+            'einstein benchmark ',
+            'einstein benchmark benchmark.yaml',
+            'einstein candidate ',
+            'einstein candidate candidate.yaml',
+            'einstein deploy',
+            'einstein help',
+            'einstein suite ',
+            'einstein suite suite.yaml',
+            'einstein run ',
+            'einstein run true_or_false_candidate:1.0 ',
+            'einstein run true_or_false_candidate:1.0 True_Or_False',
+            'einstein list ',
+            'einstein list candidates',
+            'einstein list benchmarks',
+            'einstein list suites',
+            'einstein list runs',
             'einstein ',
-            'einstein benchmark',
-            'einstein candidate',
-            'einstein suite',
-            'einstein run',
+            'benchmark.yaml',
+            'candidate.yaml',
+            'suite.yaml',
+            'benchmark',
+            'candidate',
+            'services',
+            // 'suite',
+            'list',
             'cloud',
-            'ls'
+            'ls',
+            'more ',
+            'more candidate.yaml',
+            'more benchmark.yaml',
+            'more suite.yaml',
         ];
-        const hits = this.completions.filter((c) => c.startsWith(line));
+        const hits = completions.filter((c) => c.startsWith(line));
+        // console.log(`line="${line}", hits=${hits}`);
         return [hits, line];
     }
     
@@ -221,11 +252,24 @@ export class Shell {
         }
     }
 
-    private einsteinCommand = (args: string[], shell: Shell) => {
+    private einsteinCommand = async (args: string[], shell: Shell): Promise<number> => {
         return this.einstein.run(args);
+    }
+
+    private exitCommand = async (args: string[], shell: Shell): Promise<number> => {
+        this.rl.close();
+        return 0;
     }
 
     private cloudCommand = (args: string[], shell: Shell) => {
         return this.cloud.run(args);
+    }
+
+    private helpCommand = async (args: string[], shell: Shell): Promise<number> => {
+        console.log('Available shell commands:');
+        for (const command of this.commands.keys()) {
+            console.log(`  ${command}`);
+        }
+        return 0;
     }
 }

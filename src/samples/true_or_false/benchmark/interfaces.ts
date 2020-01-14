@@ -1,22 +1,28 @@
+import { SuiteDescription } from "../../../laboratory";
+
 export interface TestCase {
     input: string;
     expected: boolean | string;
 }
 
-export interface TestSuite {
-    name: string;
-    description: string;
-    benchmark: string;
-    domainData: string;
-    cases: TestCase[];
-}
-
-export type SymbolTable = SymbolDefinition[];
-
 export interface SymbolDefinition {
     name: string;
     value: boolean;
 }
+
+export type SymbolTable = SymbolDefinition[];
+
+// TODO: extends SuiteDescription
+export interface TestSuite extends SuiteDescription {
+    name: string;
+    description: string;
+    owner: string;
+    created: string,
+    benchmarkId: string;
+    domainData: SymbolTable;
+    testCases: TestCase[];
+}
+
 
 // tslint:disable-next-line:interface-name
 export interface ICandidate {

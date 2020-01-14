@@ -1,20 +1,26 @@
 import * as yaml from 'js-yaml';
 
-import { IWorker } from '../../../cloud';
-
-import { IStorage } from '../../../cloud';
+import { IStorage, IWorker } from '../../../cloud';
+import { encodeSuite } from '../../../naming';
 import { sleep } from '../../../utilities';
 
 import { ICandidate, SymbolTable, TestSuite } from './interfaces';
 
 export class Benchmark {
     static image = {
-        tag: 'myregistry.azurecr.io/true_or_false_benchmark:1.0',
+        // tag: 'myregistry.azurecr.io/true_or_false_benchmark:1.0',
+        tag: 'true_or_false_benchmark:1.0',
         create: () => Benchmark.entryPoint
     };
 
     static async entryPoint(worker: IWorker) {
         console.log(`Benchmark.entryPoint()`);
+        const env =  worker.getEnvironment();
+        const candidateHost = env.get('host');
+        const suiteId = env.get('suite');
+        // TODO: check for undefined candidateHost, suiteName
+        console.log(`Candidate is ${candidateHost}`);
+        console.log(`Suite is ${suiteId}`);
 
         // Simulate startup time.
         console.log('benchmark: sleeping');
@@ -26,9 +32,9 @@ export class Benchmark {
 
         // TODO: don't hard-code hostname and port here.
         const candidate =
-            (await worker.connect<ICandidate>('server1', 8080)) as ICandidate;
+            (await worker.connect<ICandidate>(candidateHost, 8080)) as ICandidate;
 
-        await benchmark.run(candidate);
+        await benchmark.run(candidate, suiteId);
     }
 
     private cloudStorage: IStorage;
@@ -39,26 +45,25 @@ export class Benchmark {
         this.localStorage = localStorage;
     }
 
-    async run(candidate: ICandidate) {
+    async run(candidate: ICandidate, suiteId: string) {
         console.log('Benchmark: run()');
 
         // TODO: error handling for async APIs
 
-        // Get private key from secrets.txt
-        const secrets =
-            (await this.localStorage.readBlob('secrets.txt')).toString('utf-8');
-        console.log(`Benchmark: secrets = "${secrets}"`);
+        // // Get private key from secrets.txt
+        // const secrets =
+        //     (await this.localStorage.readBlob('secrets.txt')).toString('utf-8');
+        // console.log(`Benchmark: secrets = "${secrets}"`);
 
         // Load test suite from cloud storage.
+        const encoded = encodeSuite(suiteId);
         const suite = yaml.safeLoad(
-            (await this.cloudStorage.readBlob('suite')).toString('utf-8')
+            (await this.cloudStorage.readBlob(encoded)).toString('utf-8')
         ) as TestSuite;
         // TODO: Verify TestSuite schema
 
         // Load experiment symbol table from cloud storage.
-        const symbols = yaml.safeLoad(
-            (await this.cloudStorage.readBlob('domainData')).toString('utf-8')
-        ) as SymbolTable;
+        const symbols = suite.domainData;
         // TODO: Verify SymbolTable schema
 
         // Wait until candidate is ready.
@@ -73,7 +78,7 @@ export class Benchmark {
             await candidate.initialize(symbols);
 
             // Run each test case.
-            for (const testCase of suite.cases) {
+            for (const testCase of suite.testCases) {
                 const result = await candidate.runCase(testCase.input);
                 const success = (result === testCase.expected);
                 if (success) {

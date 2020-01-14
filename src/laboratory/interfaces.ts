@@ -7,23 +7,17 @@ export interface EntityDescription {
 
 export interface BenchmarkDescription extends EntityDescription {
     image: string;
-    // containerBaseName: string;
-    // containerVersion: string;
 }
 
 export interface CandidateDescription extends EntityDescription {
     benchmarkId: string;
     image: string;
-    // containerBaseName: string;
-    // containerVersion: string;
 }
 
 // TODO: ISSUE: do suites refer to versioned or unversioned benchmark
 // containers?
 export interface SuiteDescription extends EntityDescription {
     benchmarkId: string;
-    domainData: string[];
-    testData: string[];
 }
 
 export interface RunDescription extends EntityDescription {

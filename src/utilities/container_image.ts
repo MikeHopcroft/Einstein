@@ -9,8 +9,11 @@ export class ContainerImage {
     component = '';
     tag = '';
     digest = '';
+    shortName: string;
+    fullName: string;
 
     constructor(image: string) {
+        this.fullName = image;
         const parts = image.split('/');
         if (parts.length === 1) {
             this.host = '';
@@ -28,9 +31,11 @@ export class ContainerImage {
             const message = "Invalid image";
             throw TypeError(message);
         }
+
+        this.shortName = `${this.component}:${this.tag}`;
     }
 
-    parseComponentTagDigest(input: string) {
+    private parseComponentTagDigest(input: string) {
         const parts = input.split(':');
         if (parts.length === 1) {
             this.component = parts[0];
@@ -43,7 +48,7 @@ export class ContainerImage {
         }
     }
 
-    parseTagDigest(input: string) {
+    private parseTagDigest(input: string) {
         const parts = input.split('@');
         if (parts.length === 1) {
             this.tag = parts[0];

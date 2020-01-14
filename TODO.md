@@ -1,6 +1,8 @@
 # TODO LIST
 
 ## Next
+* Logging
+* cloud more
 * Set up unit testing
 
 ## Housekeeping
@@ -11,6 +13,16 @@
 * Prettier clean
 
 ## Easy
+* Shell print list of commands
+* world.ts: suppress localStorage initialization on disk.
+* Remove dead code files and debug configurations
+  * junk2.ts
+  * true_or_false.ts
+  * go()
+* Unify EntityDescription with SuiteDescription
+* Blob append logger
+* Move code from CLICore to Laboratory
+* Stable uuids for documentation generation
 * getPrefix() should move into naming library
 * BUG: benchmark and candidate names should come from image tag
 * BUG: suite names should come from yaml field
@@ -40,6 +52,7 @@
 * Catch errors in shell (e.g. duplicate deployments)
 
 ## Basic
+* Figure out container_image.ts. What is the naming scheme?
 * x ls and cloud ls should sort. Lexigraphical? Tree order? Are they the same?
 * Tutorial should not spit out final code block
 * Tutorial feature to limit number of lines in a block (to show first n lines of test case...)

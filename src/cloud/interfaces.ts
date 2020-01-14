@@ -34,6 +34,11 @@ export  interface IEnvironment {
     entries(): IterableIterator<[string, string]>;
 }
 
+// tslint:disable-next-line:interface-name
+export interface ILogger {
+    log: (message: string) => Promise<void>;
+}
+
 //
 // An IWorker is analogous to a running container.
 //
@@ -119,6 +124,7 @@ export interface World {
     localStorage: IStorage;
     orchestrator: IOrchestrator;
     environment: IEnvironment;
+    logger: ILogger;
     homedir: string;
     cwd: string;
 }
