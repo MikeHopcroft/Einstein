@@ -10,7 +10,7 @@ export interface SymbolDefinition {
     value: boolean;
 }
 
-export type SymbolTable = SymbolDefinition[];
+export type Symbols = SymbolDefinition[];
 
 // TODO: extends SuiteDescription
 export interface TestSuite extends SuiteDescription {
@@ -19,7 +19,7 @@ export interface TestSuite extends SuiteDescription {
     owner: string;
     created: string,
     benchmarkId: string;
-    domainData: SymbolTable;
+    domainData: Symbols;
     testCases: TestCase[];
 }
 
@@ -27,7 +27,7 @@ export interface TestSuite extends SuiteDescription {
 // tslint:disable-next-line:interface-name
 export interface ICandidate {
     ready(): Promise<boolean>;
-    initialize(symbols: SymbolTable): Promise<void>;
+    initialize(symbols: Symbols): Promise<void>;
     runCase(input: string): Promise<boolean | string>;
 
     // TODO: ISSUE: should training cases be passed one-by-one or in a batch?

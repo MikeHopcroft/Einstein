@@ -4,7 +4,7 @@ import { IStorage, IWorker, ILogger } from '../../../cloud';
 import { encodeSuite, encodeRun } from '../../../naming';
 import { sleep } from '../../../utilities';
 
-import { ICandidate, SymbolTable, TestSuite } from './interfaces';
+import { ICandidate, TestSuite } from './interfaces';
 import { RunDescription } from '../../../laboratory';
 
 export class Benchmark {
@@ -17,7 +17,7 @@ export class Benchmark {
     static async entryPoint(worker: IWorker) {
         worker.log(`Benchmark.entryPoint()`);
         // console.log(`Benchmark.entryPoint()`);
-        const env =  worker.getEnvironment();
+        const env =  worker.getWorld().environment;
         const candidateId = env.get('candidate');
         const candidateHost = env.get('host');
         const suiteId = env.get('suite');
@@ -47,8 +47,8 @@ export class Benchmark {
 
     constructor(worker: IWorker) {
         this.worker = worker;
-        this.cloudStorage = worker.getCloudStorage();
-        this.localStorage = worker.getFileSystem();
+        this.cloudStorage = worker.getWorld().cloudStorage;
+        this.localStorage = worker.getWorld().localStorage;
     }
 
     async run(candidate: ICandidate, candidateId: string, suiteId: string) {
@@ -70,7 +70,7 @@ export class Benchmark {
 
         // Load experiment symbol table from cloud storage.
         const symbols = suite.domainData;
-        // TODO: Verify SymbolTable schema
+        // TODO: Verify Symbols schema
 
         // Wait until candidate is ready.
         const ready = await waitForCandidate(candidate);

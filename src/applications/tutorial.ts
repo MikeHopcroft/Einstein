@@ -7,50 +7,51 @@ import { sampleWorld } from '../samples';
 import { Shell } from "../shell";
 import { sleep, PeekableSequence } from "../utilities";
 
-const text = `
-# Title
+// Save for unit tests
+// const text = `
+// # Title
 
-Here is a non-shell block
-~~~
-foo
-~~~
+// Here is a non-shell block
+// ~~~
+// foo
+// ~~~
 
-This is some sameple content.
+// This is some sameple content.
 
-[//]: # (shell)
-~~~
-Welcome to the Einstein interactive command shell.
-Type commands below.
-A blank line exits.
+// [//]: # (shell)
+// ~~~
+// Welcome to the Einstein interactive command shell.
+// Type commands below.
+// A blank line exits.
 
-Type "help" for information on commands.
+// Type "help" for information on commands.
 
-einstein:/% help
-einstein:/% cd a
-einstein:/a% cd b
-einstein:/a/b% pwd
-/a/b
-~~~
+// einstein:/% help
+// einstein:/% cd a
+// einstein:/a% cd b
+// einstein:/a/b% pwd
+// /a/b
+// ~~~
 
-## Heading 1
+// ## Heading 1
 
-Here is some more content.
+// Here is some more content.
 
-[//]: # (shell)
-~~~
-einstein:/% services
-no services running
-einstein:/% einstein deploy lab
-Deploying to lab.
-einstein:/% services
-no services running
-einstein:/% # wait 1 seconds for service to start ...
-einstein:/% services
-no services running
-~~~
+// [//]: # (shell)
+// ~~~
+// einstein:/% services
+// no services running
+// einstein:/% einstein deploy lab
+// Deploying to lab.
+// einstein:/% services
+// no services running
+// einstein:/% # wait 1 seconds for service to start ...
+// einstein:/% services
+// no services running
+// ~~~
 
-The end.
-`;
+// The end.
+// `;
 
 // Save for unit tests.
 // function go2() {
@@ -330,16 +331,4 @@ async function main() {
     return 0;
 }
 
-async function go() {
-    const updated = await updateMarkdown(text);
-    // const updated2 = await updateMarkdown(updated);
-    console.log('=======================================');
-    console.log(updated);
-    // console.log('???????????????????????????????????????');
-    // console.log(updated2);
-
-    // console.log(updated === updated2);
-}
-
-// go();
 main();

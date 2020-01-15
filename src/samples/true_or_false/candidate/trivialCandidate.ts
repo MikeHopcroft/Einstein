@@ -1,7 +1,7 @@
 import { IWorker } from '../../../cloud';
 import { sleep } from '../../../utilities';
 
-import { ICandidate, SymbolTable } from '../benchmark';
+import { ICandidate, Symbols } from '../benchmark';
 
 export class TrivialCandidate implements ICandidate {
     static imageFalse = {
@@ -57,7 +57,7 @@ export class TrivialCandidate implements ICandidate {
         return this.readyCount > 1;
     }
 
-    async initialize(symbols: SymbolTable): Promise<void> {
+    async initialize(symbols: Symbols): Promise<void> {
         console.log('TrivialCandidate: initialize()');
         // Ignore symbols.
     }

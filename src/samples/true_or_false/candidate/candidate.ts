@@ -1,7 +1,7 @@
 import { IWorker } from '../../../cloud';
 import { sleep } from '../../../utilities';
 
-import { ICandidate, SymbolTable } from '../benchmark';
+import { ICandidate, Symbols } from '../benchmark';
 
 import { parse } from './parser';
 
@@ -43,7 +43,7 @@ export class Candidate implements ICandidate {
         return this.readyCount > 1;
     }
 
-    async initialize(symbols: SymbolTable): Promise<void> {
+    async initialize(symbols: Symbols): Promise<void> {
         this.worker.log('Candidate: initialize()');
         this.symbols.clear();
         for (const symbol of symbols) {

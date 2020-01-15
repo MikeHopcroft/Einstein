@@ -38,7 +38,7 @@ export class Laboratory implements ILaboratory {
         const keys: KeyPair = generateKeys();
 
         // Construct and bind service RPC stub. 
-        const myService = new Laboratory(keys, worker.getFileSystem());
+        const myService = new Laboratory(keys, worker.getWorld().localStorage);
 
         // TODO: do not hard-code port here.
         worker.bind(worker.getWorld(), myService, 8080);

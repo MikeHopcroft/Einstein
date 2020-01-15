@@ -15,32 +15,24 @@
 * Prettier clean
 
 ## Easy
-* Rename camelCase files to under_score
-* Combine duplicated code in cliMain and cloudMain
-* Shell print list of commands
+* x Combine World and IWorker
+* Rename camelCase files to under_score?
 * Implement local storage flags for Shell.
 * world.ts: suppress localStorage initialization on disk.
-* Remove dead code files and debug configurations
-  * x junk2.ts
-  * x shell.old
-  * x junk.ts
-  * x true_or_false.ts
-  * go()
-  * x samples/container.ts
 * Unify EntityDescription with SuiteDescription
-* Move code from CLICore to Laboratory
 * Stable uuids for documentation generation
-* Combine World and IWorker
 * Rename tutorial to tutorial_builder
 * . Tutorial idempotent unit test
 * Tutorial read from file specified on command line
 * Use chalk or ansi-styles in tutorial
-* - Redirect recorded output to stderr to allow results on stdout
-* Remove Windows paths from true_or_false sample
 * Verfiy localDisk and ls work on Windows
 * localDisk: handle ~/tilde in root path
-* Duplicate definitions for SymbolTable
-* Move sample code out to samples folder
+* - Shell print list of commands
+* - Redirect recorded output to stderr to allow results on stdout
+* x Move sample code out to samples folder
+* x Duplicate definitions for SymbolTable
+* x Combine duplicated code in cliMain and cloudMain
+* x Remove Windows paths from true_or_false sample
 * x Move world.ts under true_or_false
 * x Remove shell parameter from einsteinCommand and cloudCommand
 * x Shell.setWorkingDirectory() migrates to World.
@@ -60,20 +52,31 @@
     * x https://stackoverflow.com/questions/13801273/what-does-u001bj-represent
     * x https://github.com/chalk/strip-ansi
     * x https://www.npmjs.com/package/strip-ansi
+* x Remove dead code files and debug configurations
+  * x junk2.ts
+  * x shell.old
+  * x junk.ts
+  * x true_or_false.ts
+  * x go()
+  * x samples/container.ts
 
 ## Basic
+* Verify YAML schemas
+* Provide candidates with their decrypted secrets 
+* Move code from CLICore to Laboratory
+* Transition to CommandDispatcher (cliMain.ts, cloud.ts, shell.ts)
 * show cloud command usage
 * formatArgs() duplicated
-* Provide candidates with their decrypted secrets   
+* CLIMain connects to analysis service as well as laboratory service.
+* cloud ls should take one optional parameter - right now has one required
 * Catch errors in shell (e.g. duplicate deployments)
   * Who catches rejected promises that happen in readline?
+* Shell into other servers?
 * Figure out container_image.ts. What is the naming scheme?
   * Review ContainerImage field names.
 * Tutorial should not spit out final code block
 * Tutorial feature to limit number of lines in a block (to show first n lines of test case...)
 * Tutorial feature to suppress salutation
-* CLIMain connects to analysis service as well as laboratory service.
-* cloud ls should take one optional parameter - right now has one required
 * Write design issue/note about databases vs canonical naming
 * Set Benchmark, Candidate, Suite create and owner fields at upload.
 * listCommand should use analysis service (analogous to CLI/Laboratory architecture)

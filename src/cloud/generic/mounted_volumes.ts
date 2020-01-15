@@ -97,5 +97,3 @@ class MountedVolumes implements IStorage {
 //         console.log(`${filepath}: ${x.relative}`);
 //     }
 // }
-
-// go();

@@ -45,16 +45,9 @@ export interface ILogger {
 //
 // tslint:disable-next-line:interface-name
 export interface IWorker {
+    // Returns a World object with access to cloud storage, local storage,
+    // orchestrator, environment, logging, etc.
     getWorld(): World;
-
-    // Returns the cloud storage available to this worker.
-    getCloudStorage(): IStorage;
-
-    // TODO: rename to getLocalStorage()?
-    // Returns this worker's local filesystem.
-    getFileSystem(): IStorage;
-
-    getEnvironment(): IEnvironment;
 
     // Makes an RPC interface stub available on a specified port.
     bind<T>(world: World, stub: T, port: number): void;
