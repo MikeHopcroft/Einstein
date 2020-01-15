@@ -8,14 +8,13 @@ import {
     RamDisk,
     Volume,
     World,
-    ConsoleLogger,
     BlobLogger
 } from '../cloud';
 
 import { Laboratory, ILaboratory, SuiteDescription } from '../laboratory';
 import { encodeBenchmark, encodeCandidate, encodeSuite, encodeLog } from '../naming';
 import { encryptSecrets, generateKeys } from '../secrets';
-import { worker } from 'cluster';
+import { loadSuite, loadCandidate, loadBenchmark } from '../laboratory/loaders';
 
 export class CLI {
     private orchestrator: IOrchestrator;
@@ -95,74 +94,107 @@ export class CLI {
     }
 
     async uploadBenchmark(filename: string): Promise<void> {
-        // TODO: use ILaboratory instead of uploading directly.
-        const encoded = encodeBenchmark(filename);
-        const buffer = await this.localStorage.readBlob(filename);
-        await this.cloudStorage.writeBlob(encoded, buffer);
-        console.log(`Uploaded to ${encoded}`);
+        const lab = await this.getLab();
+        const benchmark = await loadBenchmark(filename, this.localStorage, false);
+        const destination = await lab.createBenchmark(benchmark);
+        console.log(`Uploaded to ${destination}`);
+
+        // // TODO: use ILaboratory instead of uploading directly.
+        // // TODO: BUGBUG: use encoded container name, not filename
+        // const encoded = encodeBenchmark(filename);
+        // const buffer = await this.localStorage.readBlob(filename);
+        // await this.cloudStorage.writeBlob(encoded, buffer);
+        // console.log(`Uploaded to ${encoded}`);
     }
 
     // TODO: list with wildcards - what is the syntax?
 
     async uploadCandidate(filename: string): Promise<void> {
-        // TODO: use ILaboratory instead of uploading directly.
-        const encoded = encodeCandidate(filename);
-        const buffer = await this.localStorage.readBlob(filename);
-        await this.cloudStorage.writeBlob(encoded, buffer);
-        console.log(`Uploaded to ${encoded}`);
+        const lab = await this.getLab();
+        const candidate = await loadCandidate(filename, this.localStorage, false);
+        const destination = await lab.createCandidate(candidate);
+        console.log(`Uploaded to ${destination}`);
+
+        // // TODO: use ILaboratory instead of uploading directly.
+        // // TODO: BUGBUG: use encoded container name, not filename
+        // const encoded = encodeCandidate(filename);
+        // const buffer = await this.localStorage.readBlob(filename);
+        // await this.cloudStorage.writeBlob(encoded, buffer);
+        // console.log(`Uploaded to ${encoded}`);
     }
 
     async uploadSuite(filename: string): Promise<void> {
-        // TODO: use ILaboratory instead of uploading directly.
-        const buffer = await this.localStorage.readBlob(filename);
-        const yamlText = buffer.toString('utf8');
-        const data = yaml.safeLoad(yamlText) as SuiteDescription;
+        const lab = await this.getLab();
+        const suite = await loadSuite(filename, this.localStorage, false);
+        const destination = await lab.createSuite(suite);
+        console.log(`Uploaded to ${destination}`);
 
-        const encoded = encodeSuite(data.name);
-        await this.cloudStorage.writeBlob(encoded, buffer);
-        console.log(`Uploaded to ${encoded}`);
+        // // TODO: use ILaboratory instead of uploading directly.
+        // const buffer = await this.localStorage.readBlob(filename);
+        // const yamlText = buffer.toString('utf8');
+        // const data = yaml.safeLoad(yamlText) as SuiteDescription;
+
+        // const encoded = encodeSuite(data.name);
+        // await this.cloudStorage.writeBlob(encoded, buffer);
+        // console.log(`Uploaded to ${encoded}`);
     }
 
     async run(candidateId: string, suiteId: string): Promise<void> {
-        // TODO: use ILaboratory instead of manipulating orchestrator directly.
+        const lab = await this.getLab();
+        lab.run(candidateId, suiteId);
+        // // TODO: use ILaboratory instead of manipulating orchestrator directly.
 
-        // Load the suite manifest from cloud storage in order to get the
-        // benchmarkId.
-        const encoded = encodeSuite(suiteId);
-        // console.log(`Reading suite ${suiteId} from ${encoded}`);
-        const buffer = await this.cloudStorage.readBlob(encoded);
-        const yamlText = buffer.toString('utf8');
-        const suiteData = yaml.safeLoad(yamlText) as SuiteDescription;
+        // // Load the suite manifest from cloud storage in order to get the
+        // // benchmarkId.
+        // const suiteData = await loadSuite(suiteId, this.cloudStorage);
+        // // const encoded = encodeSuite(suiteId);
+        // // // console.log(`Reading suite ${suiteId} from ${encoded}`);
+        // // const buffer = await this.cloudStorage.readBlob(encoded);
+        // // const yamlText = buffer.toString('utf8');
+        // // const suiteData = yaml.safeLoad(yamlText) as SuiteDescription;
 
-        // TODO: verify the candidate's benchmarkId
+        // const candidateData = await loadCandidate(candidateId, this.cloudStorage);
 
-        // Start the candidate container.
-        const candidateHost = uuid();
-        console.log(`Starting candidate ${candidateId} on ${candidateHost}`);
-        this.orchestrator.createWorker(
-            candidateHost,
-            candidateId,
-            this.cloudStorage,
-            [],
-            new Environment(),
-            new BlobLogger(this.cloudStorage, candidateHost, encodeLog(candidateHost))
-        );
+        // if (suiteData.benchmarkId !== candidateData.benchmarkId) {
+        //     const message = "Suite and Candidate benchmarks don't match.";
+        //     throw TypeError(message);
+        // }
 
-        // Start the benchmark container.
-        const benchmarkHost = uuid();
-        console.log(`Starting benchmark ${suiteData.benchmarkId} on ${benchmarkHost}`);
-        this.orchestrator.createWorker(
-            benchmarkHost,
-            suiteData.benchmarkId,
-            this.cloudStorage,
-            [],
-            new Environment([
-                ['candidate', candidateId],
-                ['host', candidateHost],
-                ['suite', suiteId],
-            ]),
-            new BlobLogger(this.cloudStorage, benchmarkHost, encodeLog(benchmarkHost))
-        );
+        // // Decrypt candidate manifest secrets
+        // // const secrets = new RamDisk();
+        // // secrets.writeBlob('keys', Buffer.from(yamlText, 'utf8'));
+        // // const volume: Volume = {
+        // //     mount: 'secrets',
+        // //     storage: secrets
+        // // };
+
+        // // Start the candidate container.
+        // const candidateHost = uuid();
+        // console.log(`Starting candidate ${candidateId} on ${candidateHost}`);
+        // this.orchestrator.createWorker(
+        //     candidateHost,
+        //     candidateId,
+        //     this.cloudStorage,
+        //     [],
+        //     new Environment(),
+        //     new BlobLogger(this.cloudStorage, candidateHost, encodeLog(candidateHost))
+        // );
+
+        // // Start the benchmark container.
+        // const benchmarkHost = uuid();
+        // console.log(`Starting benchmark ${suiteData.benchmarkId} on ${benchmarkHost}`);
+        // this.orchestrator.createWorker(
+        //     benchmarkHost,
+        //     suiteData.benchmarkId,
+        //     this.cloudStorage,
+        //     [],
+        //     new Environment([
+        //         ['candidate', candidateId],
+        //         ['host', candidateHost],
+        //         ['suite', suiteId],
+        //     ]),
+        //     new BlobLogger(this.cloudStorage, benchmarkHost, encodeLog(benchmarkHost))
+        // );
     }
 
     // async connect(hostname: string) {

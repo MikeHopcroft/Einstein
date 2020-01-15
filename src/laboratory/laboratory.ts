@@ -1,10 +1,22 @@
 import * as yaml from 'js-yaml';
+import * as uuid from 'uuid';
 // import { v3 } from 'murmurhash';
 // import * as uuid from 'uuid';
 
-import { IStorage, IWorker, RamDisk } from '../cloud';
+import {
+    Environment,
+    IOrchestrator,
+    IStorage,
+    IWorker,
+    RamDisk,
+    Volume,
+    World,
+    BlobLogger
+} from '../cloud';
+
+import { encodeBenchmark, encodeCandidate, encodeSuite, encodeLog } from '../naming';
 import { generateKeys, KeyPair } from '../secrets';
-import { ContainerImage, sleep } from '../utilities';
+import { sleep } from '../utilities';
 
 import {
     BenchmarkDescription,
@@ -13,7 +25,8 @@ import {
     SuiteDescription,
     UID
 } from './interfaces';
-import { Benchmark } from '../samples/true_or_false/benchmark';
+
+import { loadSuite, loadCandidate } from './loaders';
 
 // Murmurhash seed.
 const seed = 1234567;
@@ -38,18 +51,26 @@ export class Laboratory implements ILaboratory {
         const keys: KeyPair = generateKeys();
 
         // Construct and bind service RPC stub. 
-        const myService = new Laboratory(keys, worker.getWorld().localStorage);
+        const myService = new Laboratory(keys, worker.getWorld());
 
         // TODO: do not hard-code port here.
         worker.bind(worker.getWorld(), myService, 8080);
     }
 
     private keys: KeyPair;
-    private cloudStorage: IStorage;
+    private world: World;
 
-    constructor(keys: KeyPair, cloudStorage: IStorage) {
+    // Convenience aliases
+    private cloudStorage: IStorage;
+    private orchestrator: IOrchestrator;
+
+    constructor(keys: KeyPair, world: World) {
         this.keys = keys;
-        this.cloudStorage = cloudStorage;
+        this.world = world;
+
+        // Convenience aliases
+        this.cloudStorage = world.cloudStorage;
+        this.orchestrator = world.orchestrator;
     }
 
     async getPublicKey(): Promise<string> {
@@ -57,17 +78,24 @@ export class Laboratory implements ILaboratory {
     }
 
     async createBenchmark(description: BenchmarkDescription): Promise<UID> {
-        const image = new ContainerImage(description.image);
-        const tagPart = image.tag ? '/'+image.tag : '';
-        const benchmarkId = `${image.component}${tagPart}`;
+        console.log(`createBenchmark(${description.image})`);
+        const encoded = encodeBenchmark(description.image);
+        const buffer = Buffer.from(yaml.safeDump(description), 'utf8');
+        await this.cloudStorage.writeBlob(encoded, buffer);
+        this.world.logger.log(`Uploaded to ${encoded}`);
+        return encoded;
 
-        // TODO: use Naming library
-        const blobPath = `benchmarks/${benchmarkId}`;
-        // TODO: check for attempt blob overwrite.
-        console.log(`Create ${blobPath}`);
-        const yamlBuffer = Buffer.from(yaml.safeDump(description), 'utf8');
-        this.cloudStorage.writeBlob(blobPath, yamlBuffer);
-        return benchmarkId;
+        // const image = new ContainerImage(description.image);
+        // const tagPart = image.tag ? '/'+image.tag : '';
+        // const benchmarkId = `${image.component}${tagPart}`;
+
+        // // TODO: use Naming library
+        // const blobPath = `benchmarks/${benchmarkId}`;
+        // // TODO: check for attempt blob overwrite.
+        // console.log(`Create ${blobPath}`);
+        // const yamlBuffer = Buffer.from(yaml.safeDump(description), 'utf8');
+        // this.cloudStorage.writeBlob(blobPath, yamlBuffer);
+        // return benchmarkId;
     }
 
     async listBenchmarks(pattern: CandidateDescription): Promise<BenchmarkDescription[]> {
@@ -76,18 +104,25 @@ export class Laboratory implements ILaboratory {
     }
 
     async createCandidate(description: CandidateDescription): Promise<UID> {
-        const image = new ContainerImage(description.image);
-        const tagPart = image.tag ? '/'+image.tag : '';
-        const candidateId = `${image.component}${tagPart}`;
+        console.log(`createCandidate(${description.image})`);
+        const encoded = encodeCandidate(description.image);
+        const buffer = Buffer.from(yaml.safeDump(description), 'utf8');
+        await this.cloudStorage.writeBlob(encoded, buffer);
+        this.world.logger.log(`Uploaded to ${encoded}`);
+        return encoded;
 
-        // TODO: use Naming library
-        const blobPath = `candidates/${candidateId}`;
+        // const image = new ContainerImage(description.image);
+        // const tagPart = image.tag ? '/'+image.tag : '';
+        // const candidateId = `${image.component}${tagPart}`;
 
-        // TODO: check for attempt blob overwrite.
-        console.log(`Create ${blobPath}`);
-        const yamlBuffer = Buffer.from(yaml.safeDump(description), 'utf8');
-        this.cloudStorage.writeBlob(blobPath, yamlBuffer);
-        return candidateId;
+        // // TODO: use Naming library
+        // const blobPath = `candidates/${candidateId}`;
+
+        // // TODO: check for attempt blob overwrite.
+        // console.log(`Create ${blobPath}`);
+        // const yamlBuffer = Buffer.from(yaml.safeDump(description), 'utf8');
+        // this.cloudStorage.writeBlob(blobPath, yamlBuffer);
+        // return candidateId;
     }
 
     async listCandidates(pattern: CandidateDescription): Promise<CandidateDescription[]> {
@@ -96,14 +131,20 @@ export class Laboratory implements ILaboratory {
     }
 
     async createSuite(description: SuiteDescription): Promise<UID> {
-        // TODO: organize suites by benchmarkId then suite hash?
-        // TODO: use Naming library
-        const blobPath = `suites/${description.benchmarkId}/${description.name}`;
-        // TODO: check for attempt blob overwrite.
-        console.log(`Create ${blobPath}`);
-        const yamlBuffer = Buffer.from(yaml.safeDump(description), 'utf8');
-        this.cloudStorage.writeBlob(blobPath, yamlBuffer);
-        return blobPath;
+        const encoded = encodeSuite(description.name);
+        const buffer = Buffer.from(yaml.safeDump(description), 'utf8');
+        await this.cloudStorage.writeBlob(encoded, buffer);
+        this.world.logger.log(`Uploaded to ${encoded}`);
+        return encoded;
+
+        // // TODO: organize suites by benchmarkId then suite hash?
+        // // TODO: use Naming library
+        // const blobPath = `suites/${description.benchmarkId}/${description.name}`;
+        // // TODO: check for attempt blob overwrite.
+        // console.log(`Create ${blobPath}`);
+        // const yamlBuffer = Buffer.from(yaml.safeDump(description), 'utf8');
+        // this.cloudStorage.writeBlob(blobPath, yamlBuffer);
+        // return blobPath;
     }
 
     async listSuites(pattern: SuiteDescription): Promise<BenchmarkDescription[]> {
@@ -111,22 +152,44 @@ export class Laboratory implements ILaboratory {
         return [];
     }
 
-    async run(candidateId: UID, suiteId: UID): Promise<void> {
-        console.log('Running:');
-        console.log(`  suite: ${suiteId}`);
-        console.log(`  candidate: ${candidateId}`);
+    async run(candidateId: string, suiteId: string): Promise<void> {
+        console.log(`run(${candidateId}, ${suiteId})`);
+        const suiteData = await loadSuite(suiteId, this.cloudStorage);
+        // const candidateData = await loadCandidate(candidateId, this.cloudStorage);
 
-        const candidate = await this.loadCandidate(candidateId);
-        const suite = await this.loadSuite(suiteId);
+        // if (suiteData.benchmarkId !== candidateData.benchmarkId) {
+        //     const message = "Suite and Candidate benchmarks don't match.";
+        //     throw TypeError(message);
+        // }
 
-        if (candidate.benchmarkId !== suite.benchmarkId) {
-            const message = "Candidate and suite benchmarkIds don't match";
-            throw TypeError(message);
-        }
+        // Decrypt candidate manifest secrets
+        // Start the candidate container.
+        const candidateHost = uuid();
+        console.log(`Starting candidate ${candidateId} on ${candidateHost}`);
+        this.orchestrator.createWorker(
+            candidateHost,
+            candidateId,
+            this.cloudStorage,
+            [],
+            new Environment(),
+            new BlobLogger(this.cloudStorage, candidateHost, encodeLog(candidateHost))
+        );
 
-        console.log(`  benchmark: ${suite.benchmarkId}`);
-
-        const benchmark = await this.loadBenchmark(suite.benchmarkId);
+        // Start the benchmark container.
+        const benchmarkHost = uuid();
+        console.log(`Starting benchmark ${suiteData.benchmarkId} on ${benchmarkHost}`);
+        this.orchestrator.createWorker(
+            benchmarkHost,
+            suiteData.benchmarkId,
+            this.cloudStorage,
+            [],
+            new Environment([
+                ['candidate', candidateId],
+                ['host', candidateHost],
+                ['suite', suiteId],
+            ]),
+            new BlobLogger(this.cloudStorage, benchmarkHost, encodeLog(benchmarkHost))
+        );
     }
 
     private async loadBenchmark(id: string): Promise<BenchmarkDescription> {

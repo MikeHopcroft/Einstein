@@ -44,5 +44,5 @@ export interface ILaboratory {
     createSuite(description: SuiteDescription): Promise<UID>;
     listSuites(pattern: SuiteDescription): Promise<BenchmarkDescription[]>;
 
-    run(candidateId: UID, suiteId: UID): Promise<void>;
+    run(candidateId: string, suiteId: string): Promise<void>;
 }

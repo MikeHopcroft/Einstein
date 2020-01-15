@@ -15,13 +15,11 @@
 * Prettier clean
 
 ## Easy
-* x Combine World and IWorker
 * Rename camelCase files to under_score?
-* Implement local storage flags for Shell.
-* world.ts: suppress localStorage initialization on disk.
-* Unify EntityDescription with SuiteDescription
-* Stable uuids for documentation generation
 * Rename tutorial to tutorial_builder
+* Implement local storage flags for Shell.
+  * world.ts: suppress localStorage initialization on disk.
+* Stable uuids for documentation generation
 * . Tutorial idempotent unit test
 * Tutorial read from file specified on command line
 * Use chalk or ansi-styles in tutorial
@@ -29,6 +27,8 @@
 * localDisk: handle ~/tilde in root path
 * - Shell print list of commands
 * - Redirect recorded output to stderr to allow results on stdout
+* x Unify EntityDescription with SuiteDescription
+* x Combine World and IWorker
 * x Move sample code out to samples folder
 * x Duplicate definitions for SymbolTable
 * x Combine duplicated code in cliMain and cloudMain
@@ -61,13 +61,15 @@
   * x samples/container.ts
 
 ## Basic
-* Verify YAML schemas
+* . Move code from CLICore to Laboratory
+* x BUG: uploadCandidate should use encoded container name, not filename
+* Yaml loaders should work like the formatters (ie share code)
 * Provide candidates with their decrypted secrets 
-* Move code from CLICore to Laboratory
+* CLIMain connects to analysis service as well as laboratory service.
+* Verify YAML schemas
 * Transition to CommandDispatcher (cliMain.ts, cloud.ts, shell.ts)
 * show cloud command usage
 * formatArgs() duplicated
-* CLIMain connects to analysis service as well as laboratory service.
 * cloud ls should take one optional parameter - right now has one required
 * Catch errors in shell (e.g. duplicate deployments)
   * Who catches rejected promises that happen in readline?
@@ -107,6 +109,7 @@
 * Disk based IStorage - write/append, command-line arguments
 
 ## Research
+* Naming schemes that don't exceed blob and container length limits (https://docs.microsoft.com/en-us/rest/api/storageservices/naming-and-referencing-containers--blobs--and-metadata)
 * RBAC
 * Figure out pattern for file name combination
 * What happens if the Shell's finished promise is awaited multiple times?

@@ -60,7 +60,7 @@ const benchmark = {
     description: 'A sample benchmark for boolean expressions evaluation.',
     owner: 'Mike',
     created: '2020-01-07T04:09:18.721Z',
-    image: 'myregistry.azurecr.io/true_or_false_benchmark:1.0'
+    image: 'true_or_false_benchmark:1.0'
 };
 
 const candidate = {
@@ -69,7 +69,7 @@ const candidate = {
     owner: 'Mike',
     created: '2020-01-07T04:09:18.721Z',
     benchmarkId: 'true_or_false_benchmark:1.0',
-    image: 'myregistry.azurecr.io/true_or_false_candidate:1.0',
+    image: 'true_or_false_candidate:1.0',
     password: {
         secret: 'my-password'
     },
