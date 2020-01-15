@@ -35,14 +35,19 @@ export type UID = string;
 export interface ILaboratory {
     getPublicKey(): Promise<string>;
 
-    createCandidate(description: CandidateDescription): Promise<UID>;
-    listCandidates(pattern: CandidateDescription): Promise<CandidateDescription[]>;
-
-    createBenchmark(description: BenchmarkDescription): Promise<UID>;
-    listBenchmarks(pattern: CandidateDescription): Promise<BenchmarkDescription[]>;
-
-    createSuite(description: SuiteDescription): Promise<UID>;
-    listSuites(pattern: SuiteDescription): Promise<BenchmarkDescription[]>;
-
+    createCandidate(description: CandidateDescription): Promise<string>;
+    
+    createBenchmark(description: BenchmarkDescription): Promise<string>;
+    
+    createSuite(description: SuiteDescription): Promise<string>;
+    
     run(candidateId: string, suiteId: string): Promise<void>;
+}
+
+// tslint:disable-next-line:interface-name
+export interface IAnalysis {
+    listCandidates(pattern: CandidateDescription): Promise<CandidateDescription[]>;
+    listBenchmarks(pattern: CandidateDescription): Promise<BenchmarkDescription[]>;
+    listRuns(pattern: SuiteDescription): Promise<RunDescription[]>;
+    listSuites(pattern: SuiteDescription): Promise<BenchmarkDescription[]>;
 }

@@ -77,79 +77,31 @@ export class Laboratory implements ILaboratory {
         return this.keys.publicKey;
     }
 
-    async createBenchmark(description: BenchmarkDescription): Promise<UID> {
-        console.log(`createBenchmark(${description.image})`);
+    async createBenchmark(description: BenchmarkDescription): Promise<string> {
         const encoded = encodeBenchmark(description.image);
         const buffer = Buffer.from(yaml.safeDump(description), 'utf8');
+        // TODO: check for attempt blob overwrite.
         await this.cloudStorage.writeBlob(encoded, buffer);
         this.world.logger.log(`Uploaded to ${encoded}`);
         return encoded;
-
-        // const image = new ContainerImage(description.image);
-        // const tagPart = image.tag ? '/'+image.tag : '';
-        // const benchmarkId = `${image.component}${tagPart}`;
-
-        // // TODO: use Naming library
-        // const blobPath = `benchmarks/${benchmarkId}`;
-        // // TODO: check for attempt blob overwrite.
-        // console.log(`Create ${blobPath}`);
-        // const yamlBuffer = Buffer.from(yaml.safeDump(description), 'utf8');
-        // this.cloudStorage.writeBlob(blobPath, yamlBuffer);
-        // return benchmarkId;
     }
 
-    async listBenchmarks(pattern: CandidateDescription): Promise<BenchmarkDescription[]> {
-        // TODO: implement wildcard matching
-        return [];
-    }
-
-    async createCandidate(description: CandidateDescription): Promise<UID> {
-        console.log(`createCandidate(${description.image})`);
+    async createCandidate(description: CandidateDescription): Promise<string> {
         const encoded = encodeCandidate(description.image);
         const buffer = Buffer.from(yaml.safeDump(description), 'utf8');
+        // TODO: check for attempt blob overwrite.
         await this.cloudStorage.writeBlob(encoded, buffer);
         this.world.logger.log(`Uploaded to ${encoded}`);
         return encoded;
-
-        // const image = new ContainerImage(description.image);
-        // const tagPart = image.tag ? '/'+image.tag : '';
-        // const candidateId = `${image.component}${tagPart}`;
-
-        // // TODO: use Naming library
-        // const blobPath = `candidates/${candidateId}`;
-
-        // // TODO: check for attempt blob overwrite.
-        // console.log(`Create ${blobPath}`);
-        // const yamlBuffer = Buffer.from(yaml.safeDump(description), 'utf8');
-        // this.cloudStorage.writeBlob(blobPath, yamlBuffer);
-        // return candidateId;
     }
 
-    async listCandidates(pattern: CandidateDescription): Promise<CandidateDescription[]> {
-        // TODO: implement wildcard matching
-        return [];
-    }
-
-    async createSuite(description: SuiteDescription): Promise<UID> {
+    async createSuite(description: SuiteDescription): Promise<string> {
         const encoded = encodeSuite(description.name);
         const buffer = Buffer.from(yaml.safeDump(description), 'utf8');
+        // TODO: check for attempt blob overwrite.
         await this.cloudStorage.writeBlob(encoded, buffer);
         this.world.logger.log(`Uploaded to ${encoded}`);
         return encoded;
-
-        // // TODO: organize suites by benchmarkId then suite hash?
-        // // TODO: use Naming library
-        // const blobPath = `suites/${description.benchmarkId}/${description.name}`;
-        // // TODO: check for attempt blob overwrite.
-        // console.log(`Create ${blobPath}`);
-        // const yamlBuffer = Buffer.from(yaml.safeDump(description), 'utf8');
-        // this.cloudStorage.writeBlob(blobPath, yamlBuffer);
-        // return blobPath;
-    }
-
-    async listSuites(pattern: SuiteDescription): Promise<BenchmarkDescription[]> {
-        // TODO: implement wildcard matching
-        return [];
     }
 
     async run(candidateId: string, suiteId: string): Promise<void> {
@@ -190,30 +142,6 @@ export class Laboratory implements ILaboratory {
             ]),
             new BlobLogger(this.cloudStorage, benchmarkHost, encodeLog(benchmarkHost))
         );
-    }
-
-    private async loadBenchmark(id: string): Promise<BenchmarkDescription> {
-        // TODO: use Naming library
-        return this.loadYaml('benchmarks/'+id);
-    }
-
-    private async loadCandidate(id: string): Promise<CandidateDescription> {
-        // TODO: use Naming library
-        return this.loadYaml('suites/'+id);
-    }
-
-    private async loadSuite(id: string): Promise<SuiteDescription> {
-        // TODO: use Naming library
-        return this.loadYaml('candidates/'+id);
-    }
-
-    private async loadYaml<T>(path: string): Promise<T> {
-        const yamlText = (
-            await this.cloudStorage.readBlob(path)
-        ).toString('utf8');
-
-        // TODO: verify schema.
-        return yaml.safeLoad(yamlText) as T;
     }
 }
 
@@ -258,3 +186,20 @@ export class Laboratory implements ILaboratory {
 
 // go();
 
+///////////////////////////////////////////////////////////////////////////////
+// TODO: Save for Analysis service
+
+// async listBenchmarks(pattern: CandidateDescription): Promise<BenchmarkDescription[]> {
+//     // TODO: implement wildcard matching
+//     return [];
+// }
+
+// async listCandidates(pattern: CandidateDescription): Promise<CandidateDescription[]> {
+//     // TODO: implement wildcard matching
+//     return [];
+// }
+
+// async listSuites(pattern: SuiteDescription): Promise<BenchmarkDescription[]> {
+//     // TODO: implement wildcard matching
+//     return [];
+// }
