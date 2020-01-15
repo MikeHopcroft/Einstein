@@ -14,12 +14,12 @@ export class Candidate implements ICandidate {
 
     static async entryPoint(worker: IWorker) {
         worker.log(`Candidate.entryPoint()`);
-        console.log(`Candidate.entryPoint()`);
+        // console.log(`Candidate.entryPoint()`);
 
         // Simulate server startup time.
-        console.log('candidate: sleeping');
+        // console.log('candidate: sleeping');
         await sleep(1000);
-        console.log('candidate: awoke');
+        // console.log('candidate: awoke');
     
         // Construct and bind service RPC stub. 
         const myService = new Candidate(worker);
@@ -44,7 +44,7 @@ export class Candidate implements ICandidate {
     }
 
     async initialize(symbols: SymbolTable): Promise<void> {
-        console.log('Candidate: initialize()');
+        this.worker.log('Candidate: initialize()');
         this.symbols.clear();
         for (const symbol of symbols) {
             this.symbols.set(symbol.name, symbol.value);
@@ -68,8 +68,7 @@ export class Candidate implements ICandidate {
         // Simulate delay in shutting down
         await sleep(10000);
 
-        console.log('Candidate: shutdown()');
+        this.worker.log('Candidate: shutdown()');
         this.worker.shutdown();
-        // process.exit(0);
     }
 }

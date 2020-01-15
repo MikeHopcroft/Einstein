@@ -12,7 +12,7 @@ export class BlobLogger implements ILogger {
     }
 
     async log(message: string): Promise<void> {
-        const line = `${this.hostname}: ${message}`;
+        const line = `${this.hostname}: ${message}\n`;
         this.storage.appendBlob(this.blob, Buffer.from(line, 'utf8'));
     }
 }

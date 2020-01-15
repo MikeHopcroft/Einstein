@@ -71,6 +71,21 @@ export class CloudMain {
         if (args.length !== 1) {
             console.log(`cloud more: expected a filename: ${args}`);
             return 1;
+        } else if (args[0].includes('*')) {
+            // Special case for demo.
+            const pattern = path.posix.join('/', args[0]);
+            const re = new RegExp(pattern);
+            const storage = this.world.cloudStorage;
+            const blobs = await storage.listBlobs('');
+            for (const filePath of blobs) {
+                if (filePath.match(re)) {
+                    console.log(`Contents of ${filePath}:`);
+                    const fileData = await storage.readBlob(filePath);
+                    console.log(fileData.toString('utf8'));       
+                    console.log();
+                }
+            }
+            return 0;
         } else {
             const storage = this.world.cloudStorage;
             const filePath = path.posix.join('/', args[0]);

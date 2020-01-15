@@ -76,8 +76,6 @@ Deploy Einstein immediately check services. Nothing running yet.
 
 [//]: # (shell)
 ~~~
-einstein:/% services
-no services running
 einstein:/% einstein deploy lab
 Deploying to lab.
 einstein:/% services
@@ -92,6 +90,13 @@ einstein:/% # wait 10 seconds for service to start ...
 einstein:/% services
 lab:8080
 ~~~
+
+We can use the `cloud ls` command to see that logging has started for the laboratory service:
+[//]: # (shell)
+~~~
+einstein:/% cloud ls
+~~~
+
 
 ## Submitting a Benchmark
 
@@ -136,6 +141,7 @@ We can even see the blob has been written. Note that end users won't be able to 
 [//]: # (shell)
 ~~~
 einstein:/% cloud ls
+einstein:/% cloud more benchmarks/5xh6avk3d1pp2wkb5twp2vbc
 ~~~
 
 ## Submitting a Suite
@@ -202,7 +208,18 @@ Key points:
 ~~~
 einstein:/% einstein run true_or_false_candidate:1.0 True_Or_False
 einstein:/% einstein list runs
+einstein:/% # wait 20 seconds for run to complete ...
+einstein:/% einstein list runs
 ~~~
+
+Examining run log:
+
+[//]: # (shell)
+~~~
+einstein:/% cloud ls
+einstein:/% cloud more runs/*
+~~~
+
 
 ## Examining Cloud Storage
 

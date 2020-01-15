@@ -16,20 +16,20 @@ export class Benchmark {
 
     static async entryPoint(worker: IWorker) {
         worker.log(`Benchmark.entryPoint()`);
-        console.log(`Benchmark.entryPoint()`);
+        // console.log(`Benchmark.entryPoint()`);
         const env =  worker.getEnvironment();
         const candidateId = env.get('candidate');
         const candidateHost = env.get('host');
         const suiteId = env.get('suite');
         // TODO: check for undefined candidateHost, candidateId, suiteName
-        console.log(`Candidate host is ${candidateHost}`);
-        console.log(`Candidate is ${candidateId}`);
-        console.log(`Suite is ${suiteId}`);
+        worker.log(`Candidate host is ${candidateHost}`);
+        worker.log(`Candidate is ${candidateId}`);
+        worker.log(`Suite is ${suiteId}`);
 
         // Simulate startup time.
-        console.log('benchmark: sleeping');
+        worker.log('benchmark: sleeping');
         await sleep(1000);
-        console.log('benchmark: awoke');
+        worker.log('benchmark: awoke');
 
         // TODO: pass worker to constructor?
         const benchmark = new Benchmark(worker);
@@ -52,7 +52,7 @@ export class Benchmark {
     }
 
     async run(candidate: ICandidate, candidateId: string, suiteId: string) {
-        console.log('Benchmark: run()');
+        this.worker.log('Benchmark: run()');
 
         // TODO: error handling for async APIs
 
@@ -78,7 +78,7 @@ export class Benchmark {
         if (!ready) {
             // Candidate did not start up.
             // Log failure.
-            console.log('Candidate did not start up.');
+            this.worker.log('Candidate did not start up.');
         } else {
             // Initialize the candidate.
             await candidate.initialize(symbols);
@@ -91,12 +91,12 @@ export class Benchmark {
                 const success = (result === testCase.expected);
                 if (success) {
                     ++passed;
-                    this.worker.log(`passed: "${testCase.input}"\n`)
-                    console.log(`passed: "${testCase.input}"`)
+                    this.worker.log(`passed: "${testCase.input}"`)
+                    // console.log(`passed: "${testCase.input}"`)
                 } else {
                     ++failed;
-                    this.worker.log(`failed: "${testCase.input}" ==> "${result}"\n`);
-                    console.log(`failed: "${testCase.input}" ==> "${result}"`);
+                    this.worker.log(`failed: "${testCase.input}" ==> "${result}"`);
+                    // console.log(`failed: "${testCase.input}" ==> "${result}"`);
                 }
             }
 
@@ -106,7 +106,7 @@ export class Benchmark {
             // Compute measures
 
             // Write results
-            console.log('Benchmark: writing results');
+            this.worker.log('Benchmark: writing results');
             const runId = this.worker.getWorld().hostname;
             const benchmarkId = Benchmark.image.tag;
             const name = 'foo';
@@ -131,13 +131,13 @@ export class Benchmark {
                 encodeRun(runId),
                 buffer
             );
-            console.log('Benchmark finished');
+            this.worker.log('Benchmark finished');
         }
 
         // // Simulate delay in shutting down
         // await sleep(10000);
 
-        console.log('Benchmark: return');
+        // console.log('Benchmark: return');
         return;
     }
 }
@@ -147,12 +147,12 @@ const maxTries = 5;
 async function waitForCandidate(candidate: ICandidate): Promise<boolean> {
     let ready = false;
     for (let i = 0; i < maxTries; ++i) {
-        console.log('Benchmark: ready?');
+        // console.log('Benchmark: ready?');
         ready = await candidate.ready();
         if (ready) {
             break;
         }
-        console.log('Benchmark: sleeping ...');
+        // console.log('Benchmark: sleeping ...');
         await sleep(1000);
     }
     return ready;

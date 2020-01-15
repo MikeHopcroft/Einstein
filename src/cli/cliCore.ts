@@ -129,7 +129,7 @@ export class CLI {
         // Load the suite manifest from cloud storage in order to get the
         // benchmarkId.
         const encoded = encodeSuite(suiteId);
-        console.log(`Reading suite ${suiteId} from ${encoded}`);
+        // console.log(`Reading suite ${suiteId} from ${encoded}`);
         const buffer = await this.cloudStorage.readBlob(encoded);
         const yamlText = buffer.toString('utf8');
         const suiteData = yaml.safeLoad(yamlText) as SuiteDescription;

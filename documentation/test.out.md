@@ -1,6 +1,6 @@
 # Einstein Shell Tutorial
 
-Einstein provides an interactive shell for trying out concepts in a self-contained, simulated cloud environement that runs on the local machine. This tutorial introduces the `Shell` and then uses it to walk through the following concepts
+Einstein provides an interactive `Shell` for trying out concepts in a self-contained, simulated cloud environement that runs on the local machine. This tutorial introduces the `Shell` and then uses it to walk through the following concepts
 
 * Deploying the `Einstein Service`
 * Uploading a `Benchmark`
@@ -8,6 +8,7 @@ Einstein provides an interactive shell for trying out concepts in a self-contain
 * Uploading a `Candidate`
 * Running a `Suite` for a `Benchmark` on a specified `Candidate`
 * Examining the results of the `Run`
+* Administering the `Einstein Service`
 
 Our first step is to get a copy of `Einstein`. Currently the only way to install `Einstein` is to build it from source code.
 
@@ -21,7 +22,7 @@ In order to use `Einstein` you must have
 Here are the steps for cloning and building `Einstein`:
 ~~~
 % git clone git@github.com:MikeHopcroft/Einstein.git
-% npm run install
+% npm install
 % npm run compile
 ~~~
 
@@ -29,7 +30,7 @@ Now that we've built `Einstein`, let's fire up the `Shell`.
 
 ## Introducing the Shell
 
-The `Shell` starts up a simulated cloud environment with blob storage, attached volumes, a container registry, and an orchestrator. By default, the blob storage and disk volumes reside in RAM and are initialized fresh for each session. You can use the `--localStorge` and `--cloudStorage` flags to map these stores to folders on your machine. Use this option when you want files to persist across sessions.
+The `Shell` starts up a simulated cloud environment with blob storage, disk volumes, a container registry, and an orchestrator. By default, the blob storage and disk volumes reside in RAM and are initialized fresh for each session. You can use the `--localStorge` and `--cloudStorage` flags to map these stores to folders on your machine. Use this option when you want blobs and files to persist across sessions.
 
 Here's how start a session with ephermeral, in-memory stores:
 ~~~
@@ -52,46 +53,29 @@ A blank line exits.
 Type "help" for information on commands.
 
 einstein:/% help
-help: command not found
+Available shell commands:
+  cd
+  cloud
+  einstein
+  exit
+  help
+  images
+  ls
+  more
+  pwd
+  services
 ~~~
 
-### Shell Commands
+You can read more about the shell commands [here](shell_commands.md).
 
-Here's a cheat sheet for the shell commands:
-
-* Local storage
-    * ls \<path> - show pre-populated configuration files
-    * cd \<path>
-    * pushd \<path>
-    * popd \<path>
-    * pwd
-    * more \<path>
-* Cloud storage
-    * cloud ls \<path>
-    * cloud cd \<path>
-    * cloud pwd
-    * cloud more \<path>
-* Orchestration
-    * images - lists the images in the container registry
-    * services - lists the services currently running in the cluster
-* Einstein CLI
-    * einstein help
-    * einstein deploy
-    * einstein encrypt \<file>
-    * einstein benchmark \<benchmark description file>
-    * einstein suite \<suite description file>
-    * einstein candidate \<candidate description file>
-    * einstein run \<candidate id> \<suite id>
-    * einstein list \<benchmark|candidate|run|suite> \<pattern>
-    * einstein show \<benchmark|candidate|run|suite> \<id>
 
 ## Deploying Einstein
 
-* Einstein service is a container
-* containers
-* Generate public and private keys
+Key points:
+* Einstein is a service that runs in the environment
+* Must be deployed
 
-Initially there are no services running in our cluster.
+Initially there are no services running in our cluster. We can see this by running the `services` command:
 
 [//]: # (shell)
 ~~~
@@ -103,9 +87,6 @@ Deploy Einstein immediately check services. Nothing running yet.
 
 [//]: # (shell)
 ~~~
-einstein:/% services
-no services running
-
 einstein:/% einstein deploy lab
 Deploying to lab.
 depoying einstein to lab
@@ -124,8 +105,17 @@ image                                 host   port
 myregistry.azurecr.io/labratory:1.0   lab    8080
 ~~~
 
+We can use the `cloud ls` command to see that logging has started for the laboratory service:
+[//]: # (shell)
+~~~
+einstein:/% cloud ls
+logs/lab
+~~~
+
+
 ## Submitting a Benchmark
 
+Key points:
 * Description of contest
 * Benchmark description file
 * containers
@@ -137,8 +127,10 @@ Shell pre-provisions the container registry.
 [//]: # (shell)
 ~~~
 einstein:/% images
-myregistry.azurecr.io/true_or_false_benchmark:1.0
-myregistry.azurecr.io/true_or_false_candidate:1.0
+true_or_false_benchmark:1.0
+true_or_false_candidate:1.0
+alwaysTrue_candidate:1.0
+alwaysFalse_candidate:1.0
 myregistry.azurecr.io/labratory:1.0
 ~~~
 
@@ -176,18 +168,28 @@ image                         name            owner   created
 true_or_false_benchmark:1.0   True_Or_False   Mike    2020-01-07T04:09:18.721Z
 ~~~
 
-We can even see the blob has been written.
+We can even see the blob has been written. Note that end users won't be able to do `cloud ls`.
 
 [//]: # (shell)
 ~~~
 einstein:/% cloud ls
 benchmarks/5xh6avk3d1pp2wkb5twp2vbc
+logs/lab
+
+einstein:/% cloud more benchmarks/5xh6avk3d1pp2wkb5twp2vbc
+name: True_Or_False
+description: A sample benchmark for boolean expressions evaluation.
+owner: Mike
+created: '2020-01-07T04:09:18.721Z'
+image: 'myregistry.azurecr.io/true_or_false_benchmark:1.0'
 ~~~
 
 ## Submitting a Suite
 
+Key points:
 * Suite description file
 * Domain data
+* Test cases
 * einstein suite
 * einstein list suites
 
@@ -199,8 +201,114 @@ description: A sample suite.
 owner: Mike
 created: '2020-01-07T04:09:18.721Z'
 benchmarkId: 'true_or_false_benchmark:1.0'
-domainData: []
-testData: []
+domainData:
+  - name: a
+    value: true
+  - name: b
+    value: true
+  - name: c
+    value: true
+  - name: x
+    value: false
+  - name: 'y'
+    value: false
+  - name: z
+    value: false
+testCases:
+  - input: a
+    expected: true
+  - input: b
+    expected: true
+  - input: x
+    expected: false
+  - input: '!a'
+    expected: false
+  - input: '!b'
+    expected: false
+  - input: '!x'
+    expected: true
+  - input: (a)
+    expected: true
+  - input: (x)
+    expected: false
+  - input: a & b
+    expected: true
+  - input: a & b & c
+    expected: true
+  - input: a & x
+    expected: false
+  - input: a & b & x
+    expected: false
+  - input: a | b
+    expected: true
+  - input: a | x
+    expected: true
+  - input: x | y | z | a
+    expected: true
+  - input: x | y
+    expected: false
+  - input: '!(x & y)'
+    expected: true
+  - input: '!(a | b)'
+    expected: false
+  - input: '!a & !x'
+    expected: false
+  - input: '!x & !y'
+    expected: true
+  - input: '!a & !b'
+    expected: false
+  - input: '!x & !b'
+    expected: false
+  - input: '!!a'
+    expected: true
+  - input: '!!!a'
+    expected: false
+  - input: x & a | b
+    expected: true
+  - input: (x & a) | b
+    expected: true
+  - input: x & (a | b)
+    expected: false
+  - input: ((a | x) & (b | y) & ((c | x) | (d | y)))
+    expected: true
+  - input: foo
+    expected: true
+  - input: bar
+    expected: true
+  - input: foo-bar
+    expected: true
+  - input: foo & bar & !baz-baz
+    expected: true
+  - input: '    a   &b & c   '
+    expected: true
+  - input: a&b&c
+    expected: true
+  - input: (a&b
+    expected: Expected ')'
+  - input: (a|b
+    expected: Expected ')'
+  - input: a&
+    expected: Expected a variable
+  - input: a |
+    expected: Expected a variable
+  - input: '&'
+    expected: Unexpected operator "&"
+  - input: '|'
+    expected: Unexpected operator "|"
+  - input: '!'
+    expected: Expected a variable
+  - input: (
+    expected: Expected a variable
+  - input: )
+    expected: Unexpected operator ")"
+  - input: a b
+    expected: Expected '&' or '|' operator
+  - input: (a+b))
+    expected: Expected '&' or '|' operator
+  - input: ''
+    expected: Expected a variable
+  - input: '   '
+    expected: Expected a variable
 ~~~
 
 Uploading the suite:
@@ -208,7 +316,7 @@ Uploading the suite:
 [//]: # (shell)
 ~~~
 einstein:/% einstein suite suite.yaml
-Uploaded to /suites/5xtqaubmcmq7jrbddg
+Uploaded to /suites/aht7ataz9xt5yhk1dhtpa
 
 einstein:/% einstein list suites
 name            benchmark                     owner   created                 
@@ -217,7 +325,12 @@ True_Or_False   true_or_false_benchmark:1.0   Mike    2020-01-07T04:09:18.721Z
 
 ## Submitting a Candidate
 
+Key points:
 * Candidate description file
+* Secrets and encryption
+* Whitelist
+* einstein candidate
+* einstein list candidates
 
 [//]: # (shell)
 ~~~
@@ -249,7 +362,7 @@ benchmarkId: 'true_or_false_benchmark:1.0'
 image: 'myregistry.azurecr.io/true_or_false_candidate:1.0'
 password:
   secret: >-
-    UXGLRHSszEKyDQn61j9pjWvvjPmirNjbl9qyojB8erPOlSioYXQyKNGFkzaocT+hkecgJ/l0W7u7JvY+B8LKaR1ljgvnnxSoiujz9O+HFh8GEEQK4+ImSip3+FEvCKVxRyb/cTlpsGCqgkmH56zpUE1JGNdB/sAho6JJKWDb142/vsErV+n598nMBdf//bbXTH23aFvJ3aeJWiKeOMW6E9A5Btv0dUOZ1COWCgT35+BADm0KJYSnnJ93jIC86u5g2+k8um+PnZnoDBWutoUX83Jm8Wh18Qx+N2BIanEpzgsvgxqBilAN2BjqWgYeykuxz9Tjrv8C/oEgW7STBbE/Toy5xcoE8SlBzPTDlVPhRxS4LSXuL/niLEc0a1Rsimb6vz7sB9LjZWlahqt4xM4rTim6/DYELrXLLnPsvDGj/z8YmiziwwIvdkcnL1InYejPVcPscw5i4GaY9oesVHFDZwVptod5Pfl+fZd95o3tiRS+/TWy6ZUahWs7ggf+Sm6Fj3BzgPcqNUkNbFqWtdPnXcw4RFukGIaoSP5hNILyX8GAMheujbgj+sFzgI3e14wRt+glIWhDEmcl0zR0hBG+5FEbNqpAaKkmNfPEgCPe8HGjq/hoHkE4R9YBqj/6GR7c+btoHDnYfviaNGodnyMQx9qXM2FB/emyIdTmc1fYna4=:WLcMAKxoezUBxTUGnJ4y0Q==:3vGxtYrXtUs8MdqXEcMmRg==
+    Uf2ObY/xXFdPqKl5tFxFolODTsQbfS8L13mnS2OqkbOvqDBur1j56RnaZvmmcUOlIpkkmrLgCAXFaIIHoFOlcV+0YkGjPyimGkRuHMuZEfzeo+UKoPHPkB9xC2ZpDkv9gkr7Zyq1fa5o+wvrNYy+spgfg+B6MkARMRspc3tgAiSD0KIsbNy/Hm24a/pj3Etgz0Hukhb0OksC8dt6a7L1RKsz5j+FPfRhSyrScY4JjtZp+rQ/Y0hO8IXz0Q+UpCCs5MIN5mvvBLwVyP80K/vf01eeNNNmFE6f2yhAUBgEoCAJYP39Z0ExYP2h2vWfvAr5iCj7pZoAUP0aCNVIbDeUU/MapHmR0KJq0sJ6RUFzjrcUuTeMgR5Yr5cT+g/auf9EYOnboVmVpiWqq98wJX1DjY6bYGwfCQTKjUj8NhtmvTsQ+lSiqRieMfsySUCnBjwczr+sM64X9MucuDjHi4gx7pgdDhfehwXElUQ3wmDgrZ80UxIWWDQzdgRuCgylcXqHkpMCMW0ouP/egwCJqaxTk30xgPAlNRVJAkP82zcPfmeri5dQB5rUatIuOfCn3e3wPHaPp2eHgwpdDVxN+TKAxC6wUA5dyFOkEoPfQcDluGyMEjRsh+bm4zBJjTf0CH6GCnvwUVsDlHksKhb6wcv190vNf3biFG3dmW5+2BpRFOw=:jdDsfrjHuw/k5h13Gmskyg==:xWUzS5esM+PqMI22drc1QA==
 whitelist:
   - 'http://www.wikipedia.org'
 ~~~
@@ -266,33 +379,104 @@ image                         name            owner   created
 true_or_false_benchmark:1.0   True_Or_False   Mike    2020-01-07T04:09:18.721Z
 ~~~
 
-* einstein candidate
-* einstein list candidates
 
 ## Running a Suite
 
+Key points:
 * einstein run
 * einstein list runs
 * einstein show run
 
 [//]: # (shell)
 ~~~
-einstein:/% einstein run candidateId suiteID
-running suite suiteID on candidate candidateId
+einstein:/% einstein run true_or_false_candidate:1.0 True_Or_False
+Starting candidate true_or_false_candidate:1.0 on e5f6c767-1a48-4b45-b4e7-4e12e732493e
+Starting benchmark true_or_false_benchmark:1.0 on ad7419f0-9fb8-4c1a-b22b-fddfc0e042ea
 
 einstein:/% einstein list runs
-Bad collection "runs"
+name   candidate   benchmark   suite   date
+
+einstein:/% # wait 20 seconds for run to complete ...
+einstein:/% einstein list runs
+name                                   candidate                     benchmark                     suite           date                    
+ad7419f0-9fb8-4c1a-b22b-fddfc0e042ea   true_or_false_candidate:1.0   true_or_false_benchmark:1.0   True_Or_False   2020-01-15T01:32:08.686Z
 ~~~
 
-## Examining Cloud Storage
+Examining run log:
 
 [//]: # (shell)
 ~~~
 einstein:/% cloud ls
 benchmarks/5xh6avk3d1pp2wkb5twp2vbc
 candidates/5xh6avk3d1pp2wkb5twp2vbc
-suites/5xtqaubmcmq7jrbddg
+logs/ad7419f0-9fb8-4c1a-b22b-fddfc0e042ea
+logs/e5f6c767-1a48-4b45-b4e7-4e12e732493e
+logs/lab
+runs/ad7419f0-9fb8-4c1a-b22b-fddfc0e042ea
+suites/aht7ataz9xt5yhk1dhtpa
+
+einstein:/% cloud more runs/*
+Contents of /runs/ad7419f0-9fb8-4c1a-b22b-fddfc0e042ea:
+runId: ad7419f0-9fb8-4c1a-b22b-fddfc0e042ea
+candidateId: 'true_or_false_candidate:1.0'
+suiteId: True_Or_False
+benchmarkId: 'true_or_false_benchmark:1.0'
+name: foo
+description: foo
+owner: foo
+created: '2020-01-15T01:32:08.686Z'
+results:
+  passed: 43
+  failed: 4
 ~~~
+
+
+## Examining Cloud Storage
+
+Key points:
+* Logging for Einstein laboratory service.
+* Run logging for candidate and benchmark.
+* Run results.
+* Benchmark manifests.
+* Suite manifests.
+* Candidate manifests.
+
+[//]: # (shell)
+~~~
+einstein:/% cloud ls
+benchmarks/5xh6avk3d1pp2wkb5twp2vbc
+candidates/5xh6avk3d1pp2wkb5twp2vbc
+logs/ad7419f0-9fb8-4c1a-b22b-fddfc0e042ea
+logs/e5f6c767-1a48-4b45-b4e7-4e12e732493e
+logs/lab
+runs/ad7419f0-9fb8-4c1a-b22b-fddfc0e042ea
+suites/aht7ataz9xt5yhk1dhtpa
+~~~
+
+## Managing VMs
+
+Key points
+* Data scientists need to interactively explore sample data to gain insights into feature extraction and model design.
+* Interactive access through VMs deployed to cluster.
+
+[//]: # (shell)
+~~~
+einstein:/% einstein create vm
+einstein: unknown command 'create'
+
+einstein:/% einstein destroy vm
+einstein: unknown command 'destroy'
+~~~
+
+## Administering the Einstein Laboratory Service
+
+Key points:
+* Approving and revoking white listed services.
+* Managing roles
+  * Contest Creater
+  * Data Scientist
+  * Contestant
+  * Einstein Administrator
 
 The end.
 
