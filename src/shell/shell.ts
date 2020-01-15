@@ -110,7 +110,6 @@ export class Shell {
         // Register line input handler.
         rl.on('line', async (line: string) => {
             if (line.trim() === 'exit') {
-            // if (line === '') {
                 rl.close();
             } else {
                 await processOneInputLine(line);
@@ -189,8 +188,7 @@ export class Shell {
     }
 
     completer = (line: string) => {
-        // console.log('completing');
-        // const completions = 'einstein cloud ls pwd'.split(' ');
+        // TODO: HACK: replace this code with real completions algorithm.
         const completions = [
             'einstein benchmark ',
             'einstein benchmark benchmark.yaml',
@@ -251,7 +249,7 @@ export class Shell {
     private async processLine(line: string) {
         if (!line.trim().startsWith('#')) {
             // TODO: better arg splitter that handles quotes.
-            const args = line.split(/\s+/);
+            const args = line.trim().split(/\s+/);
             const command = this.commands.get(args[0]);
             if (command === undefined) {
                 console.log(`${args[0]}: command not found`)

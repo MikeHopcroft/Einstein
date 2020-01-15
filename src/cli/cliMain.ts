@@ -80,64 +80,6 @@ export class CLIMain {
         ];
     }
 
-    async deployCommand(args: string[]): Promise<number> {
-        const [hostname] = args;
-        console.log(`Deploying to ${hostname}.`)
-        await this.cli.deploy(hostname);
-        return 0;
-    }
-
-    async encryptCommand(args: string[]): Promise<number> {
-        const [filename] = args;
-        const p = fullPath(this.cwd, filename);
-        await this.cli.encrypt(p);
-        return 0;
-    }
-
-    async benchmarkCommand(args: string[]): Promise<number> {
-        const [manifest] = args;
-        const normalized = fullPath(this.cwd, manifest);
-        await this.cli.uploadBenchmark(normalized);
-        return 0;
-    }
-
-    async suiteCommand(args: string[]): Promise<number> {
-        const [manifest] = args;
-        const normalized = fullPath(this.cwd, manifest);
-        await this.cli.uploadSuite(normalized);
-        return 0;
-    }
-
-    async candidateCommand(args: string[]): Promise<number> {
-        const [manifest] = args;
-        const normalized = fullPath(this.cwd, manifest);
-        await this.cli.uploadCandidate(normalized);
-        return 0;
-    }
-
-    async runCommand(args: string[]): Promise<number> {
-        const [candidateId, suiteId] = args;
-        await this.cli.run(candidateId, suiteId);
-        return 0;
-    }
-
-    async listCommand(args: string[]): Promise<number> {
-        const [collection] = args;
-        await listCommandInternal(this.cloudStorage, collection);
-        return 0;
-    }
-
-    async helpCommand(args: string[]): Promise<number> {
-        console.log('Here are some einstein commands:');
-        console.log();
-        for (const command of this.commands) {
-            console.log(`einstein ${command.name} ${formatArgs(command.args)}`);
-            console.log(`  ${command.description}`);
-            console.log();
-        }
-        return 0;
-    }
-
     async run(args: string[]): Promise<number> {
         if (args.length < 2) {
             this.usage();
@@ -170,8 +112,66 @@ export class CLIMain {
         }
     }
 
-    usage() {
+    private usage() {
         console.log('TODO: show einstein command usage');
+    }
+
+    private async deployCommand(args: string[]): Promise<number> {
+        const [hostname] = args;
+        console.log(`Deploying to ${hostname}.`)
+        await this.cli.deploy(hostname);
+        return 0;
+    }
+
+    private async encryptCommand(args: string[]): Promise<number> {
+        const [filename] = args;
+        const p = fullPath(this.cwd, filename);
+        await this.cli.encrypt(p);
+        return 0;
+    }
+
+    private async benchmarkCommand(args: string[]): Promise<number> {
+        const [manifest] = args;
+        const normalized = fullPath(this.cwd, manifest);
+        await this.cli.uploadBenchmark(normalized);
+        return 0;
+    }
+
+    private async suiteCommand(args: string[]): Promise<number> {
+        const [manifest] = args;
+        const normalized = fullPath(this.cwd, manifest);
+        await this.cli.uploadSuite(normalized);
+        return 0;
+    }
+
+    private async candidateCommand(args: string[]): Promise<number> {
+        const [manifest] = args;
+        const normalized = fullPath(this.cwd, manifest);
+        await this.cli.uploadCandidate(normalized);
+        return 0;
+    }
+
+    private async runCommand(args: string[]): Promise<number> {
+        const [candidateId, suiteId] = args;
+        await this.cli.run(candidateId, suiteId);
+        return 0;
+    }
+
+    private async listCommand(args: string[]): Promise<number> {
+        const [collection] = args;
+        await listCommandInternal(this.cloudStorage, collection);
+        return 0;
+    }
+
+    private async helpCommand(args: string[]): Promise<number> {
+        console.log('Here are some einstein commands:');
+        console.log();
+        for (const command of this.commands) {
+            console.log(`einstein ${command.name} ${formatArgs(command.args)}`);
+            console.log(`  ${command.description}`);
+            console.log();
+        }
+        return 0;
     }
 }
 

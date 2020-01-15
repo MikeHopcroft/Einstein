@@ -1,8 +1,10 @@
 # TODO LIST
 
 ## Next
-* Logging
-* cloud more
+* x Logging
+* x cloud more
+* einstein create gets type from yaml
+* einstein create vm
 * Set up unit testing
 
 ## Housekeeping
@@ -13,50 +15,54 @@
 * Prettier clean
 
 ## Easy
-* getPrefix() should move to naming.ts
+* BUG: `einstein deploy` should not work without a host parameter.
+* x getPrefix() should move to naming.ts
 * Cloud commands (ls, more) should not be relative to filesystem cwd
 * Shell print list of commands
 * world.ts: suppress localStorage initialization on disk.
 * Remove dead code files and debug configurations
-  * junk2.ts
-  * true_or_false.ts
+  * x junk2.ts
+  * x shell.old
+  * junk.ts
+  * x true_or_false.ts
   * go()
-  * samples/container.ts
+  * x samples/container.ts
 * Unify EntityDescription with SuiteDescription
-* Blob append logger
+* x Blob append logger
 * Move code from CLICore to Laboratory
 * Stable uuids for documentation generation
-* getPrefix() should move into naming library
-* BUG: benchmark and candidate names should come from image tag
-* BUG: suite names should come from yaml field
+* x BUG: benchmark and candidate names should come from image tag
+* x BUG: suite names should come from yaml field
 * Combine duplicated code in cliMain and cloudMain
 * Remove shell parameter from einsteinCommand and cloudCommand
 * Combine World and IWorker
 * Move world.ts under true_or_false
-* Delete cliArgs.ts
+* x Delete cliArgs.ts
 * Rename tutorial to tutorial_builder
 * . Tutorial idempotent unit test
 * Tutorial read from file specified on command line
-* Why doesn't empty line in tutorial shut down Shell?
+* x Why doesn't empty line in tutorial shut down Shell? Irrelevant not that Ctrl-D exits.
 * Use chalk or ansi-styles in tutorial
 * - Redirect recorded output to stderr to allow results on stdout
 * x Strip ANSI escape codes from recorded stdout.
     * https://stackoverflow.com/questions/13801273/what-does-u001bj-represent
     * https://github.com/chalk/strip-ansi
     * https://www.npmjs.com/package/strip-ansi
-* Don't hard-code LocalDisk path in Shell
+* x Don't hard-code LocalDisk path in Shell. Irrelevant not that shell is in-memory
+* Implement local storage flags for Shell.
 * Remove Windows paths from true_or_false sample
 * Verfiy localDisk and ls work on Windows
 * localDisk: handle ~/tilde in root path
 * Duplicate definitions for SymbolTable
-* Applications go in src/applications
+* x Applications go in src/applications
 * Move sample code out to samples folder
-* Convert CLIArgs class to CLIMain() function
+* x Convert CLIArgs class to CLIMain() function
 * Catch errors in shell (e.g. duplicate deployments)
 
 ## Basic
 * Provide candidates with their decrypted secrets   
 * Figure out container_image.ts. What is the naming scheme?
+  * Review ContainerImage field names.
 * x ls and cloud ls should sort. Lexigraphical? Tree order? Are they the same?
 * Tutorial should not spit out final code block
 * Tutorial feature to limit number of lines in a block (to show first n lines of test case...)
@@ -65,7 +71,6 @@
 * cloud ls should take one optional parameter - right now has one required
 * Write design issue/note about databases vs canonical naming
 * Set Benchmark, Candidate, Suite create and owner fields at upload.
-* Review ContainerImage field names.
 * listCommand should use analysis service (analogous to CLI/Laboratory architecture)
 * Consolidate yaml loading and schema verification
 * cd command should not allow cd into non-existant directory
@@ -90,9 +95,10 @@
 * services command shows volumes for services
 
 ## Round-out/Finish-up
-* Disk based IStorage
+* Disk based IStorage - write/append, command-line arguments
 
 ## Research
+* RBAC
 * Figure out pattern for file name combination
 * What happens if the Shell's finished promise is awaited multiple times?
 * Figure out how to reintroduce persistant history in Shell

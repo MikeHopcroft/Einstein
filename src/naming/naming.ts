@@ -74,6 +74,23 @@ function decode(collection: string, encoded: string) {
     }
 }
 
+export function getPrefix(collection: string): string {
+    switch (collection) {
+        case 'benchmarks':
+            return '/benchmarks';
+        case 'candidates':
+            return '/candidates';
+        case 'suites':
+            return '/suites';
+        case 'runs':
+            return '/runs';
+        default:
+            const message = `Bad collection "${collection}"`;
+            throw TypeError(message);
+    }
+}
+
+
 // Save for unit tests
 // console.log(encodeBenchmark('foobar'));
 // console.log(decodeBenchmark(encodeBenchmark('foobar')));

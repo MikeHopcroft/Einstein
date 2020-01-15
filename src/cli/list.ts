@@ -9,6 +9,7 @@ import {
     SuiteDescription
 } from '../laboratory';
 
+import { getPrefix } from '../naming';
 import { formatTable, ContainerImage } from '../utilities';
 
 export async function listCommandInternal(
@@ -91,23 +92,6 @@ class RunFormatter implements IFormatter {
         const item = yaml.safeLoad(yamlText) as RunDescription;
 
         this.rows.push([item.runId, item.candidateId, item.benchmarkId, item.suiteId, item.created]);
-    }
-}
-
-// TODO: this code should go into naming.
-function getPrefix(collection: string): string {
-    switch (collection) {
-        case 'benchmarks':
-            return '/benchmarks';
-        case 'candidates':
-            return '/candidates';
-        case 'suites':
-            return '/suites';
-        case 'runs':
-            return '/runs';
-        default:
-            const message = `Bad collection "${collection}"`;
-            throw TypeError(message);
     }
 }
 

@@ -29,8 +29,6 @@ export class LocalDisk implements IStorage {
     }
 
     async listBlobs(prefix = ''): Promise<string[]> {
-        const results: string[] = [];
-
         // TODO: May want to modify this to a recursive directory walk.
         const translated = this.translatePath(prefix);
         if (fs.existsSync(translated)) {
@@ -41,7 +39,7 @@ export class LocalDisk implements IStorage {
         }
     }
 
-    translatePath(localPath: string) {
+    private translatePath(localPath: string) {
         const normalized = path.posix.resolve('/', path.posix.normalize(localPath));
         const relative = path.posix.relative('/', normalized);
         const resolved = path.resolve(this.root, relative);
@@ -56,16 +54,13 @@ export class LocalDisk implements IStorage {
     }
 }
 
-function go() {
-//    const disk = new LocalDisk('c:\\temp\\einstein');
-    const disk = new LocalDisk('/Users/mhop/git/temp');
+// TODO: Save for unit tests **********************************************
+// function go() {
+//     const disk = new LocalDisk('/Users/mike/git/temp');
 
-    // TODO: Save for unit tests **********************************************
-    // disk.translatePath('../a');
-    // disk.translatePath('/a');
-    // disk.translatePath('a');
-    // disk.translatePath('a/b');
-    // disk.translatePath('c:\\temp\\foo');
-}
-
-// go();
+//     disk.translatePath('../a');
+//     disk.translatePath('/a');
+//     disk.translatePath('a');
+//     disk.translatePath('a/b');
+//     disk.translatePath('c:\\temp\\foo');
+// }
