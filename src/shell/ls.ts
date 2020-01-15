@@ -1,10 +1,10 @@
 import * as path from 'path';
 
-import { Shell } from './shell';
+import { World } from '../cloud';
 
-export async function lsCommand(args: string[], shell: Shell): Promise<number> {
-    const cwd = shell.getWorld().cwd;
-    const storage = shell.getWorld().localStorage;
+export async function lsCommand(args: string[], world: World): Promise<number> {
+    const cwd = world.cwd;
+    const storage = world.localStorage;
 
     let p = cwd;
     if (args.length > 1) {

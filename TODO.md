@@ -15,9 +15,8 @@
 * Prettier clean
 
 ## Easy
-* BUG: `einstein deploy` should not work without a host parameter.
-* x getPrefix() should move to naming.ts
-* Cloud commands (ls, more) should not be relative to filesystem cwd
+* Remove shell parameter from einsteinCommand and cloudCommand
+* Combine duplicated code in cliMain and cloudMain
 * Shell print list of commands
 * world.ts: suppress localStorage initialization on disk.
 * Remove dead code files and debug configurations
@@ -28,42 +27,47 @@
   * go()
   * x samples/container.ts
 * Unify EntityDescription with SuiteDescription
-* x Blob append logger
 * Move code from CLICore to Laboratory
 * Stable uuids for documentation generation
-* x BUG: benchmark and candidate names should come from image tag
-* x BUG: suite names should come from yaml field
-* Combine duplicated code in cliMain and cloudMain
-* Remove shell parameter from einsteinCommand and cloudCommand
 * Combine World and IWorker
 * Move world.ts under true_or_false
-* x Delete cliArgs.ts
 * Rename tutorial to tutorial_builder
 * . Tutorial idempotent unit test
 * Tutorial read from file specified on command line
-* x Why doesn't empty line in tutorial shut down Shell? Irrelevant not that Ctrl-D exits.
 * Use chalk or ansi-styles in tutorial
 * - Redirect recorded output to stderr to allow results on stdout
-* x Strip ANSI escape codes from recorded stdout.
-    * https://stackoverflow.com/questions/13801273/what-does-u001bj-represent
-    * https://github.com/chalk/strip-ansi
-    * https://www.npmjs.com/package/strip-ansi
-* x Don't hard-code LocalDisk path in Shell. Irrelevant not that shell is in-memory
 * Implement local storage flags for Shell.
 * Remove Windows paths from true_or_false sample
 * Verfiy localDisk and ls work on Windows
 * localDisk: handle ~/tilde in root path
 * Duplicate definitions for SymbolTable
-* x Applications go in src/applications
 * Move sample code out to samples folder
+* x Shell.setWorkingDirectory() migrates to World.
+  * x Actually, shell needs to update prompt when cwd changes.
+* x Cloud commands (ls, more) should not be relative to filesystem cwd
+* x BUG: `einstein deploy` should not work without a host parameter.
+* x Don't hard-code LocalDisk path in Shell. Irrelevant not that shell is in-memory
+* x Applications go in src/applications
 * x Convert CLIArgs class to CLIMain() function
-* Catch errors in shell (e.g. duplicate deployments)
+* x Blob append logger
+* x getPrefix() should move to naming.ts
+* x BUG: benchmark and candidate names should come from image tag
+* x BUG: suite names should come from yaml field
+* x Delete cliArgs.ts
+* x Why doesn't empty line in tutorial shut down Shell? Irrelevant not that Ctrl-D exits.
+* x Strip ANSI escape codes from recorded stdout.
+    * x https://stackoverflow.com/questions/13801273/what-does-u001bj-represent
+    * x https://github.com/chalk/strip-ansi
+    * x https://www.npmjs.com/package/strip-ansi
 
 ## Basic
+* show cloud command usage
+* formatArgs() duplicated
 * Provide candidates with their decrypted secrets   
+* Catch errors in shell (e.g. duplicate deployments)
+  * Who catches rejected promises that happen in readline?
 * Figure out container_image.ts. What is the naming scheme?
   * Review ContainerImage field names.
-* x ls and cloud ls should sort. Lexigraphical? Tree order? Are they the same?
 * Tutorial should not spit out final code block
 * Tutorial feature to limit number of lines in a block (to show first n lines of test case...)
 * Tutorial feature to suppress salutation
@@ -93,6 +97,7 @@
 * localDisk: ensure paths exist on file create
 * services command shows image tags for services
 * services command shows volumes for services
+* x ls and cloud ls should sort. Lexigraphical? Tree order? Are they the same?
 
 ## Round-out/Finish-up
 * Disk based IStorage - write/append, command-line arguments

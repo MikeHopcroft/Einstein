@@ -37,13 +37,11 @@ export class CloudMain {
     }
 
     async lsCommand(args: string[]): Promise<number> {
-        // TODO: BUGBUG: this should not be the filesystem cwd.
-        const cwd = this.cwd;
         const storage = this.world.cloudStorage;
 
-        let p = cwd;
+        let p = this.cwd;
         if (args.length > 1) {
-            p = path.posix.join(cwd, args[1]);
+            p = path.posix.join(this.cwd, args[1]);
         }
 
         const blobs = await storage.listBlobs(p);
@@ -58,7 +56,7 @@ export class CloudMain {
             }
         } else {
             for (const blob of blobs) {
-                const relative = path.posix.relative(cwd, blob);
+                const relative = path.posix.relative(this.cwd, blob);
                 console.log(relative);
             }
         }
@@ -66,14 +64,13 @@ export class CloudMain {
         return 0;
     }
 
-    // export async function moreCommand(args: string[], shell: Shell): Promise<number> {
     async moreCommand(args: string[]): Promise<number> {
         if (args.length !== 1) {
             console.log(`cloud more: expected a filename: ${args}`);
             return 1;
         } else if (args[0].includes('*')) {
             // Special case for demo.
-            const pattern = path.posix.join('/', args[0]);
+            const pattern = path.posix.join(this.cwd, args[0]);
             const re = new RegExp(pattern);
             const storage = this.world.cloudStorage;
             const blobs = await storage.listBlobs('');
@@ -88,15 +85,13 @@ export class CloudMain {
             return 0;
         } else {
             const storage = this.world.cloudStorage;
-            const filePath = path.posix.join('/', args[0]);
+            const filePath = path.posix.join(this.cwd, args[0]);
             const fileData = await storage.readBlob(filePath);
             console.log(fileData.toString('utf8'));
             return 0;
         }
     }
     
-
-
     async helpCommand(args: string[]): Promise<number> {
         console.log('Here are some cloud commands:');
         console.log();
@@ -140,7 +135,7 @@ export class CloudMain {
         }
     }
 
-    usage() {
+    private usage() {
         console.log('TODO: show cloud command usage');
     }
 }
@@ -148,7 +143,3 @@ export class CloudMain {
 function formatArgs(args: string[]) {
     return args.map(x => `<${x}>`).join(' ');
 }
-
-// function fullPath(cwd: string, relative: string) {
-//     return path.posix.join(cwd, relative);
-// }

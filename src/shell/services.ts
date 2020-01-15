@@ -1,10 +1,9 @@
+import { World } from '../cloud';
 import { formatTable } from '../utilities';
 
-import { Shell } from './shell';
 
-export async function servicesCommand(args: string[], shell: Shell): Promise<number> {
-    const orchestrator = shell.getOrchestrator();
-    const services = await orchestrator.listServices();
+export async function servicesCommand(args: string[], world: World): Promise<number> {
+    const services = await world.orchestrator.listServices();
 
     const alignments = ['left', 'left', 'left'];
     const headers = ['image', 'host', 'port'];

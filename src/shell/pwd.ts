@@ -1,6 +1,6 @@
-import { Shell } from './shell';
+import { World } from '../cloud';
 
-export async function pwdCommand(args: string[], shell: Shell): Promise<number> {
-    console.log(shell.getWorld().cwd);
+export async function pwdCommand(args: string[], world: World): Promise<number> {
+    console.log(world.cwd);
     return 0;
 }

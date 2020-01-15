@@ -1,8 +1,7 @@
-import { Shell } from './shell';
+import { World } from '../cloud';
 
-export async function imagesCommand(args: string[], shell: Shell): Promise<number> {
-    const orchestrator = shell.getOrchestrator();
-    const images = await orchestrator.listImages();
+export async function imagesCommand(args: string[], world: World): Promise<number> {
+    const images = await world.orchestrator.listImages();
 
     if (images.length > 0) {
         for (const image of images) {

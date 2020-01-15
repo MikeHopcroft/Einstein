@@ -17,17 +17,10 @@ import { servicesCommand } from './services';
 
 // Shell commands are implemented as CommandEntryPoints.
 // The return value is the standard bash shell return code.
-type CommandEntryPoint = (args: string[], shell: Shell) => Promise<number>;
+type CommandEntryPoint = (args: string[], world: World) => Promise<number>;
 
 const maxHistorySteps = 1000;
 const historyFile = '.repl_history';
-
-// function completer2(line: string) {
-//     const completions = 'einstein cloud ls pwd'.split(' ');
-//     const hits = completions.filter((c) => c.startsWith(line));
-//     // Show all completions if none found
-//     return [hits.length ? hits : completions, line];
-// }
 
 export class Shell {
     // Map of shell commands (e.g. cd, ls, pwd, einstein, etc.)
@@ -35,6 +28,9 @@ export class Shell {
     private completions: string[] = [];
 
     private world: World;
+
+    // The current working directory (CWD) displayed in the prompt.
+    private promptCwd: string;
 
     // Einstein CLI application. Used for the 'einstein' command.
     private cli: CLI;
@@ -58,6 +54,9 @@ export class Shell {
         } | undefined = {}
     ) {
         this.world = world;
+
+        // Initialize promptCwd with '' to force initialization in displayPrompt().
+        this.promptCwd = '';
 
         const input = options.input || process.stdin;
 
@@ -99,13 +98,12 @@ export class Shell {
         const rl = readline.createInterface({
             input,
             output: process.stdout,
-            prompt: this.getPrompt(),
             completer: this.completer
         });
         this.rl = rl;
 
         // Display first prompt.
-        rl.prompt();
+        this.displayPrompt();
 
         // Register line input handler.
         rl.on('line', async (line: string) => {
@@ -133,7 +131,7 @@ export class Shell {
             }
 
             // Show next prompt.
-            rl.prompt();
+            shell.displayPrompt();
         }
 
         // TODO: reinstate this code and code to write history on close.
@@ -170,11 +168,6 @@ export class Shell {
         return this.cli;
     }
 
-    setWorkingDirectory(cwd: string) {
-        this.world.cwd = cwd;
-        this.updatePrompt();
-    }
-
     getWorld() {
         return this.world;
     }
@@ -187,7 +180,7 @@ export class Shell {
         return this.capture.output;
     }
 
-    completer = (line: string) => {
+    private completer = (line: string) => {
         // TODO: HACK: replace this code with real completions algorithm.
         const completions = [
             'einstein benchmark ',
@@ -237,13 +230,12 @@ export class Shell {
         return [hits, line];
     }
     
-
-    private getPrompt() {
-        return `einstein:${this.world.cwd}% `;
-    }
-
-    private updatePrompt() {
-        this.rl.setPrompt(this.getPrompt());
+    private displayPrompt() {
+        if (this.promptCwd !== this.world.cwd) {
+            this.promptCwd = this.world.cwd;
+            this.rl.setPrompt(`einstein:${this.world.cwd}% `);
+        }
+        this.rl.prompt();
     }
 
     private async processLine(line: string) {
@@ -254,26 +246,26 @@ export class Shell {
             if (command === undefined) {
                 console.log(`${args[0]}: command not found`)
             } else {
-                await command(args, this);
+                await command(args, this.world);
             }
             console.log();
         }
     }
 
-    private einsteinCommand = async (args: string[], shell: Shell): Promise<number> => {
+    private einsteinCommand = async (args: string[], world: World): Promise<number> => {
         return this.einstein.run(args);
     }
 
-    private exitCommand = async (args: string[], shell: Shell): Promise<number> => {
+    private exitCommand = async (args: string[], world: World): Promise<number> => {
         this.rl.close();
         return 0;
     }
 
-    private cloudCommand = (args: string[], shell: Shell) => {
+    private cloudCommand = (args: string[], world: World) => {
         return this.cloud.run(args);
     }
 
-    private helpCommand = async (args: string[], shell: Shell): Promise<number> => {
+    private helpCommand = async (args: string[], world: World): Promise<number> => {
         console.log('Available shell commands:');
         for (const command of this.commands.keys()) {
             console.log(`  ${command}`);
