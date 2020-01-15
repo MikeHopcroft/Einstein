@@ -9,11 +9,11 @@ import {
     LocalOrchestrator,
     LocalDisk,
     World,
-} from '../../cloud';
+} from '../../../cloud';
 
-import { Laboratory } from '../../laboratory';
+import { Laboratory } from '../../../laboratory';
 
-import { Benchmark, Candidate, TrivialCandidate } from '../true_or_false'
+import { Benchmark, Candidate, TrivialCandidate } from '..'
 
 // TODO: suppress localStorage initialization on disk.
 // Don't want to overwrite yaml files on disk.

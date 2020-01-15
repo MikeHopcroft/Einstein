@@ -15,14 +15,15 @@
 * Prettier clean
 
 ## Easy
-* Remove shell parameter from einsteinCommand and cloudCommand
+* Rename camelCase files to under_score
 * Combine duplicated code in cliMain and cloudMain
 * Shell print list of commands
+* Implement local storage flags for Shell.
 * world.ts: suppress localStorage initialization on disk.
 * Remove dead code files and debug configurations
   * x junk2.ts
   * x shell.old
-  * junk.ts
+  * x junk.ts
   * x true_or_false.ts
   * go()
   * x samples/container.ts
@@ -30,18 +31,18 @@
 * Move code from CLICore to Laboratory
 * Stable uuids for documentation generation
 * Combine World and IWorker
-* Move world.ts under true_or_false
 * Rename tutorial to tutorial_builder
 * . Tutorial idempotent unit test
 * Tutorial read from file specified on command line
 * Use chalk or ansi-styles in tutorial
 * - Redirect recorded output to stderr to allow results on stdout
-* Implement local storage flags for Shell.
 * Remove Windows paths from true_or_false sample
 * Verfiy localDisk and ls work on Windows
 * localDisk: handle ~/tilde in root path
 * Duplicate definitions for SymbolTable
 * Move sample code out to samples folder
+* x Move world.ts under true_or_false
+* x Remove shell parameter from einsteinCommand and cloudCommand
 * x Shell.setWorkingDirectory() migrates to World.
   * x Actually, shell needs to update prompt when cwd changes.
 * x Cloud commands (ls, more) should not be relative to filesystem cwd
