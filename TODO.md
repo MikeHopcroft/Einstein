@@ -61,16 +61,18 @@
   * x samples/container.ts
 
 ## Basic
+* Provide candidates with their decrypted secrets 
 * . Move code from CLICore to Laboratory
+* CLIMain connects to analysis service as well as laboratory service.
+  * Move code from CLICore to Analysis/Repository/???
 * x BUG: uploadCandidate should use encoded container name, not filename
 * Yaml loaders should work like the formatters (ie share code)
-* Provide candidates with their decrypted secrets 
-* CLIMain connects to analysis service as well as laboratory service.
+  * getPrefix(): make collection be an enum - of strings or symbols?
 * Verify YAML schemas
 * Transition to CommandDispatcher (cliMain.ts, cloud.ts, shell.ts)
-* show cloud command usage
-* formatArgs() duplicated
-* cloud ls should take one optional parameter - right now has one required
+  * show cloud command usage
+  * formatArgs() duplicated
+  * cloud ls should take one optional parameter - right now has one required
 * Catch errors in shell (e.g. duplicate deployments)
   * Who catches rejected promises that happen in readline?
 * Shell into other servers?
