@@ -1,10 +1,11 @@
 import * as yaml from 'js-yaml';
 
 import { IStorage, IWorker, ILogger } from '../../../cloud';
-import { encodeSuite } from '../../../naming';
+import { encodeSuite, encodeRun } from '../../../naming';
 import { sleep } from '../../../utilities';
 
 import { ICandidate, SymbolTable, TestSuite } from './interfaces';
+import { RunDescription } from '../../../laboratory';
 
 export class Benchmark {
     static image = {
@@ -17,10 +18,12 @@ export class Benchmark {
         worker.log(`Benchmark.entryPoint()`);
         console.log(`Benchmark.entryPoint()`);
         const env =  worker.getEnvironment();
+        const candidateId = env.get('candidate');
         const candidateHost = env.get('host');
         const suiteId = env.get('suite');
-        // TODO: check for undefined candidateHost, suiteName
-        console.log(`Candidate is ${candidateHost}`);
+        // TODO: check for undefined candidateHost, candidateId, suiteName
+        console.log(`Candidate host is ${candidateHost}`);
+        console.log(`Candidate is ${candidateId}`);
         console.log(`Suite is ${suiteId}`);
 
         // Simulate startup time.
@@ -35,7 +38,7 @@ export class Benchmark {
         const candidate =
             (await worker.connect<ICandidate>(candidateHost, 8080)) as ICandidate;
 
-        await benchmark.run(candidate, suiteId);
+        await benchmark.run(candidate, candidateId, suiteId);
     }
 
     private worker: IWorker;
@@ -48,7 +51,7 @@ export class Benchmark {
         this.localStorage = worker.getFileSystem();
     }
 
-    async run(candidate: ICandidate, suiteId: string) {
+    async run(candidate: ICandidate, candidateId: string, suiteId: string) {
         console.log('Benchmark: run()');
 
         // TODO: error handling for async APIs
@@ -81,13 +84,17 @@ export class Benchmark {
             await candidate.initialize(symbols);
 
             // Run each test case.
+            let passed = 0;
+            let failed = 0;
             for (const testCase of suite.testCases) {
                 const result = await candidate.runCase(testCase.input);
                 const success = (result === testCase.expected);
                 if (success) {
+                    ++passed;
                     this.worker.log(`passed: "${testCase.input}"\n`)
                     console.log(`passed: "${testCase.input}"`)
                 } else {
+                    ++failed;
                     this.worker.log(`failed: "${testCase.input}" ==> "${result}"\n`);
                     console.log(`failed: "${testCase.input}" ==> "${result}"`);
                 }
@@ -100,10 +107,31 @@ export class Benchmark {
 
             // Write results
             console.log('Benchmark: writing results');
-            this.cloudStorage.writeBlob(
-                'results',
-                Buffer.from('benchmark results', 'utf-8')
+            const runId = this.worker.getWorld().hostname;
+            const benchmarkId = Benchmark.image.tag;
+            const name = 'foo';
+            const description = 'foo';
+            const owner = 'foo';
+            const created = new Date().toISOString();
+            const results = { passed, failed };
+            const rd: RunDescription = {
+                runId,
+                candidateId,
+                suiteId,
+                benchmarkId,
+                name,
+                description,
+                owner,
+                created,
+                results
+            };
+            const text = yaml.safeDump(rd);
+            const buffer = Buffer.from(text, 'utf8');
+            await this.cloudStorage.writeBlob(
+                encodeRun(runId),
+                buffer
             );
+            console.log('Benchmark finished');
         }
 
         // // Simulate delay in shutting down

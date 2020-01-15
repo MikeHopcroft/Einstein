@@ -1,6 +1,6 @@
 # Einstein Shell Tutorial
 
-Einstein provides an interactive shell for trying out concepts in a self-contained, simulated cloud environement that runs on the local machine. This tutorial introduces the `Shell` and then uses it to walk through the following concepts
+Einstein provides an interactive `Shell` for trying out concepts in a self-contained, simulated cloud environement that runs on the local machine. This tutorial introduces the `Shell` and then uses it to walk through the following concepts
 
 * Deploying the `Einstein Service`
 * Uploading a `Benchmark`
@@ -8,6 +8,7 @@ Einstein provides an interactive shell for trying out concepts in a self-contain
 * Uploading a `Candidate`
 * Running a `Suite` for a `Benchmark` on a specified `Candidate`
 * Examining the results of the `Run`
+* Administering the `Einstein Service`
 
 Our first step is to get a copy of `Einstein`. Currently the only way to install `Einstein` is to build it from source code.
 
@@ -21,7 +22,7 @@ In order to use `Einstein` you must have
 Here are the steps for cloning and building `Einstein`:
 ~~~
 % git clone git@github.com:MikeHopcroft/Einstein.git
-% npm run install
+% npm install
 % npm run compile
 ~~~
 
@@ -29,7 +30,7 @@ Now that we've built `Einstein`, let's fire up the `Shell`.
 
 ## Introducing the Shell
 
-The `Shell` starts up a simulated cloud environment with blob storage, attached volumes, a container registry, and an orchestrator. By default, the blob storage and disk volumes reside in RAM and are initialized fresh for each session. You can use the `--localStorge` and `--cloudStorage` flags to map these stores to folders on your machine. Use this option when you want files to persist across sessions.
+The `Shell` starts up a simulated cloud environment with blob storage, disk volumes, a container registry, and an orchestrator. By default, the blob storage and disk volumes reside in RAM and are initialized fresh for each session. You can use the `--localStorge` and `--cloudStorage` flags to map these stores to folders on your machine. Use this option when you want blobs and files to persist across sessions.
 
 Here's how start a session with ephermeral, in-memory stores:
 ~~~
@@ -54,43 +55,16 @@ Type "help" for information on commands.
 einstein:/% help
 ~~~
 
-### Shell Commands
+You can read more about the shell commands [here](shell_commands.md).
 
-Here's a cheat sheet for the shell commands:
-
-* Local storage
-    * ls \<path> - show pre-populated configuration files
-    * cd \<path>
-    * pushd \<path>
-    * popd \<path>
-    * pwd
-    * more \<path>
-* Cloud storage
-    * cloud ls \<path>
-    * cloud cd \<path>
-    * cloud pwd
-    * cloud more \<path>
-* Orchestration
-    * images - lists the images in the container registry
-    * services - lists the services currently running in the cluster
-* Einstein CLI
-    * einstein help
-    * einstein deploy
-    * einstein encrypt \<file>
-    * einstein benchmark \<benchmark description file>
-    * einstein suite \<suite description file>
-    * einstein candidate \<candidate description file>
-    * einstein run \<candidate id> \<suite id>
-    * einstein list \<benchmark|candidate|run|suite> \<pattern>
-    * einstein show \<benchmark|candidate|run|suite> \<id>
 
 ## Deploying Einstein
 
-* Einstein service is a container
-* containers
-* Generate public and private keys
+Key points:
+* Einstein is a service that runs in the environment
+* Must be deployed
 
-Initially there are no services running in our cluster.
+Initially there are no services running in our cluster. We can see this by running the `services` command:
 
 [//]: # (shell)
 ~~~
@@ -121,6 +95,7 @@ lab:8080
 
 ## Submitting a Benchmark
 
+Key points:
 * Description of contest
 * Benchmark description file
 * containers
@@ -156,7 +131,7 @@ einstein:/% einstein benchmark benchmark.yaml
 einstein:/% einstein list benchmarks
 ~~~
 
-We can even see the blob has been written.
+We can even see the blob has been written. Note that end users won't be able to do `cloud ls`.
 
 [//]: # (shell)
 ~~~
@@ -165,8 +140,10 @@ einstein:/% cloud ls
 
 ## Submitting a Suite
 
+Key points:
 * Suite description file
 * Domain data
+* Test cases
 * einstein suite
 * einstein list suites
 
@@ -185,7 +162,12 @@ einstein:/% einstein list suites
 
 ## Submitting a Candidate
 
+Key points:
 * Candidate description file
+* Secrets and encryption
+* Whitelist
+* einstein candidate
+* einstein list candidates
 
 [//]: # (shell)
 ~~~
@@ -208,26 +190,55 @@ einstein:/% einstein candidate benchmark.yaml
 einstein:/% einstein list candidates
 ~~~
 
-* einstein candidate
-* einstein list candidates
 
 ## Running a Suite
 
+Key points:
 * einstein run
 * einstein list runs
 * einstein show run
 
 [//]: # (shell)
 ~~~
-einstein:/% einstein run candidateId suiteID
+einstein:/% einstein run true_or_false_candidate:1.0 True_Or_False
 einstein:/% einstein list runs
 ~~~
 
 ## Examining Cloud Storage
 
+Key points:
+* Logging for Einstein laboratory service.
+* Run logging for candidate and benchmark.
+* Run results.
+* Benchmark manifests.
+* Suite manifests.
+* Candidate manifests.
+
 [//]: # (shell)
 ~~~
 einstein:/% cloud ls
 ~~~
+
+## Managing VMs
+
+Key points
+* Data scientists need to interactively explore sample data to gain insights into feature extraction and model design.
+* Interactive access through VMs deployed to cluster.
+
+[//]: # (shell)
+~~~
+einstein:/% einstein create vm
+einstein:/% einstein destroy vm
+~~~
+
+## Administering the Einstein Laboratory Service
+
+Key points:
+* Approving and revoking white listed services.
+* Managing roles
+  * Contest Creater
+  * Data Scientist
+  * Contestant
+  * Einstein Administrator
 
 The end.

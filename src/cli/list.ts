@@ -82,6 +82,18 @@ class SuiteFormatter implements IFormatter {
     }
 }
 
+class RunFormatter implements IFormatter {
+    alignments = ['left', 'left', 'left', 'left', 'left'];
+    private headers = ['name', 'candidate', 'benchmark', 'suite', 'date'];
+    rows: string[][] = [this.headers];
+
+    formatBlob(yamlText: string): void {
+        const item = yaml.safeLoad(yamlText) as RunDescription;
+
+        this.rows.push([item.runId, item.candidateId, item.benchmarkId, item.suiteId, item.created]);
+    }
+}
+
 // TODO: this code should go into naming.
 function getPrefix(collection: string): string {
     switch (collection) {
@@ -99,7 +111,6 @@ function getPrefix(collection: string): string {
     }
 }
 
-
 function createFormatter(collection: string): IFormatter {
     switch (collection) {
         case 'benchmarks':
@@ -108,9 +119,8 @@ function createFormatter(collection: string): IFormatter {
             return new CandidateFormatter();
         case 'suites':
             return new SuiteFormatter();
-        // TODO: implement runs formatter.
-        // case 'runs':
-        //     return '/runs';
+        case 'runs':
+            return new RunFormatter();
         default:
             const message = `Bad collection "${collection}"`;
             throw TypeError(message);

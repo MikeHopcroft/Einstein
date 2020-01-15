@@ -157,6 +157,7 @@ export class CLI {
             this.cloudStorage,
             [],
             new Environment([
+                ['candidate', candidateId],
                 ['host', candidateHost],
                 ['suite', suiteId],
             ]),

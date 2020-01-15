@@ -13,7 +13,7 @@ import {
 
 import { Laboratory } from '../../laboratory';
 
-import { Benchmark, Candidate } from '../true_or_false'
+import { Benchmark, Candidate, TrivialCandidate } from '../true_or_false'
 
 // TODO: suppress localStorage initialization on disk.
 // Don't want to overwrite yaml files on disk.
@@ -36,6 +36,8 @@ export function sampleWorld(localDiskPath?: string) {
 
     world.orchestrator.pushImage(Benchmark.image);
     world.orchestrator.pushImage(Candidate.image);
+    world.orchestrator.pushImage(TrivialCandidate.imageTrue);
+    world.orchestrator.pushImage(TrivialCandidate.imageFalse);
     world.orchestrator.pushImage(Laboratory.image);
 
     // TODO: copy sample yaml files to ramdisk

@@ -21,11 +21,12 @@ export interface SuiteDescription extends EntityDescription {
 }
 
 export interface RunDescription extends EntityDescription {
-    runId: string;  // Probably a guid.
+    runId: string;
+    candidateId: string;
     benchmarkId: string;
-    containerId: string;
     suiteId: string;
-    results: string[];
+    // tslint:disable-next-line:no-any
+    results: any;
 }
 
 export type UID = string;

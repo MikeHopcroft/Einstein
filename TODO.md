@@ -13,6 +13,7 @@
 * Prettier clean
 
 ## Easy
+* getPrefix() should move to naming.ts
 * Cloud commands (ls, more) should not be relative to filesystem cwd
 * Shell print list of commands
 * world.ts: suppress localStorage initialization on disk.
@@ -54,6 +55,7 @@
 * Catch errors in shell (e.g. duplicate deployments)
 
 ## Basic
+* Provide candidates with their decrypted secrets   
 * Figure out container_image.ts. What is the naming scheme?
 * x ls and cloud ls should sort. Lexigraphical? Tree order? Are they the same?
 * Tutorial should not spit out final code block
