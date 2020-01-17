@@ -16,6 +16,10 @@ export async function listCommandInternal(
     storage: IStorage,
     collection: string
 ): Promise<number> {
+    //
+    // Currently implemented directly on the cloud IStorage.
+    // Intention is to implement via RPC to Repository service.
+    //
     const prefix = getPrefix(collection);
     const blobs = await storage.listBlobs(prefix);
     

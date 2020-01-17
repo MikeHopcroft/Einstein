@@ -33,6 +33,10 @@ export class CLI {
     async deploy(
         hostname: string
     ): Promise<void> {
+        //
+        // The deploy functionality runs locally in the CLI application.
+        //
+
         console.log(`depoying einstein to ${hostname}`);
 
         // TODO: generate keys here and store in CLI local store
@@ -66,20 +70,11 @@ export class CLI {
         this.hostName = hostname;
     }
 
-    async getLab(): Promise<ILaboratory> {
-        if (!this.hostName) {
-            const message = 'Not connected to a Labratory';
-            throw TypeError(message);
-        }
-        if (!this.lab) {
-            // TODO: better handling of connection timeout exception here.
-            // TODO: don't hard-code port.
-            this.lab = await this.orchestrator.connect<ILaboratory>(this.hostName, 8080);
-        }
-        return this.lab;
-    }
-
     async encrypt(filename: string): Promise<void> {
+        //
+        // The encrypt functionality gets the key from the lab, but then
+        // performs the encryption locally in the CLI application.
+        //
         const lab = await this.getLab();
         const publicKey = await lab.getPublicKey();
 
@@ -94,6 +89,9 @@ export class CLI {
     }
 
     async uploadBenchmark(filename: string): Promise<void> {
+        //
+        // Impemented as an RPC to the Lab service
+        //
         const lab = await this.getLab();
         const benchmark = await loadBenchmark(filename, this.localStorage, false);
         const destination = await lab.createBenchmark(benchmark);
@@ -101,6 +99,9 @@ export class CLI {
     }
 
     async uploadCandidate(filename: string): Promise<void> {
+        //
+        // Impemented as an RPC to the Lab service
+        //
         const lab = await this.getLab();
         const candidate = await loadCandidate(filename, this.localStorage, false);
         const destination = await lab.createCandidate(candidate);
@@ -108,6 +109,9 @@ export class CLI {
     }
 
     async uploadSuite(filename: string): Promise<void> {
+        //
+        // Impemented as an RPC to the Lab service
+        //
         const lab = await this.getLab();
         const suite = await loadSuite(filename, this.localStorage, false);
         const destination = await lab.createSuite(suite);
@@ -115,6 +119,9 @@ export class CLI {
     }
 
     async run(candidateId: string, suiteId: string): Promise<void> {
+        //
+        // Impemented as an RPC to the Lab service
+        //
         const lab = await this.getLab();
         lab.run(candidateId, suiteId);
     }
@@ -123,4 +130,17 @@ export class CLI {
     //     // Read hostname from connection file.
     //     this.lab = (await this.orchestrator.connect<ILaboratory>(hostname, 8080));
     // }
+
+    private async getLab(): Promise<ILaboratory> {
+        if (!this.hostName) {
+            const message = 'Not connected to a Labratory';
+            throw TypeError(message);
+        }
+        if (!this.lab) {
+            // TODO: better handling of connection timeout exception here.
+            // TODO: don't hard-code port.
+            this.lab = await this.orchestrator.connect<ILaboratory>(this.hostName, 8080);
+        }
+        return this.lab;
+    }
 }
