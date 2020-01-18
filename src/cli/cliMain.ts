@@ -41,24 +41,6 @@ export class CLIMain {
                 description: 'Create benchmark, candidate or suite specified in <spec>',
                 command: context.createCommand
             },
-            // {
-            //     name: 'benchmark',
-            //     args: ['manifest'],
-            //     description: 'Upload benchmark specified in <manifest>',
-            //     command: context.benchmarkCommand
-            // },
-            // {
-            //     name: 'suite',
-            //     args: ['manifest'],
-            //     description: 'Upload suite specified in <manifest>',
-            //     command: context.suiteCommand
-            // },
-            // {
-            //     name: 'candidate',
-            //     args: ['manifest'],
-            //     description: 'Upload candidate specified in <manifest>',
-            //     command: context.candidateCommand
-            // },
             {
                 name: 'run',
                 args: ['candidateId', 'suiteId'],
@@ -143,27 +125,6 @@ export class CLIMain {
         return 0;
     }
 
-    // private async benchmarkCommand(args: string[]): Promise<number> {
-    //     const [manifest] = args;
-    //     const normalized = fullPath(this.cwd, manifest);
-    //     await this.cli.uploadBenchmark(normalized);
-    //     return 0;
-    // }
-
-    // private async suiteCommand(args: string[]): Promise<number> {
-    //     const [manifest] = args;
-    //     const normalized = fullPath(this.cwd, manifest);
-    //     await this.cli.uploadSuite(normalized);
-    //     return 0;
-    // }
-
-    // private async candidateCommand(args: string[]): Promise<number> {
-    //     const [manifest] = args;
-    //     const normalized = fullPath(this.cwd, manifest);
-    //     await this.cli.uploadCandidate(normalized);
-    //     return 0;
-    // }
-
     private async runCommand(args: string[]): Promise<number> {
         const [candidateId, suiteId] = args;
         await this.cli.run(candidateId, suiteId);
@@ -173,7 +134,7 @@ export class CLIMain {
     private async listCommand(args: string[]): Promise<number> {
         //
         // Currently implemented directly on the cloud IStorage.
-        // Intention is to implement via RPC to Repository service.
+        // TODO: Intention is to implement via RPC to Repository service.
         //
 
         const [collection] = args;

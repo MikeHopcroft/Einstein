@@ -50,9 +50,9 @@ export class CloudMain {
             // TODO: BUGBUG: args[1] is not always defined.
             // Can get to this case after cd to bad directory.
             if (args.length > 1) {
-                console.log(`cloud ls: ${args[1]}: No such file or directory`);
+                console.log(`cloud ls: ${args[1]}: No blobs matchign prefix`);
             } else {
-                console.log(`cloud ls: empty`);
+                console.log(`cloud ls: no blobs in cloud storage`);
             }
         } else {
             for (const blob of blobs) {
@@ -70,6 +70,9 @@ export class CloudMain {
             return 1;
         } else if (args[0].includes('*')) {
             // Special case for demo.
+            // Use regular expression matching to display multiple files.
+            // This is essential for the demo script, since we don't know
+            // the uuid values before the run.
             const pattern = path.posix.join(this.cwd, args[0]);
             const re = new RegExp(pattern);
             const storage = this.world.cloudStorage;
@@ -93,13 +96,7 @@ export class CloudMain {
     }
     
     async helpCommand(args: string[]): Promise<number> {
-        console.log('Here are some cloud commands:');
-        console.log();
-        for (const command of this.commands) {
-            console.log(`cloud ${command.name} ${formatArgs(command.args)}`);
-            console.log(`  ${command.description}`);
-            console.log();
-        }
+        this.printHelp();
         return 0;
     }
 
@@ -136,7 +133,19 @@ export class CloudMain {
     }
 
     private usage() {
-        console.log('TODO: show cloud command usage');
+        console.log('cloud usage:');
+        console.log();
+        this.printHelp();
+    }
+
+    private printHelp() {
+        console.log('Here are some cloud commands:');
+        console.log();
+        for (const command of this.commands) {
+            console.log(`cloud ${command.name} ${formatArgs(command.args)}`);
+            console.log(`  ${command.description}`);
+            console.log();
+        }
     }
 }
 

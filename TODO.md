@@ -5,11 +5,14 @@
 * x Logging
 * x cloud more
 * x einstein create gets type from yaml
+* x worker.log replaces console.log
+* schema verification for TestSuite (vs SuiteDescription)
+* catching exceptions in shell.processline
+* repository service
+* repository tabular view of run results with schema from benchmark spec
 * einstein create vm
 * einstein deploy from spec
 * einstein connect
-* repository service
-* repository tabular view of run results with schema from benchmark spec
 * ssh to other hosts - need to modify tutorial builder to detect prompts on other servers
 * Set up unit testing
 
@@ -21,8 +24,11 @@
 * Prettier clean
 
 ## Easy
+* Better error message for "RamDisk: file /suites/aht7ataz9xt5yhk1dhtpa not found". Really want "Can't open suite True_Or_False".
+  * RamDisk: file /candidates/c5p7erbteda74xb5bxhp2vk4d5j62x3578rjwc0 not found.
 * Living spec: name, description, owner = 'foo'
-* BUG: can run test without candidate schema
+* x BUG: can run test without candidate schema
+* BUG: can run test without benchmark schema
 * Rename camelCase files to under_score?
 * Rename tutorial to tutorial_builder
 * Implement local storage flags for Shell.
@@ -122,12 +128,13 @@
 * x BUG: uploadCandidate should use encoded container name, not filename
 * x ls and cloud ls should sort. Lexigraphical? Tree order? Are they the same?
 
-## Specs
+## Specs/Design Notes
 * apiVersion
 * YAML files
 * naming
   * use of container names
   * mapping to blob names
+* exception hierarchy
 
 ## Round-out/Finish-up
 * Disk based IStorage - write/append, command-line arguments

@@ -33,12 +33,17 @@ import {
     Kind,
 } from './interfaces';
 
-import { loadSuite } from './loaders';
+import { loadCandidate, loadSuite } from './loaders';
 
 // Murmurhash seed.
 const seed = 1234567;
 
 export class Laboratory implements ILaboratory {
+    static getPort() {
+        // TODO: don't hard-code port here.
+        return 8080;
+    }
+
     static image = {
         tag: 'labratory:1.0',
         create: () => Laboratory.entryPoint
@@ -47,24 +52,23 @@ export class Laboratory implements ILaboratory {
     // TODO: this should do a bind, not a connect.
     static async entryPoint(worker: IWorker) {
         worker.log(`Labratory.entryPoint()`);
-        // console.log(`Laboratory.entryPoint()`);
 
         // Simulate server startup time.
-        // console.log('laboratory: sleeping');
+        worker.log('laboratory: starting up');
         await sleep(9000);
-        // console.log('laboratory: awoke');
+        worker.log('laboratory: fully initialized');
 
         // TODO: get KeyPair from local storage instead.
         const keys: KeyPair = generateKeys();
 
         // Construct and bind service RPC stub. 
-        const myService = new Laboratory(keys, worker.getWorld());
+        const world = worker.getWorld();
+        const myService = new Laboratory(keys, world);
 
-        // TODO: do not hard-code port here.
-        const port = 8080;
+        const port = Laboratory.getPort();
         worker.bind(worker.getWorld(), myService, port);
 
-        worker.log(`Labratory service running at ${worker.getWorld().hostname}:${port}`);
+        worker.log(`Labratory service running at ${world.hostname}:${port}`);
     }
 
     private keys: KeyPair;
@@ -97,6 +101,7 @@ export class Laboratory implements ILaboratory {
                 return this.createSuite(description);
             default:
                 const message = `Laboratory.create(): unsupported kind==="${description.kind}"`;
+                this.world.logger.log(message);
                 throw new TypeError(message);
         }
     }
@@ -106,7 +111,7 @@ export class Laboratory implements ILaboratory {
         const buffer = Buffer.from(yaml.safeDump(description), 'utf8');
         // TODO: check for attempt blob overwrite.
         await this.cloudStorage.writeBlob(encoded, buffer);
-        this.world.logger.log(`Uploaded to ${encoded}`);
+        this.world.logger.log(`Uploaded benchmark schema to ${encoded}`);
         return encoded;
     }
 
@@ -115,7 +120,7 @@ export class Laboratory implements ILaboratory {
         const buffer = Buffer.from(yaml.safeDump(description), 'utf8');
         // TODO: check for attempt blob overwrite.
         await this.cloudStorage.writeBlob(encoded, buffer);
-        this.world.logger.log(`Uploaded to ${encoded}`);
+        this.world.logger.log(`Uploaded candidate schema to ${encoded}`);
         return encoded;
     }
 
@@ -124,24 +129,25 @@ export class Laboratory implements ILaboratory {
         const buffer = Buffer.from(yaml.safeDump(description), 'utf8');
         // TODO: check for attempt blob overwrite.
         await this.cloudStorage.writeBlob(encoded, buffer);
-        this.world.logger.log(`Uploaded to ${encoded}`);
+        this.world.logger.log(`Uploaded suite schema to ${encoded}`);
         return encoded;
     }
 
     async run(candidateId: string, suiteId: string): Promise<void> {
-        console.log(`run(${candidateId}, ${suiteId})`);
+        this.world.logger.log(`run(${candidateId}, ${suiteId})`);
         const suiteData = await loadSuite(suiteId, this.cloudStorage);
-        // const candidateData = await loadCandidate(candidateId, this.cloudStorage);
+        const candidateData = await loadCandidate(candidateId, this.cloudStorage);
 
-        // if (suiteData.benchmarkId !== candidateData.benchmarkId) {
-        //     const message = "Suite and Candidate benchmarks don't match.";
-        //     throw new TypeError(message);
-        // }
+        if (suiteData.benchmarkId !== candidateData.benchmarkId) {
+            const message = "Suite and Candidate benchmarks don't match.";
+            this.world.logger.log(message);
+            throw new TypeError(message);
+        }
 
         // Decrypt candidate manifest secrets
         // Start the candidate container.
         const candidateHost = uuid();
-        console.log(`Starting candidate ${candidateId} on ${candidateHost}`);
+        this.world.logger.log(`Starting candidate ${candidateId} on ${candidateHost}`);
         this.orchestrator.createWorker(
             candidateHost,
             candidateId,
@@ -153,7 +159,7 @@ export class Laboratory implements ILaboratory {
 
         // Start the benchmark container.
         const benchmarkHost = uuid();
-        console.log(`Starting benchmark ${suiteData.benchmarkId} on ${benchmarkHost}`);
+        this.world.logger.log(`Starting benchmark ${suiteData.benchmarkId} on ${benchmarkHost}`);
         this.orchestrator.createWorker(
             benchmarkHost,
             suiteData.benchmarkId,

@@ -5,9 +5,15 @@ import { encodeSuite, encodeRun } from '../../../naming';
 import { sleep } from '../../../utilities';
 
 import { ICandidate, TestSuite } from './interfaces';
-import { Kind, RunDescription } from '../../../laboratory';
+import { Kind, RunDescription, loadSuite } from '../../../laboratory';
 
 export class Benchmark {
+    // TODO: don't hard-code hostname and port here.
+    // The candidate's service port.
+    static candidatePort() {
+        return 8080;
+    }
+
     static image = {
         // tag: 'myregistry.azurecr.io/true_or_false_benchmark:1.0',
         tag: 'true_or_false_benchmark:1.0',
@@ -34,21 +40,25 @@ export class Benchmark {
         // TODO: pass worker to constructor?
         const benchmark = new Benchmark(worker);
 
-        // TODO: don't hard-code hostname and port here.
         const candidate =
-            (await worker.connect<ICandidate>(candidateHost, 8080)) as ICandidate;
+            (await worker.connect<ICandidate>(candidateHost, Benchmark.candidatePort())) as ICandidate;
 
         await benchmark.run(candidate, candidateId, suiteId);
     }
 
     private worker: IWorker;
     private cloudStorage: IStorage;
-    private localStorage: IStorage;
+
+    // Maximum number of attempts to contact the Candidate.
+    private maxConnectionAttempts = 5;
+
+    // Number of milliseconds between attempts to contact the Candidate.
+    private msBetweenConnectionAttempts = 1000;
+
 
     constructor(worker: IWorker) {
         this.worker = worker;
         this.cloudStorage = worker.getWorld().cloudStorage;
-        this.localStorage = worker.getWorld().localStorage;
     }
 
     async run(candidate: ICandidate, candidateId: string, suiteId: string) {
@@ -62,10 +72,7 @@ export class Benchmark {
         // console.log(`Benchmark: secrets = "${secrets}"`);
 
         // Load test suite from cloud storage.
-        const encoded = encodeSuite(suiteId);
-        const suite = yaml.safeLoad(
-            (await this.cloudStorage.readBlob(encoded)).toString('utf-8')
-        ) as TestSuite;
+        const suite = await loadSuite(suiteId, this.cloudStorage) as TestSuite;
         // TODO: Verify TestSuite schema
 
         // Load experiment symbol table from cloud storage.
@@ -73,7 +80,7 @@ export class Benchmark {
         // TODO: Verify Symbols schema
 
         // Wait until candidate is ready.
-        const ready = await waitForCandidate(candidate);
+        const ready = await this.waitForCandidate(candidate);
 
         if (!ready) {
             // Candidate did not start up.
@@ -92,11 +99,9 @@ export class Benchmark {
                 if (success) {
                     ++passed;
                     this.worker.log(`passed: "${testCase.input}"`)
-                    // console.log(`passed: "${testCase.input}"`)
                 } else {
                     ++failed;
                     this.worker.log(`failed: "${testCase.input}" ==> "${result}"`);
-                    // console.log(`failed: "${testCase.input}" ==> "${result}"`);
                 }
             }
 
@@ -139,23 +144,21 @@ export class Benchmark {
         // // Simulate delay in shutting down
         // await sleep(10000);
 
-        // console.log('Benchmark: return');
         return;
     }
-}
 
-// TODO: better way to configure timeout.
-const maxTries = 5;
-async function waitForCandidate(candidate: ICandidate): Promise<boolean> {
-    let ready = false;
-    for (let i = 0; i < maxTries; ++i) {
-        // console.log('Benchmark: ready?');
-        ready = await candidate.ready();
-        if (ready) {
-            break;
+    async waitForCandidate(candidate: ICandidate): Promise<boolean> {
+        let ready = false;
+        for (let i = 0; i < this.maxConnectionAttempts; ++i) {
+            this.worker.log('Benchmark: is candidate ready?');
+            ready = await candidate.ready();
+            if (ready) {
+                this.worker.log('Benchmark: candidate is ready');
+                break;
+            }
+            this.worker.log('Benchmark: sleeping ...');
+            await sleep(this.msBetweenConnectionAttempts);
         }
-        // console.log('Benchmark: sleeping ...');
-        await sleep(1000);
+        return ready;
     }
-    return ready;
 }

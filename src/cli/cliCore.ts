@@ -37,7 +37,7 @@ export class CLI {
         // The deploy functionality runs locally in the CLI application.
         //
 
-        console.log(`depoying einstein to ${hostname}`);
+        console.log(`Depoying einstein to ${hostname}`);
 
         // TODO: generate keys here and store in CLI local store
         // and in worker's attached volume.
@@ -97,36 +97,6 @@ export class CLI {
         const destination = await lab.create(spec);
         console.log(`Uploaded to ${destination}`);
     }
-
-    // async uploadBenchmark(filename: string): Promise<void> {
-    //     //
-    //     // Impemented as an RPC to the Lab service
-    //     //
-    //     const lab = await this.getLab();
-    //     const benchmark = await loadBenchmark(filename, this.localStorage, false);
-    //     const destination = await lab.createBenchmark(benchmark);
-    //     console.log(`Uploaded to ${destination}`);
-    // }
-
-    // async uploadCandidate(filename: string): Promise<void> {
-    //     //
-    //     // Impemented as an RPC to the Lab service
-    //     //
-    //     const lab = await this.getLab();
-    //     const candidate = await loadCandidate(filename, this.localStorage, false);
-    //     const destination = await lab.createCandidate(candidate);
-    //     console.log(`Uploaded to ${destination}`);
-    // }
-
-    // async uploadSuite(filename: string): Promise<void> {
-    //     //
-    //     // Impemented as an RPC to the Lab service
-    //     //
-    //     const lab = await this.getLab();
-    //     const suite = await loadSuite(filename, this.localStorage, false);
-    //     const destination = await lab.createSuite(suite);
-    //     console.log(`Uploaded to ${destination}`);
-    // }
 
     async run(candidateId: string, suiteId: string): Promise<void> {
         //

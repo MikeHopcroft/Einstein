@@ -26,12 +26,11 @@ export class TrivialCandidate implements ICandidate {
 
     static async entryPoint(worker: IWorker, truthValue: boolean) {
         worker.log(`TrivialCandidate.entryPoint()`);
-        console.log(`TrivialCandidate.entryPoint()`);
 
         // Simulate server startup time.
-        console.log('TrivialCandidate: sleeping');
+        worker.log('TrivialCandidate: initializing');
         await sleep(1000);
-        console.log('TrivialCandidate: awoke');
+        worker.log('TrivialCandidate: ready');
     
         // Construct and bind service RPC stub. 
         const myService = new TrivialCandidate(worker, truthValue);
@@ -58,7 +57,7 @@ export class TrivialCandidate implements ICandidate {
     }
 
     async initialize(symbols: Symbols): Promise<void> {
-        console.log('TrivialCandidate: initialize()');
+        this.worker.log('TrivialCandidate: initialize()');
         // Ignore symbols.
     }
 
@@ -68,9 +67,10 @@ export class TrivialCandidate implements ICandidate {
 
     async shutdown(): Promise<void> {
         // Simulate delay in shutting down
+        this.worker.log('TrivialCandidate: preparing to shutdown');
         await sleep(5000);
 
-        console.log('TrivialCandidate: shutdown()');
+        this.worker.log('TrivialCandidate: shutdown()');
         this.worker.shutdown();
         // process.exit(0);
     }

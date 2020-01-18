@@ -1,30 +1,28 @@
 import { IWorker } from '../../../cloud';
 import { sleep } from '../../../utilities';
 
-import { ICandidate, Symbols } from '../benchmark';
+import { ICandidate, Symbols, Benchmark } from '../benchmark';
 
 import { parse } from './parser';
 
 export class Candidate implements ICandidate {
     static image = {
-        // tag: 'myregistry.azurecr.io/true_or_false_candidate:1.0',
         tag: 'true_or_false_candidate:1.0',
         create: () => Candidate.entryPoint
     };
 
     static async entryPoint(worker: IWorker) {
         worker.log(`Candidate.entryPoint()`);
-        // console.log(`Candidate.entryPoint()`);
 
         // Simulate server startup time.
-        // console.log('candidate: sleeping');
+        worker.log('candidate: initializing');
         await sleep(1000);
-        // console.log('candidate: awoke');
+        worker.log('candidate: ready');
     
         // Construct and bind service RPC stub. 
         const myService = new Candidate(worker);
         // TODO: do not bind port here.
-        worker.bind(worker.getWorld(), myService, 8080);
+        worker.bind(worker.getWorld(), myService, Benchmark.candidatePort());
 
         // TODO: auto-shutdown if no connection after a certain amount of time?
     }
@@ -54,18 +52,24 @@ export class Candidate implements ICandidate {
     async runCase(input: string): Promise<boolean | string> {
         try {
             const evaluator = parse(input);
-            return evaluator(this.symbols);
+            const result = evaluator(this.symbols);
+            this.worker.log(`Case: "${input}" returns ${result}`);
+            return result;
         } catch (e) {
             if (e instanceof Error) {
+                this.worker.log(`Case: "${input}" returns "${e.message}"`);
                 return e.message;
             } else {
-                return "UNKNOWN EXCEPTION";
+                const message = "UNKNOWN EXCEPTION";
+                this.worker.log(`Case: "${input}" returns "${message}"`);
+                return message;
             }
         }
     }
 
     async shutdown(): Promise<void> {
         // Simulate delay in shutting down
+        this.worker.log('Candidate: preparing to shutdown');
         await sleep(10000);
 
         this.worker.log('Candidate: shutdown()');

@@ -102,6 +102,15 @@ export class Shell {
         });
         this.rl = rl;
 
+        process.on('unhandledRejection', (err) => {
+            if (err instanceof TypeError) {
+                console.log(err.message);
+            } else {
+                console.log(`Unknwon exception: ${err}`);
+            }
+            rl.prompt();
+        });
+
         // Display first prompt.
         this.displayPrompt();
 
@@ -187,16 +196,9 @@ export class Shell {
             'einstein create benchmark.yaml',
             'einstein create candidate.yaml',
             'einstein create suite.yaml',
-            
-            // 'einstein benchmark ',
-            // 'einstein benchmark benchmark.yaml',
-            // 'einstein candidate ',
-            // 'einstein candidate candidate.yaml',
             'einstein deploy ',
             'einstein deploy lab',
             'einstein help',
-            // 'einstein suite ',
-            // 'einstein suite suite.yaml',
             'einstein run ',
             'einstein run true_or_false_candidate:1.0 ',
             'einstein run true_or_false_candidate:1.0 True_Or_False',
@@ -210,13 +212,6 @@ export class Shell {
             'einstein list suites',
             'einstein list runs',
             'einstein ',
-            // 'benchmark.yaml',
-            // 'candidate.yaml',
-            // 'suite.yaml',
-            // 'benchmark',
-            // 'candidate',
-            // 'suite',
-            // 'list',
             'cloud ',
             'cloud ls',
             'cloud more suites/aht7ataz9xt5yhk1dhtpa',
@@ -232,7 +227,6 @@ export class Shell {
             'services',
         ];
         const hits = completions.filter((c) => c.startsWith(line));
-        // console.log(`line="${line}", hits=${hits}`);
         return [hits, line];
     }
     
@@ -252,7 +246,15 @@ export class Shell {
             if (command === undefined) {
                 console.log(`${args[0]}: command not found`)
             } else {
-                await command(args, this.world);
+                try {
+                    await command(args, this.world);
+                } catch (e) {
+                    if (e instanceof TypeError) {
+                        console.log(e.message);
+                    } else {
+                        throw e;
+                    }
+                }
             }
             console.log();
         }
