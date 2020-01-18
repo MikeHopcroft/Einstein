@@ -6,8 +6,8 @@
 * x cloud more
 * x einstein create gets type from yaml
 * x worker.log replaces console.log
-* schema verification for TestSuite (vs SuiteDescription)
-* catching exceptions in shell.processline
+* x schema verification for TestSuite (vs SuiteDescription)
+* x catching exceptions in shell.processline
 * repository service
 * repository tabular view of run results with schema from benchmark spec
 * einstein create vm

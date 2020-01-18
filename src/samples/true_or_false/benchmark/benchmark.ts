@@ -1,11 +1,12 @@
 import * as yaml from 'js-yaml';
 
-import { IStorage, IWorker, ILogger } from '../../../cloud';
-import { encodeSuite, encodeRun } from '../../../naming';
+import { IStorage, IWorker } from '../../../cloud';
+import { Kind, RunDescription, loadSuite } from '../../../laboratory';
+import { encodeRun } from '../../../naming';
 import { sleep } from '../../../utilities';
 
-import { ICandidate, TestSuite } from './interfaces';
-import { Kind, RunDescription, loadSuite } from '../../../laboratory';
+import { ICandidate } from './interfaces';
+import { validateTestSuite } from './schemas';
 
 export class Benchmark {
     // TODO: don't hard-code hostname and port here.
@@ -22,7 +23,6 @@ export class Benchmark {
 
     static async entryPoint(worker: IWorker) {
         worker.log(`Benchmark.entryPoint()`);
-        // console.log(`Benchmark.entryPoint()`);
         const env =  worker.getWorld().environment;
         const candidateId = env.get('candidate');
         const candidateHost = env.get('host');
@@ -71,13 +71,11 @@ export class Benchmark {
         //     (await this.localStorage.readBlob('secrets.txt')).toString('utf-8');
         // console.log(`Benchmark: secrets = "${secrets}"`);
 
-        // Load test suite from cloud storage.
-        const suite = await loadSuite(suiteId, this.cloudStorage) as TestSuite;
-        // TODO: Verify TestSuite schema
+        // Load suite from cloud storage.
+        const suite = await loadSuite(suiteId, this.cloudStorage);
 
-        // Load experiment symbol table from cloud storage.
-        const symbols = suite.domainData;
-        // TODO: Verify Symbols schema
+        // Validate TestSuite schema
+        const testSuite = validateTestSuite(suite.data);
 
         // Wait until candidate is ready.
         const ready = await this.waitForCandidate(candidate);
@@ -88,12 +86,12 @@ export class Benchmark {
             this.worker.log('Candidate did not start up.');
         } else {
             // Initialize the candidate.
-            await candidate.initialize(symbols);
+            await candidate.initialize(testSuite.domainData);
 
             // Run each test case.
             let passed = 0;
             let failed = 0;
-            for (const testCase of suite.testCases) {
+            for (const testCase of testSuite.testCases) {
                 const result = await candidate.runCase(testCase.input);
                 const success = (result === testCase.expected);
                 if (success) {

@@ -1,9 +1,10 @@
 import * as AJV from 'ajv';
 import * as betterAjvErrors from 'better-ajv-errors';
+
 import { AnyDescription } from './interfaces';
 
 // Schema generated with typescript-json-schema:
-// typescript-json-schema tsconfig.json AnyDescription --required
+//   typescript-json-schema tsconfig.json AnyDescription --required
 const anyDescriptionSchema = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "anyOf": [
@@ -165,6 +166,12 @@ const anyDescriptionSchema = {
                 "created": {
                     "type": "string"
                 },
+                "data": {
+                    "additionalProperties": true,
+                    "properties": {
+                    },
+                    "type": "object"
+                },
                 "description": {
                     "type": "string"
                 },
@@ -185,6 +192,7 @@ const anyDescriptionSchema = {
                 "apiVersion",
                 "benchmarkId",
                 "created",
+                "data",
                 "description",
                 "kind",
                 "name",
@@ -201,7 +209,6 @@ export class YAMLValidationError extends TypeError {
         this.name = 'YAML Validation Error';
     }
 }
-
 
 const ajv = new AJV();
 const anyDescriptionValidator = ajv.compile(anyDescriptionSchema);

@@ -13,16 +13,10 @@ export interface SymbolDefinition {
 export type Symbols = SymbolDefinition[];
 
 // TODO: extends SuiteDescription
-export interface TestSuite extends SuiteDescription {
-    name: string;
-    description: string;
-    owner: string;
-    created: string,
-    benchmarkId: string;
+export interface TestSuite {
     domainData: Symbols;
     testCases: TestCase[];
 }
-
 
 // tslint:disable-next-line:interface-name
 export interface ICandidate {

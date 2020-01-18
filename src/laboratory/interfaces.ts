@@ -31,6 +31,10 @@ export interface CandidateDescription extends EntityDescription {
 export interface SuiteDescription extends EntityDescription {
     kind: Kind.SUITE,
     benchmarkId: string;
+    // Important that data is 'object' and not 'Object'
+    // 'object' specifies non-primitive and therefore doesn't
+    // allow 'undefined'
+    data: object
 }
 
 export interface RunDescription extends EntityDescription {
