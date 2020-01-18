@@ -37,7 +37,7 @@ export class LocalOrchestrator implements IOrchestrator {
     pushImage(image: Image): void {
         if (this.images.has(image.tag)) {
             const message = "Attempting to push duplicate image ${image.tag}.";
-            throw TypeError(message);
+            throw new TypeError(message);
         }
         this.images.set(image.tag, image);
     }
@@ -71,12 +71,12 @@ export class LocalOrchestrator implements IOrchestrator {
         const host = this.hosts.get(hostname);
         if (host !== undefined) {
             const message = `Host ${hostname} already exists.`;
-            throw TypeError(message);
+            throw new TypeError(message);
         }
         const image = this.images.get(tagname);
         if (image === undefined) {
             const message = `Image ${tagname} not found.`;
-            throw TypeError(message);
+            throw new TypeError(message);
         }
 
         // TODO: correct implementation.
@@ -88,7 +88,7 @@ export class LocalOrchestrator implements IOrchestrator {
             localStorage = new RamDisk();
         } else {
             const message = "createWorker(): expected zero or one volumes";
-            throw TypeError(message);
+            throw new TypeError(message);
         }
 
         const world: World = {
@@ -114,7 +114,7 @@ export class LocalOrchestrator implements IOrchestrator {
             this.hosts.delete(hostname);
         } else {
             const message = `Attempting to kill worker on unknown host ${hostname}.`;
-            throw TypeError(message);
+            throw new TypeError(message);
         }
     }
 
@@ -130,7 +130,7 @@ export class LocalOrchestrator implements IOrchestrator {
             const existing = host.ports.get(port);
             if (existing) {
                 const message = `Port ${port} on host ${hostname} already in use.`;
-                throw TypeError(message);
+                throw new TypeError(message);
             } else {
                 host.ports.set(port, service);
             }
@@ -159,10 +159,10 @@ export class LocalOrchestrator implements IOrchestrator {
         }
         if (!host) {
             const message =`Unknown host ${hostname}.`;
-            throw TypeError(message);
+            throw new TypeError(message);
         } else {
             const message = `Timed out connecting to port ${port} on ${hostname}.`;
-            throw TypeError(message);
+            throw new TypeError(message);
         }
     }
 }

@@ -98,7 +98,7 @@ export class CommandDispatcher implements ICommand {
         if (this.commands.has(name)) {
             const message =
                 `Attempting to register duplicate command "${name}"`;
-            throw TypeError(message);
+            throw new TypeError(message);
         } else {
             this.commands.set(name, command);
         }

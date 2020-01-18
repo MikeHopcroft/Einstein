@@ -51,7 +51,7 @@ export function decodeRun(encoded: string): string {
         return parts[1];
     } else {
         const message = `decode: invalid encoding "${encoded}"`;
-        throw TypeError(message);
+        throw new TypeError(message);
     }
 }
 
@@ -66,11 +66,11 @@ function decode(collection: string, encoded: string) {
             return base32.decode(parts[2]);
         } else {
             const message = `decode: collection mismatch - found "${parts[1]} - expected ${collection}"`;
-            throw TypeError(message);
+            throw new TypeError(message);
         }
     } else {
         const message = `decode: invalid encoding "${encoded}"`;
-        throw TypeError(message);
+        throw new TypeError(message);
     }
 }
 
@@ -86,7 +86,7 @@ export function getPrefix(collection: string): string {
             return '/runs';
         default:
             const message = `Bad collection "${collection}"`;
-            throw TypeError(message);
+            throw new TypeError(message);
     }
 }
 

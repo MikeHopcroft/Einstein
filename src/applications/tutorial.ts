@@ -177,7 +177,7 @@ class Parser {
 
         if (!input.skip('~~~')) {
             const message = 'Expected closing ~~~.';
-            throw TypeError(message);
+            throw new TypeError(message);
         }
 
         return lines;

@@ -29,7 +29,7 @@ export class RamDisk implements IStorage {
         const buffer = this.blobs.get(name);
         if (buffer === undefined) {
             const message = `RamDisk: file ${name} not found.`;
-            throw TypeError(message);
+            throw new TypeError(message);
         } else {
             return buffer;
         }

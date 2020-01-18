@@ -97,7 +97,7 @@ export class Laboratory implements ILaboratory {
                 return this.createSuite(description);
             default:
                 const message = `Laboratory.create(): unsupported kind==="${description.kind}"`;
-                throw TypeError(message);
+                throw new TypeError(message);
         }
     }
 
@@ -135,7 +135,7 @@ export class Laboratory implements ILaboratory {
 
         // if (suiteData.benchmarkId !== candidateData.benchmarkId) {
         //     const message = "Suite and Candidate benchmarks don't match.";
-        //     throw TypeError(message);
+        //     throw new TypeError(message);
         // }
 
         // Decrypt candidate manifest secrets

@@ -144,7 +144,7 @@ export class CLI {
     private async getLab(): Promise<ILaboratory> {
         if (!this.hostName) {
             const message = 'Not connected to a Labratory';
-            throw TypeError(message);
+            throw new TypeError(message);
         }
         if (!this.lab) {
             // TODO: better handling of connection timeout exception here.

@@ -14,13 +14,13 @@ export class LocalDisk implements IStorage {
     async appendBlob(name: string, buffer: Buffer): Promise<void> {
         // TODO: implement
         const message = "LocalDisk: appendBlob() not implemented";
-        throw TypeError(message);
+        throw new TypeError(message);
     }
 
     async writeBlob(name: string, buffer: Buffer): Promise<void> {
         // TODO: implement
         const message = "LocalDisk: writeBlob() not implemented";
-        throw TypeError(message);
+        throw new TypeError(message);
     }
 
     async readBlob(name: string): Promise<Buffer> {

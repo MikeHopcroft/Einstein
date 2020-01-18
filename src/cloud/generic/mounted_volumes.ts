@@ -11,7 +11,7 @@ class MountedVolumes implements IStorage {
             // TODO: also check whether one mount would be a prefix of another.
             if (this.volumes.has(volume.mount)) {
                 const message = `MountedVolumes: mount ${volume.mount} already in use.`;
-                throw TypeError(message);
+                throw new TypeError(message);
             }
             this.volumes.set(volume.mount, volume.storage);
         }
@@ -20,7 +20,7 @@ class MountedVolumes implements IStorage {
     async appendBlob(name: string, buffer: Buffer): Promise<void> {
         // TODO: implement
         const message = "MountedVolumes: appendBlob() not implemented";
-        throw TypeError(message);
+        throw new TypeError(message);
     }
 
     async writeBlob(name: string, buffer: Buffer): Promise<void> {
@@ -68,7 +68,7 @@ class MountedVolumes implements IStorage {
         }
 
         const message = `Path ${normalized} not found`;
-        throw TypeError(message);
+        throw new TypeError(message);
     }
 }
 

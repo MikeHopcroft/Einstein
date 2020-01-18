@@ -23,19 +23,19 @@
 ## Easy
 * Living spec: name, description, owner = 'foo'
 * BUG: can run test without candidate schema
-* TypeError() => new TypeError()
 * Rename camelCase files to under_score?
 * Rename tutorial to tutorial_builder
 * Implement local storage flags for Shell.
   * world.ts: suppress localStorage initialization on disk.
+  * Verfiy localDisk and ls work on Windows
+  * localDisk: handle ~/tilde in root path
 * Stable uuids for documentation generation
 * . Tutorial idempotent unit test
-* Tutorial read from file specified on command line
-* Use chalk or ansi-styles in tutorial
-* Verfiy localDisk and ls work on Windows
-* localDisk: handle ~/tilde in root path
+* - Use chalk or ansi-styles in tutorial
 * - Shell print list of commands
 * - Redirect recorded output to stderr to allow results on stdout
+* x TypeError() => new TypeError()
+* x Tutorial read from file specified on command line
 * x Unify EntityDescription with SuiteDescription
 * x Combine World and IWorker
 * x Move sample code out to samples folder

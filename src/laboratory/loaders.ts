@@ -90,7 +90,7 @@ export function toBenchmark(
     if (description.kind !== Kind.BENCHMARK) {
         const message = `toBenchmark(): expected kind==="${
             Kind.BENCHMARK}", found "${description.kind}"`;
-        throw TypeError(message);
+        throw new TypeError(message);
     }
 
     return description;    
@@ -102,7 +102,7 @@ export function toCandidate(
     if (description.kind !== Kind.CANDIDATE) {
         const message = `toCandidate(): expected kind==="${
             Kind.CANDIDATE}", found "${description.kind}"`;
-        throw TypeError(message);
+        throw new TypeError(message);
     }
 
     return description;    
@@ -114,7 +114,7 @@ export function toRun(
     if (description.kind !== Kind.RUN) {
         const message = `toRun(): expected kind==="${
             Kind.RUN}", found "${description.kind}"`;
-        throw TypeError(message);
+        throw new TypeError(message);
     }
 
     return description;    
@@ -126,7 +126,7 @@ export function toSuite(
     if (description.kind !== Kind.SUITE) {
         const message = `toSuite(): expected kind==="${
             Kind.SUITE}", found "${description.kind}"`;
-        throw TypeError(message);
+        throw new TypeError(message);
     }
 
     return description;    

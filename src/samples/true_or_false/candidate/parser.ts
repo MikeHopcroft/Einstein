@@ -53,7 +53,7 @@ function parseDisjunction(input: PeekableSequence<string>): Evaluator {
             children.push(parseConjunction(input));
         } else {
             const message = "Expected '&' or '|' operator";
-            throw TypeError(message);
+            throw new TypeError(message);
         }
     }
 
@@ -110,7 +110,7 @@ function parseUnary(input: PeekableSequence<string>): Evaluator {
         const unary = parseDisjunction(input);
         if (!input.nextIs(')')) {
             const message = "Expected ')'";
-            throw TypeError(message);
+            throw new TypeError(message);
         }
         input.get();
         return unary;
@@ -125,19 +125,19 @@ function parseTerm(input: PeekableSequence<string>): Evaluator {
         const next = input.peek();
         if (['&', '|', '!', '(', ')'].includes(next)) {
             const message = `Unexpected operator "${next}"`;
-            throw TypeError(message);
+            throw new TypeError(message);
         }
         const variable = input.get();
         return (symbols: SymbolTable) => {
             const value = symbols.get(variable);
             if (value === undefined) {
                 const message = `Undefined variable ${variable}`;
-                throw TypeError(message);
+                throw new TypeError(message);
             }
             return value;
         }
     } else {
         const message = 'Expected a variable';
-        throw TypeError(message);
+        throw new TypeError(message);
     }
 }

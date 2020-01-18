@@ -29,7 +29,7 @@ export class ContainerImage {
             this.parseComponentTagDigest(parts[2]);
         } else {
             const message = "Invalid image";
-            throw TypeError(message);
+            throw new TypeError(message);
         }
 
         this.shortName = `${this.component}:${this.tag}`;
@@ -44,7 +44,7 @@ export class ContainerImage {
             this.parseTagDigest(parts[1]);
         } else {
             const message = "Invalid image";
-            throw TypeError(message);
+            throw new TypeError(message);
         }
     }
 
@@ -57,7 +57,7 @@ export class ContainerImage {
             this.digest = parts[1];
         } else {
             const message = "Invalid image";
-            throw TypeError(message);
+            throw new TypeError(message);
         }
     }
 }

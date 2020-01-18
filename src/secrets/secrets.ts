@@ -159,7 +159,7 @@ function d3(text: string, privateKey: string): string {
     const parts = text.split(':');
     if (parts.length !== 3) {
         const message = 'Invalid format for decryption.';
-        throw TypeError(message);
+        throw new TypeError(message);
     }
     const encryptedKey = Buffer.from(parts[0], 'base64');
     const iv = Buffer.from(parts[1], 'base64');

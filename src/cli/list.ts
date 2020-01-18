@@ -111,6 +111,6 @@ function createFormatter(collection: string): IFormatter {
             return new RunFormatter();
         default:
             const message = `Bad collection "${collection}"`;
-            throw TypeError(message);
+            throw new TypeError(message);
     }
 }

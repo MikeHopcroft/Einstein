@@ -152,7 +152,7 @@ export class Shell {
         if (this.commands.has(name)) {
             const message =
                 `Attempting to register duplicate command "${name}"`;
-            throw TypeError(message);
+            throw new TypeError(message);
         } else {
             this.commands.set(name, entryPoint);
             this.completions.push(name + ' ');
@@ -215,7 +215,6 @@ export class Shell {
             // 'suite.yaml',
             // 'benchmark',
             // 'candidate',
-            // 'services',
             // 'suite',
             // 'list',
             'cloud ',
@@ -224,11 +223,13 @@ export class Shell {
             'cloud more benchmarks/eht7atazdxt5ytk1dhtpaqv2cnq66u3dc5t6pehh5rr0',
             'cloud more candidates/eht7atazdxt5ytk1dhtpaqv3c5q68ub4c5u6aehh5rr0',
             'cloud more logs/lab',
+            'images',
             'ls',
             'more ',
             'more candidate.yaml',
             'more benchmark.yaml',
             'more suite.yaml',
+            'services',
         ];
         const hits = completions.filter((c) => c.startsWith(line));
         // console.log(`line="${line}", hits=${hits}`);

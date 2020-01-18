@@ -11,7 +11,7 @@ export class PeekableSequence<T> {
         if (!this.current.done) {
             return this.current.value;
         } else {
-            throw TypeError('PeekableSequence<T>.peek(): at end of stream.');
+            throw new TypeError('PeekableSequence<T>.peek(): at end of stream.');
         }
     }
 
@@ -21,7 +21,7 @@ export class PeekableSequence<T> {
             this.current = this.iterator.next();
             return value;
         } else {
-            throw TypeError('PeekableSequence<T>.get(): at end of stream.');
+            throw new TypeError('PeekableSequence<T>.get(): at end of stream.');
         }
     }
 
