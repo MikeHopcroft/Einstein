@@ -1,6 +1,7 @@
 # TODO LIST
 
 ## Next
+* x true or false repl
 * x Logging
 * x cloud more
 * x einstein create gets type from yaml
@@ -8,7 +9,8 @@
 * einstein deploy from spec
 * einstein connect
 * repository service
-* ssh to other hosts
+* repository tabular view of run results with schema from benchmark spec
+* ssh to other hosts - need to modify tutorial builder to detect prompts on other servers
 * Set up unit testing
 
 ## Housekeeping
@@ -68,12 +70,15 @@
   * x samples/container.ts
 
 ## Basic
+* Managing white lists
+* Managing roles
+* interface naming for specs, entities, etc.
+* simplify specs (e.g. no name field, fill in owner and created fields)
 * Living spec: run 2nd and 3rd candidate. Will need some way to show results.
 * Provide candidates with their decrypted secrets 
 * . Move code from CLICore to Laboratory
 * CLIMain connects to analysis service as well as laboratory service.
   * Move code from CLICore to Analysis/Repository/???
-* x BUG: uploadCandidate should use encoded container name, not filename
 * Yaml loaders should work like the formatters (ie share code)
   * getPrefix(): make collection be an enum - of strings or symbols?
 * Verify YAML schemas
@@ -104,15 +109,17 @@
     * Don't want to take input until shell is fully intialized
     * Probably want to introduce concept of an execution environment or world.
 * Shell: help command
-* Shell: cloudls
-    * cloud ls
+* Shell: cloud ls
+    * x cloud ls
+    * x cloud more
     * cloud images
     * cloud services
 * Shell: pushd/popd
 * Shell: better arg splitter that handles quotes. https://stackoverflow.com/questions/2817646/javascript-split-string-on-space-or-on-quotes-to-array/18647776
 * localDisk: ensure paths exist on file create
-* services command shows image tags for services
 * services command shows volumes for services
+* x services command shows image tags for services
+* x BUG: uploadCandidate should use encoded container name, not filename
 * x ls and cloud ls should sort. Lexigraphical? Tree order? Are they the same?
 
 ## Specs

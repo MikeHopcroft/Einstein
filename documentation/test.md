@@ -220,7 +220,7 @@ einstein:/% # wait 20 seconds for run to complete ...
 einstein:/% einstein list runs
 ~~~
 
-Examining run log:
+Examining run results:
 
 [//]: # (shell)
 ~~~
