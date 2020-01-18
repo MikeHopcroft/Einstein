@@ -11,7 +11,7 @@ import {
     World,
 } from '../../../cloud';
 
-import { Laboratory } from '../../../laboratory';
+import { Kind, Laboratory } from '../../../laboratory';
 
 import { Benchmark, Candidate, TrivialCandidate } from '..'
 
@@ -56,6 +56,8 @@ function copyYaml(storage: IStorage, filename: string, data: any) {
 }
 
 const benchmark = {
+    apiVersion: '0.0.1',
+    kind: Kind.BENCHMARK,
     name: 'True_Or_False',
     description: 'A sample benchmark for boolean expressions evaluation.',
     owner: 'Mike',
@@ -64,6 +66,8 @@ const benchmark = {
 };
 
 const candidate = {
+    apiVersion: '0.0.1',
+    kind: Kind.CANDIDATE,
     name: 'True_Or_False',
     description: 'A sample candidate that implements a boolean expression parser.',
     owner: 'Mike',
@@ -79,6 +83,8 @@ const candidate = {
 };
 
 const suite = {
+    apiVersion: '0.0.1',
+    kind: Kind.SUITE,
     name: 'True_Or_False',
     description: 'A sample suite.',
     owner: 'Mike',

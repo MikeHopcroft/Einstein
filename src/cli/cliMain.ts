@@ -36,23 +36,29 @@ export class CLIMain {
                 command: context.deployCommand
             },
             {
-                name: 'benchmark',
-                args: ['manifest'],
-                description: 'Upload benchmark specified in <manifest>',
-                command: context.benchmarkCommand
+                name: 'create',
+                args: ['spec'],
+                description: 'Create benchmark, candidate or suite specified in <spec>',
+                command: context.createCommand
             },
-            {
-                name: 'suite',
-                args: ['manifest'],
-                description: 'Upload suite specified in <manifest>',
-                command: context.suiteCommand
-            },
-            {
-                name: 'candidate',
-                args: ['manifest'],
-                description: 'Upload candidate specified in <manifest>',
-                command: context.candidateCommand
-            },
+            // {
+            //     name: 'benchmark',
+            //     args: ['manifest'],
+            //     description: 'Upload benchmark specified in <manifest>',
+            //     command: context.benchmarkCommand
+            // },
+            // {
+            //     name: 'suite',
+            //     args: ['manifest'],
+            //     description: 'Upload suite specified in <manifest>',
+            //     command: context.suiteCommand
+            // },
+            // {
+            //     name: 'candidate',
+            //     args: ['manifest'],
+            //     description: 'Upload candidate specified in <manifest>',
+            //     command: context.candidateCommand
+            // },
             {
                 name: 'run',
                 args: ['candidateId', 'suiteId'],
@@ -130,26 +136,33 @@ export class CLIMain {
         return 0;
     }
 
-    private async benchmarkCommand(args: string[]): Promise<number> {
+    private async createCommand(args: string[]): Promise<number> {
         const [manifest] = args;
         const normalized = fullPath(this.cwd, manifest);
-        await this.cli.uploadBenchmark(normalized);
+        await this.cli.create(normalized);
         return 0;
     }
 
-    private async suiteCommand(args: string[]): Promise<number> {
-        const [manifest] = args;
-        const normalized = fullPath(this.cwd, manifest);
-        await this.cli.uploadSuite(normalized);
-        return 0;
-    }
+    // private async benchmarkCommand(args: string[]): Promise<number> {
+    //     const [manifest] = args;
+    //     const normalized = fullPath(this.cwd, manifest);
+    //     await this.cli.uploadBenchmark(normalized);
+    //     return 0;
+    // }
 
-    private async candidateCommand(args: string[]): Promise<number> {
-        const [manifest] = args;
-        const normalized = fullPath(this.cwd, manifest);
-        await this.cli.uploadCandidate(normalized);
-        return 0;
-    }
+    // private async suiteCommand(args: string[]): Promise<number> {
+    //     const [manifest] = args;
+    //     const normalized = fullPath(this.cwd, manifest);
+    //     await this.cli.uploadSuite(normalized);
+    //     return 0;
+    // }
+
+    // private async candidateCommand(args: string[]): Promise<number> {
+    //     const [manifest] = args;
+    //     const normalized = fullPath(this.cwd, manifest);
+    //     await this.cli.uploadCandidate(normalized);
+    //     return 0;
+    // }
 
     private async runCommand(args: string[]): Promise<number> {
         const [candidateId, suiteId] = args;

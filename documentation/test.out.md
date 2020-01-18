@@ -101,15 +101,25 @@ Wait a few seconds and check services again. Can see that the host lab is runnin
 ~~~
 einstein:/% # wait 10 seconds for service to start ...
 einstein:/% services
-image                                 host   port
-myregistry.azurecr.io/labratory:1.0   lab    8080
+image           host   port
+labratory:1.0   lab    8080
 ~~~
 
 We can use the `cloud ls` command to see that logging has started for the laboratory service:
+
 [//]: # (shell)
 ~~~
 einstein:/% cloud ls
 logs/lab
+~~~
+
+If we examine the log, we can see that the Laboratory service has started:
+
+[//]: # (shell)
+~~~
+einstein:/% cloud more logs/lab 
+lab: Labratory.entryPoint()
+lab: Labratory service running at lab:8080
 ~~~
 
 
@@ -131,7 +141,7 @@ true_or_false_benchmark:1.0
 true_or_false_candidate:1.0
 alwaysTrue_candidate:1.0
 alwaysFalse_candidate:1.0
-myregistry.azurecr.io/labratory:1.0
+labratory:1.0
 ~~~
 
 Shell also pre-provisions yaml configuration files:
@@ -149,19 +159,21 @@ Here's the benchmark configuration file:
 [//]: # (shell)
 ~~~
 einstein:/% more benchmark.yaml
+apiVersion: 0.0.1
+kind: Benchmark
 name: True_Or_False
 description: A sample benchmark for boolean expressions evaluation.
 owner: Mike
 created: '2020-01-07T04:09:18.721Z'
-image: 'myregistry.azurecr.io/true_or_false_benchmark:1.0'
+image: 'true_or_false_benchmark:1.0'
 ~~~
 
 Uploading the benchmark:
 
 [//]: # (shell)
 ~~~
-einstein:/% einstein benchmark benchmark.yaml
-Uploaded to /benchmarks/5xh6avk3d1pp2wkb5twp2vbc
+einstein:/% einstein create benchmark.yaml
+Uploaded to /benchmarks/eht7atazdxt5ytk1dhtpaqv2cnq66u3dc5t6pehh5rr0
 
 einstein:/% einstein list benchmarks
 image                         name            owner   created                 
@@ -173,15 +185,17 @@ We can even see the blob has been written. Note that end users won't be able to 
 [//]: # (shell)
 ~~~
 einstein:/% cloud ls
-benchmarks/5xh6avk3d1pp2wkb5twp2vbc
+benchmarks/eht7atazdxt5ytk1dhtpaqv2cnq66u3dc5t6pehh5rr0
 logs/lab
 
-einstein:/% cloud more benchmarks/5xh6avk3d1pp2wkb5twp2vbc
+einstein:/% cloud more benchmarks/eht7atazdxt5ytk1dhtpaqv2cnq66u3dc5t6pehh5rr0
+apiVersion: 0.0.1
+kind: Benchmark
 name: True_Or_False
 description: A sample benchmark for boolean expressions evaluation.
 owner: Mike
 created: '2020-01-07T04:09:18.721Z'
-image: 'myregistry.azurecr.io/true_or_false_benchmark:1.0'
+image: 'true_or_false_benchmark:1.0'
 ~~~
 
 ## Submitting a Suite
@@ -196,6 +210,8 @@ Key points:
 [//]: # (shell)
 ~~~
 einstein:/% more suite.yaml
+apiVersion: 0.0.1
+kind: Suite
 name: True_Or_False
 description: A sample suite.
 owner: Mike
@@ -315,7 +331,7 @@ Uploading the suite:
 
 [//]: # (shell)
 ~~~
-einstein:/% einstein suite suite.yaml
+einstein:/% einstein create suite.yaml
 Uploaded to /suites/aht7ataz9xt5yhk1dhtpa
 
 einstein:/% einstein list suites
@@ -335,12 +351,14 @@ Key points:
 [//]: # (shell)
 ~~~
 einstein:/% more candidate.yaml
+apiVersion: 0.0.1
+kind: Candidate
 name: True_Or_False
 description: A sample candidate that implements a boolean expression parser.
 owner: Mike
 created: '2020-01-07T04:09:18.721Z'
 benchmarkId: 'true_or_false_benchmark:1.0'
-image: 'myregistry.azurecr.io/true_or_false_candidate:1.0'
+image: 'true_or_false_candidate:1.0'
 password:
   secret: my-password
 whitelist:
@@ -354,15 +372,17 @@ Encrypting secrets
 einstein:/% einstein encrypt candidate.yaml
 
 einstein:/% more candidate.yaml
+apiVersion: 0.0.1
+kind: Candidate
 name: True_Or_False
 description: A sample candidate that implements a boolean expression parser.
 owner: Mike
 created: '2020-01-07T04:09:18.721Z'
 benchmarkId: 'true_or_false_benchmark:1.0'
-image: 'myregistry.azurecr.io/true_or_false_candidate:1.0'
+image: 'true_or_false_candidate:1.0'
 password:
   secret: >-
-    Uf2ObY/xXFdPqKl5tFxFolODTsQbfS8L13mnS2OqkbOvqDBur1j56RnaZvmmcUOlIpkkmrLgCAXFaIIHoFOlcV+0YkGjPyimGkRuHMuZEfzeo+UKoPHPkB9xC2ZpDkv9gkr7Zyq1fa5o+wvrNYy+spgfg+B6MkARMRspc3tgAiSD0KIsbNy/Hm24a/pj3Etgz0Hukhb0OksC8dt6a7L1RKsz5j+FPfRhSyrScY4JjtZp+rQ/Y0hO8IXz0Q+UpCCs5MIN5mvvBLwVyP80K/vf01eeNNNmFE6f2yhAUBgEoCAJYP39Z0ExYP2h2vWfvAr5iCj7pZoAUP0aCNVIbDeUU/MapHmR0KJq0sJ6RUFzjrcUuTeMgR5Yr5cT+g/auf9EYOnboVmVpiWqq98wJX1DjY6bYGwfCQTKjUj8NhtmvTsQ+lSiqRieMfsySUCnBjwczr+sM64X9MucuDjHi4gx7pgdDhfehwXElUQ3wmDgrZ80UxIWWDQzdgRuCgylcXqHkpMCMW0ouP/egwCJqaxTk30xgPAlNRVJAkP82zcPfmeri5dQB5rUatIuOfCn3e3wPHaPp2eHgwpdDVxN+TKAxC6wUA5dyFOkEoPfQcDluGyMEjRsh+bm4zBJjTf0CH6GCnvwUVsDlHksKhb6wcv190vNf3biFG3dmW5+2BpRFOw=:jdDsfrjHuw/k5h13Gmskyg==:xWUzS5esM+PqMI22drc1QA==
+    XW48Kl6zD002aFVf1+aYQjtIhtf0aTMDQGQS0TyUiFR1t1ZtT2eWp6CdmI9/EwXxVG5pmhgmZi3lBMMRp//Y6A1v8A23YF+lvrgzro9wNSjIEPlpZiiYJRGg9h1z1jMkrR7a6Y8nHpCeZYsF5UcAuoTOkPPKJHcxMzCgInEBpkb2zL0aCHyBvq1LvGnh50zFtYNRjqo7jjaByOcrxNtpjAYGU/Icr3ct9zm+t+2g9P7elzzlCKQgxMk1TUWLRqhdmtQr960jdrYpDva8N068nqSejAjuTNOHmbCR4F+L6WrjHfUUq0DBXHR5DLze2pKMVMxJ0rn/ltiFObtMbw0jUgcr6DQfSH3Od0Gj9Cw3pIStkdqIT0+AwHcY50KLyNx5JrjChq6qT2sfslKh2O5XFvjHUx5cDeDQ4tX2n5gmy+FJTta/TGp485aWcABk8YHljOvMyrkvOp6388b4xF8FfNJnx3fwFeiH3fZiXah0JZT2/9CEmtMe+8kGPXFpJzZUWlXPtjV2oSWWggQcwbT5VSXWNWFJa/VmB1Fs7xQL/Dyxxssp1dPTuty1E3piFMfHYNbl2fJ0exNl8Qb1SQVvrXkPX2V0fp59mZAAhanqiazyiJ6CQDjFvrlfzy03dJByX41tx9xNn29Gnko3KBqUAOrNI7kHhHlVyJM/cQQGeIY=:eWuy2Op3Pd6u5mXNZh37Lg==:pNwZexF4g461IB/JxODNgQ==
 whitelist:
   - 'http://www.wikipedia.org'
 ~~~
@@ -371,12 +391,12 @@ Uploading the candidate:
 
 [//]: # (shell)
 ~~~
-einstein:/% einstein candidate benchmark.yaml
-Uploaded to /candidates/5xh6avk3d1pp2wkb5twp2vbc
+einstein:/% einstein create candidate.yaml
+Uploaded to /candidates/eht7atazdxt5ytk1dhtpaqv3c5q68ub4c5u6aehh5rr0
 
 einstein:/% einstein list candidates
 image                         name            owner   created                 
-true_or_false_benchmark:1.0   True_Or_False   Mike    2020-01-07T04:09:18.721Z
+true_or_false_candidate:1.0   True_Or_False   Mike    2020-01-07T04:09:18.721Z
 ~~~
 
 
@@ -390,8 +410,9 @@ Key points:
 [//]: # (shell)
 ~~~
 einstein:/% einstein run true_or_false_candidate:1.0 True_Or_False
-Starting candidate true_or_false_candidate:1.0 on e5f6c767-1a48-4b45-b4e7-4e12e732493e
-Starting benchmark true_or_false_benchmark:1.0 on ad7419f0-9fb8-4c1a-b22b-fddfc0e042ea
+run(true_or_false_candidate:1.0, True_Or_False)
+Starting candidate true_or_false_candidate:1.0 on e61c370b-0abb-40a4-89b9-fa0b0d4c21d4
+Starting benchmark true_or_false_benchmark:1.0 on f2e2291e-0832-4f9a-ae9a-16c347e0e662
 
 einstein:/% einstein list runs
 name   candidate   benchmark   suite   date
@@ -399,7 +420,7 @@ name   candidate   benchmark   suite   date
 einstein:/% # wait 20 seconds for run to complete ...
 einstein:/% einstein list runs
 name                                   candidate                     benchmark                     suite           date                    
-ad7419f0-9fb8-4c1a-b22b-fddfc0e042ea   true_or_false_candidate:1.0   true_or_false_benchmark:1.0   True_Or_False   2020-01-15T01:32:08.686Z
+f2e2291e-0832-4f9a-ae9a-16c347e0e662   true_or_false_candidate:1.0   true_or_false_benchmark:1.0   True_Or_False   2020-01-18T02:50:10.713Z
 ~~~
 
 Examining run log:
@@ -407,24 +428,26 @@ Examining run log:
 [//]: # (shell)
 ~~~
 einstein:/% cloud ls
-benchmarks/5xh6avk3d1pp2wkb5twp2vbc
-candidates/5xh6avk3d1pp2wkb5twp2vbc
-logs/ad7419f0-9fb8-4c1a-b22b-fddfc0e042ea
-logs/e5f6c767-1a48-4b45-b4e7-4e12e732493e
+benchmarks/eht7atazdxt5ytk1dhtpaqv2cnq66u3dc5t6pehh5rr0
+candidates/eht7atazdxt5ytk1dhtpaqv3c5q68ub4c5u6aehh5rr0
+logs/e61c370b-0abb-40a4-89b9-fa0b0d4c21d4
+logs/f2e2291e-0832-4f9a-ae9a-16c347e0e662
 logs/lab
-runs/ad7419f0-9fb8-4c1a-b22b-fddfc0e042ea
+runs/f2e2291e-0832-4f9a-ae9a-16c347e0e662
 suites/aht7ataz9xt5yhk1dhtpa
 
 einstein:/% cloud more runs/*
-Contents of /runs/ad7419f0-9fb8-4c1a-b22b-fddfc0e042ea:
-runId: ad7419f0-9fb8-4c1a-b22b-fddfc0e042ea
+Contents of /runs/f2e2291e-0832-4f9a-ae9a-16c347e0e662:
+kind: Run
+apiVersion: 0.0.1
+runId: f2e2291e-0832-4f9a-ae9a-16c347e0e662
 candidateId: 'true_or_false_candidate:1.0'
 suiteId: True_Or_False
 benchmarkId: 'true_or_false_benchmark:1.0'
 name: foo
 description: foo
 owner: foo
-created: '2020-01-15T01:32:08.686Z'
+created: '2020-01-18T02:50:10.713Z'
 results:
   passed: 43
   failed: 4
@@ -444,12 +467,12 @@ Key points:
 [//]: # (shell)
 ~~~
 einstein:/% cloud ls
-benchmarks/5xh6avk3d1pp2wkb5twp2vbc
-candidates/5xh6avk3d1pp2wkb5twp2vbc
-logs/ad7419f0-9fb8-4c1a-b22b-fddfc0e042ea
-logs/e5f6c767-1a48-4b45-b4e7-4e12e732493e
+benchmarks/eht7atazdxt5ytk1dhtpaqv2cnq66u3dc5t6pehh5rr0
+candidates/eht7atazdxt5ytk1dhtpaqv3c5q68ub4c5u6aehh5rr0
+logs/e61c370b-0abb-40a4-89b9-fa0b0d4c21d4
+logs/f2e2291e-0832-4f9a-ae9a-16c347e0e662
 logs/lab
-runs/ad7419f0-9fb8-4c1a-b22b-fddfc0e042ea
+runs/f2e2291e-0832-4f9a-ae9a-16c347e0e662
 suites/aht7ataz9xt5yhk1dhtpa
 ~~~
 
@@ -462,7 +485,7 @@ Key points
 [//]: # (shell)
 ~~~
 einstein:/% einstein create vm
-einstein: unknown command 'create'
+RamDisk: file /vm not found.
 
 einstein:/% einstein destroy vm
 einstein: unknown command 'destroy'

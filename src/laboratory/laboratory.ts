@@ -14,26 +14,33 @@ import {
     BlobLogger
 } from '../cloud';
 
-import { encodeBenchmark, encodeCandidate, encodeSuite, encodeLog } from '../naming';
+import {
+    encodeBenchmark,
+    encodeCandidate,
+    encodeSuite,
+    encodeLog
+} from '../naming';
+
 import { generateKeys, KeyPair } from '../secrets';
 import { sleep } from '../utilities';
 
 import {
+    AnyDescription,
     BenchmarkDescription,
     CandidateDescription,
     ILaboratory,
     SuiteDescription,
-    UID
+    Kind,
 } from './interfaces';
 
-import { loadSuite, loadCandidate } from './loaders';
+import { loadSuite } from './loaders';
 
 // Murmurhash seed.
 const seed = 1234567;
 
 export class Laboratory implements ILaboratory {
     static image = {
-        tag: 'myregistry.azurecr.io/labratory:1.0',
+        tag: 'labratory:1.0',
         create: () => Laboratory.entryPoint
     };
 
@@ -54,7 +61,10 @@ export class Laboratory implements ILaboratory {
         const myService = new Laboratory(keys, worker.getWorld());
 
         // TODO: do not hard-code port here.
-        worker.bind(worker.getWorld(), myService, 8080);
+        const port = 8080;
+        worker.bind(worker.getWorld(), myService, port);
+
+        worker.log(`Labratory service running at ${worker.getWorld().hostname}:${port}`);
     }
 
     private keys: KeyPair;
@@ -77,7 +87,21 @@ export class Laboratory implements ILaboratory {
         return this.keys.publicKey;
     }
 
-    async createBenchmark(description: BenchmarkDescription): Promise<string> {
+    async create(description: AnyDescription): Promise<string> {
+        switch (description.kind) {
+            case Kind.BENCHMARK:
+                return this.createBenchmark(description);
+            case Kind.CANDIDATE:
+                return this.createCandidate(description);
+            case Kind.SUITE:
+                return this.createSuite(description);
+            default:
+                const message = `Laboratory.create(): unsupported kind==="${description.kind}"`;
+                throw TypeError(message);
+        }
+    }
+
+    private async createBenchmark(description: BenchmarkDescription): Promise<string> {
         const encoded = encodeBenchmark(description.image);
         const buffer = Buffer.from(yaml.safeDump(description), 'utf8');
         // TODO: check for attempt blob overwrite.
@@ -86,7 +110,7 @@ export class Laboratory implements ILaboratory {
         return encoded;
     }
 
-    async createCandidate(description: CandidateDescription): Promise<string> {
+    private async createCandidate(description: CandidateDescription): Promise<string> {
         const encoded = encodeCandidate(description.image);
         const buffer = Buffer.from(yaml.safeDump(description), 'utf8');
         // TODO: check for attempt blob overwrite.
@@ -95,7 +119,7 @@ export class Laboratory implements ILaboratory {
         return encoded;
     }
 
-    async createSuite(description: SuiteDescription): Promise<string> {
+    private async createSuite(description: SuiteDescription): Promise<string> {
         const encoded = encodeSuite(description.name);
         const buffer = Buffer.from(yaml.safeDump(description), 'utf8');
         // TODO: check for attempt blob overwrite.

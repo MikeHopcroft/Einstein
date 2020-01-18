@@ -92,9 +92,17 @@ lab:8080
 ~~~
 
 We can use the `cloud ls` command to see that logging has started for the laboratory service:
+
 [//]: # (shell)
 ~~~
 einstein:/% cloud ls
+~~~
+
+If we examine the log, we can see that the Laboratory service has started:
+
+[//]: # (shell)
+~~~
+einstein:/% cloud more logs/lab 
 ~~~
 
 
@@ -132,7 +140,7 @@ Uploading the benchmark:
 
 [//]: # (shell)
 ~~~
-einstein:/% einstein benchmark benchmark.yaml
+einstein:/% einstein create benchmark.yaml
 einstein:/% einstein list benchmarks
 ~~~
 
@@ -141,7 +149,7 @@ We can even see the blob has been written. Note that end users won't be able to 
 [//]: # (shell)
 ~~~
 einstein:/% cloud ls
-einstein:/% cloud more benchmarks/5xh6avk3d1pp2wkb5twp2vbc
+einstein:/% cloud more benchmarks/eht7atazdxt5ytk1dhtpaqv2cnq66u3dc5t6pehh5rr0
 ~~~
 
 ## Submitting a Suite
@@ -162,7 +170,7 @@ Uploading the suite:
 
 [//]: # (shell)
 ~~~
-einstein:/% einstein suite suite.yaml
+einstein:/% einstein create suite.yaml
 einstein:/% einstein list suites
 ~~~
 
@@ -192,7 +200,7 @@ Uploading the candidate:
 
 [//]: # (shell)
 ~~~
-einstein:/% einstein candidate benchmark.yaml
+einstein:/% einstein create candidate.yaml
 einstein:/% einstein list candidates
 ~~~
 

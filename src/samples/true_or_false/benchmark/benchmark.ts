@@ -5,7 +5,7 @@ import { encodeSuite, encodeRun } from '../../../naming';
 import { sleep } from '../../../utilities';
 
 import { ICandidate, TestSuite } from './interfaces';
-import { RunDescription } from '../../../laboratory';
+import { Kind, RunDescription } from '../../../laboratory';
 
 export class Benchmark {
     static image = {
@@ -115,6 +115,8 @@ export class Benchmark {
             const created = new Date().toISOString();
             const results = { passed, failed };
             const rd: RunDescription = {
+                kind: Kind.RUN,
+                apiVersion: '0.0.1',
                 runId,
                 candidateId,
                 suiteId,

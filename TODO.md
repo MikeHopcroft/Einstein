@@ -3,8 +3,12 @@
 ## Next
 * x Logging
 * x cloud more
-* einstein create gets type from yaml
+* x einstein create gets type from yaml
 * einstein create vm
+* einstein deploy from spec
+* einstein connect
+* repository service
+* ssh to other hosts
 * Set up unit testing
 
 ## Housekeeping
@@ -15,6 +19,9 @@
 * Prettier clean
 
 ## Easy
+* Living spec: name, description, owner = 'foo'
+* BUG: can run test without candidate schema
+* TypeError() => new TypeError()
 * Rename camelCase files to under_score?
 * Rename tutorial to tutorial_builder
 * Implement local storage flags for Shell.
@@ -61,6 +68,7 @@
   * x samples/container.ts
 
 ## Basic
+* Living spec: run 2nd and 3rd candidate. Will need some way to show results.
 * Provide candidates with their decrypted secrets 
 * . Move code from CLICore to Laboratory
 * CLIMain connects to analysis service as well as laboratory service.
@@ -106,6 +114,13 @@
 * services command shows image tags for services
 * services command shows volumes for services
 * x ls and cloud ls should sort. Lexigraphical? Tree order? Are they the same?
+
+## Specs
+* apiVersion
+* YAML files
+* naming
+  * use of container names
+  * mapping to blob names
 
 ## Round-out/Finish-up
 * Disk based IStorage - write/append, command-line arguments
