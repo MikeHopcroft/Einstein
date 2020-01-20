@@ -98,5 +98,18 @@
                 "${workspaceFolder}/build/**/*.js"
             ]
         },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "repository integration test",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/build/test/src/repository/repository.test.js",
+            "preLaunchTask": "tsc: build - tsconfig.json",
+            "outFiles": [
+                "${workspaceFolder}/build/**/*.js"
+            ]
+        },
     ]
 }

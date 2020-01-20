@@ -9,6 +9,19 @@
 * x schema verification for TestSuite (vs SuiteDescription)
 * x catching exceptions in shell.processline
 * repository service
+    * x cloud abstraction for tables - does prototype need this abstraction? Can't it just inline its own implementation of tables?
+    * cloud events for blobs
+    * benchmark table schemas
+    * einstein deploy starts repository
+    * x crawl benchmarks
+    * crawl runs
+    * crawl suites
+    * crawl candidates
+    * integrate with cli
+* IDatabase, LocalDatabase
+  * primary key uniqueness
+  * column type checking
+  * using object with properties, rather than arrays for rows??
 * repository tabular view of run results with schema from benchmark spec
 * einstein create vm
 * einstein deploy from spec
@@ -76,6 +89,7 @@
   * x samples/container.ts
 
 ## Basic
+* Shell process.on('unhandledRejection') - review/remove/replace?
 * Managing white lists
 * Managing roles
 * interface naming for specs, entities, etc.

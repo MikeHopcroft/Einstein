@@ -1,11 +1,15 @@
 const base32 = require('base32') as IBase32;
 
+// base32 packages doesn't have a .d.ts file or an @types/base32
+// Define type for package here.
 // tslint:disable-next-line:interface-name
 interface IBase32 {
     encode(text:string): string;
     decode(text:string): string;
 }
 
+// TODO: unify these with the collection/prefix data below.
+// Look at declartions for 'prefixes' and 'collectionToPrefix'
 const benchmarks = 'benchmarks';
 const candidates = 'candidates';
 const runs = 'runs';
@@ -74,20 +78,47 @@ function decode(collection: string, encoded: string) {
     }
 }
 
+const prefixes: Array<[string, string]> = [
+    ['benchmarks', '/benchmarks'],
+    ['candidates', '/candidates'],
+    ['suites', '/suites'],
+    ['runs', '/runs'],
+]
+
+const collectionToPrefix = new Map<string, string>(prefixes);
+// const prefixToCollection = new Map<string, string>(
+//     prefixes.map(x => [x[1], x[0]])
+// );
+
 export function getPrefix(collection: string): string {
-    switch (collection) {
-        case 'benchmarks':
-            return '/benchmarks';
-        case 'candidates':
-            return '/candidates';
-        case 'suites':
-            return '/suites';
-        case 'runs':
-            return '/runs';
-        default:
-            const message = `Bad collection "${collection}"`;
-            throw new TypeError(message);
+    const prefix = collectionToPrefix.get(collection);
+    if (prefix === undefined) {
+        const message = `Bad collection "${collection}"`;
+        throw new TypeError(message);
     }
+    return prefix;
+    // switch (collection) {
+    //     case 'benchmarks':
+    //         return '/benchmarks';
+    //     case 'candidates':
+    //         return '/candidates';
+    //     case 'suites':
+    //         return '/suites';
+    //     case 'runs':
+    //         return '/runs';
+    //     default:
+    //         const message = `Bad collection "${collection}"`;
+    //         throw new TypeError(message);
+    // }
+}
+
+export function getCollection(blob: string): string | null {
+    for (const [collection, prefix] of collectionToPrefix) {
+        if (blob.startsWith(prefix)) {
+            return collection;
+        }
+    }
+    return null;
 }
 
 

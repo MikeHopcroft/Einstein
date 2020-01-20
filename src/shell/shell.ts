@@ -102,6 +102,8 @@ export class Shell {
         });
         this.rl = rl;
 
+        // TODO: REVIEW: this is probably overkill and obscures real exceptions.
+        // https://alphacoder.xyz/nodejs-unhandled-promise-rejection-warning/
         process.on('unhandledRejection', (err) => {
             if (err instanceof TypeError) {
                 console.log(err.message);
