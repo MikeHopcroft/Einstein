@@ -1,3 +1,5 @@
+export type BlobCreateHandler = (blob: string) => Promise<void>;
+
 // tslint:disable-next-line:interface-name
 export interface IStorage {
     // TODO: blob creation/update/delete events
@@ -5,6 +7,8 @@ export interface IStorage {
     writeBlob(name: string, buffer: Buffer): Promise<void>;
     readBlob(name: string): Promise<Buffer>;
     listBlobs(prefix?: string): Promise<string[]>;
+
+    onBlobCreate(handler: BlobCreateHandler): Promise<void>;
 }
 
 export interface Volume {

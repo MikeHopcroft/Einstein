@@ -41,6 +41,8 @@ export class Repository implements IRepository {
     constructor(world: World) {
         this.database = new LocalDatabase();
         this.world = world;
+
+        // Bind to cloud storage events here?
     }
 
     async select(from: string): Promise<SelectResults> {
@@ -59,22 +61,16 @@ export class Repository implements IRepository {
         // table for that benchmark exists.
         // Have to assume that blob events could arrive out of order.
 
-        // Bind to cloud storage events.
+        const repository = this;
+
+        // Bind to cloud storage events here?
+        this.world.cloudStorage.onBlobCreate(async (blob: string) => {
+            console.log(`onBlobCreate(${blob})`);
+            await repository.processOneBlob(blob);
+        });
 
         // Crawl blobs
-        this.crawlBlobs();
-
-        // // Crawl benchmarks, creating tables for runs
-        // this.crawlBenchmarks();
-
-        // // Crawl runs
-        // this.crawlRuns();
-
-        // // Crawl suites
-        // this.crawlSuites();
-
-        // // Crawl candidates
-        // this.crawlCandidates();
+        await this.crawlBlobs();
     }
 
     private async crawlBlobs() {
@@ -82,74 +78,48 @@ export class Repository implements IRepository {
         const cloudStorage = this.world.cloudStorage;
         const blobs = await cloudStorage.listBlobs();
         for (const blob of blobs) {
-            const collection = getCollection(blob);
-            switch (collection) {
-                case 'benchmarks':
-                    await this.processBenchmark(blob);
-                    break;
-                case 'candidates':
-                    await this.processCandidate(blob);
-                    break;
-                case 'suites':
-                    await this.processSuite(blob);
-                    break;
-                case 'runs':
-                    await this.processRun(blob);
-                    break;
-                default:
-                    // This blob is not a member of a collection.
-                    // Skip it.
-            }
+            this.processOneBlob(blob);
+            // const collection = getCollection(blob);
+            // switch (collection) {
+            //     case 'benchmarks':
+            //         await this.processBenchmark(blob);
+            //         break;
+            //     case 'candidates':
+            //         await this.processCandidate(blob);
+            //         break;
+            //     case 'suites':
+            //         await this.processSuite(blob);
+            //         break;
+            //     case 'runs':
+            //         await this.processRun(blob);
+            //         break;
+            //     default:
+            //         // This blob is not a member of a collection
+            //         // that we process. Skip it.
+            // }
         }
     }
 
-    // private async crawlBenchmarks() {
-    //     const prefix = getPrefix('benchmarks');
-    //     const cloudStorage = this.world.cloudStorage;
-    //     const benchmarks = await cloudStorage.listBlobs(prefix);
-    //     for (const benchmark of benchmarks) {
-    //         await this.processBenchmark(benchmark);
-    //         // Add to benchmarks table
-    //         // Create results table for this benchmark
-    //     }
-    // }
-
-    // private async crawlRuns() {
-    //     // TODO: If run arrives before benchmark, add to queue of
-    //     // orphaned runs, which will be processed when the benchmark
-    //     // arrives.
-
-    //     const prefix = getPrefix('runs');
-    //     const cloudStorage = this.world.cloudStorage;
-    //     const runs = await cloudStorage.listBlobs(prefix);
-    //     for (const run of runs) {
-    //         await this.processRun(run);
-    //         // Add to runs table
-    //         // Add to results table for appropriate benchmark
-    //     }
-    // }
-
-    // private async crawlSuites() {
-    //     const prefix = getPrefix('suites');
-    //     const cloudStorage = this.world.cloudStorage;
-    //     const suites = await cloudStorage.listBlobs(prefix);
-    //     for (const suite of suites) {
-    //         await this.processSuite(suite);
-    //         // Add to suites table
-    //         // Add to results table for appropriate benchmark
-    //     }
-    // }
-
-    // private async crawlCandidates() {
-    //     const prefix = getPrefix('candidates');
-    //     const cloudStorage = this.world.cloudStorage;
-    //     const candidates = await cloudStorage.listBlobs(prefix);
-    //     for (const candidate of candidates) {
-    //         await this.processCandidate(candidate);
-    //         // Add to candidates table
-    //         // Add to results table for appropriate benchmark
-    //     }
-    // }
+    private async processOneBlob(blob: string): Promise<void> {
+        const collection = getCollection(blob);
+        switch (collection) {
+            case 'benchmarks':
+                await this.processBenchmark(blob);
+                break;
+            case 'candidates':
+                await this.processCandidate(blob);
+                break;
+            case 'suites':
+                await this.processSuite(blob);
+                break;
+            case 'runs':
+                await this.processRun(blob);
+                break;
+            default:
+                // This blob is not a member of a collection
+                // that we process. Skip it.
+        }
+    }
 
     private benchmarkTableName = 'benchmarks';
     private benchmarkCache = new Map<string, BenchmarkDescription>();
@@ -192,6 +162,14 @@ export class Repository implements IRepository {
                 benchmark.created
             ]
         );
+    }
+
+    private async processRun(name: string) {
+        // If runs table, add to runs table
+        // Otherwise, add to orphan's table
+
+        // Adding to table involves pulling fields from run,
+        // based on column schema in benchmark.
 
         // // Ensure results table for this benchmark.
         // // TODO: get results column schema from benchmark YAML file
@@ -206,14 +184,6 @@ export class Repository implements IRepository {
         //     benchmark.image,
 
         // // Process orphaned runs associated with this benchmark.
-    }
-
-    private async processRun(name: string) {
-        // If runs table, add to runs table
-        // Otherwise, add to orphan's table
-
-        // Adding to table involves pulling fields from run,
-        // based on column schema in benchmark.
     }
 
     private async processSuite(name: string) {

@@ -16,12 +16,25 @@ async function go() {
 
     await cli.deploy('lab');
 
-    sleep(10000);
+    await sleep(10000);
 
+    // console.log('Creating benchmark');
+    // await cli.create('/benchmark.yaml');
+
+    console.log('Creating repository');
+    const repository = new Repository(world);
+    console.log('Initializing repository');
+    await repository.initialize();
+
+    console.log('Creating benchmark2');
     await cli.create('/benchmark.yaml');
 
-    const repository = new Repository(world);
-    await repository.initialize();
+    console.log('Selecting');
+    const { columns, rows } = await repository.select('benchmarks');
+    console.log(columns.map(a => a.name).join(' | '));
+    for (const row of rows) {
+        console.log(row.join(' | '));
+    }
 
     console.log('done');
 }

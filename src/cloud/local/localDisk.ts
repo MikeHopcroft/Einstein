@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { IStorage } from '../interfaces';
+import { BlobCreateHandler, IStorage } from '../interfaces';
 
 export class LocalDisk implements IStorage {
     private root: string;
@@ -37,6 +37,11 @@ export class LocalDisk implements IStorage {
             // TODO: change API to distinguish between path not found and empty directory.
             return [];
         }
+    }
+
+    async onBlobCreate(handler: BlobCreateHandler): Promise<void> {
+        const message = 'LocalDisk.onBlobCreate: not implemented.';
+        throw new TypeError(message);
     }
 
     private translatePath(localPath: string) {

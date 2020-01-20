@@ -1,10 +1,10 @@
 import * as path from 'path';
 
-import { IStorage, Volume } from '../interfaces';
-import { RamDisk } from '../local';
+import { BlobCreateHandler, IStorage, Volume } from '../interfaces';
 
 class MountedVolumes implements IStorage {
-    volumes = new Map<string, IStorage>();
+    private volumes = new Map<string, IStorage>();
+    private blobCreateHandlers: BlobCreateHandler[] = [];
 
     constructor(volumes: Volume[]) {
         for (const volume of volumes) {
@@ -26,6 +26,9 @@ class MountedVolumes implements IStorage {
     async writeBlob(name: string, buffer: Buffer): Promise<void> {
         const { storage, relative } = this.translatePath(name);
         storage.writeBlob(relative, buffer);
+        for (const handler of this.blobCreateHandlers) {
+            await handler(name);
+        }
     }
 
     async readBlob(name: string): Promise<Buffer> {
@@ -45,7 +48,11 @@ class MountedVolumes implements IStorage {
         return blobs;
     }
 
-    async *listBlobsGenerator(prefix: string): AsyncIterableIterator<string> {
+    async onBlobCreate(handler: BlobCreateHandler): Promise<void> {
+        this.blobCreateHandlers.push(handler);
+    }
+
+    private async *listBlobsGenerator(prefix: string): AsyncIterableIterator<string> {
         const normalized = path.posix.normalize(prefix);
         for (const [mount, storage] of this.volumes) {
             if (normalized.startsWith(mount)) {

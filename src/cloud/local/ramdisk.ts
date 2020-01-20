@@ -1,4 +1,4 @@
-import { IStorage } from '../interfaces';
+import { BlobCreateHandler, IStorage } from '../interfaces';
 
 interface Blob {
     created: Date;
@@ -8,12 +8,12 @@ interface Blob {
 
 export class RamDisk implements IStorage {
     private blobs = new Map<string, Buffer>();
+    private blobCreateHandlers: BlobCreateHandler[] = [];
 
     async appendBlob(name: string, buffer: Buffer): Promise<void> {
         const blob = this.blobs.get(name);
         if (blob === undefined) {
-            // TODO: copy buffer here?
-            this.blobs.set(name, buffer);
+            await this.writeBlob(name, buffer);
         } else {
             // TODO: find more efficient way of appending.
             this.blobs.set(name, Buffer.concat([blob, buffer]))
@@ -21,8 +21,11 @@ export class RamDisk implements IStorage {
     }
 
     async writeBlob(name: string, buffer: Buffer): Promise<void> {
-            // TODO: copy buffer here?
-            this.blobs.set(name, buffer);
+        // TODO: copy buffer here?
+        this.blobs.set(name, buffer);
+        for (const handler of this.blobCreateHandlers) {
+            await handler(name);
+        }
     }
 
     async readBlob(name: string): Promise<Buffer> {
@@ -44,5 +47,9 @@ export class RamDisk implements IStorage {
             }
         }
         return results;
+    }
+
+    async onBlobCreate(handler: BlobCreateHandler): Promise<void> {
+        this.blobCreateHandlers.push(handler);
     }
 }
