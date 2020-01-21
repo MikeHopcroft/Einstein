@@ -6,8 +6,8 @@ import {
     ColumnDescription,
 } from '../cloud';
 
-import { IRepository, SelectResults } from './interfaces';
 import { getCollection, encodeBenchmark } from '../naming';
+
 import {
     loadBenchmark,
     loadCandidate,
@@ -16,13 +16,18 @@ import {
     loadSuite
 } from '../laboratory';
 
-// TODO: get these from the naming library.
+import { sleep } from '../utilities';
+
+import { IRepository, SelectResults } from './interfaces';
+
+// TODO: perhaps get these from the naming library.
+// TODO: guard against name collisions between results and other tables.
 const benchmarkTableName = 'benchmarks';
 const candidateTableName = 'candidates';
 const runTableName = 'runs';
 const suiteTableName = 'suites';
 
-
+// TODO: perhaps move the ColumnDescriptions to a config file.
 const benchmarkColumns: ColumnDescription[] = [
     { name: 'image', type: 'string' },
     { name: 'name', type: 'string' },
@@ -67,10 +72,15 @@ export class Repository implements IRepository {
     static async entryPoint(worker: IWorker) {
         worker.log(`Repository.entryPoint()`);
 
+        // Simulate server startup time.
+        worker.log('starting up');
+        await sleep(6000);
+        worker.log('fully initialized');
 
         // Construct and bind service RPC stub. 
         const world = worker.getWorld();
         const myService = new Repository(world);
+        myService.initialize();
 
         const port = Repository.getPort();
         worker.bind(worker.getWorld(), myService, port);
@@ -100,6 +110,7 @@ export class Repository implements IRepository {
     // the class constructor and its initialization method. Initialization may
     // require async calls.
     async initialize(): Promise<void> {
+        this.world.logger.log('Initializing');
         // DESIGN NOTE: Have to assume that blob creation events could arrive
         // out of order.
 
@@ -117,6 +128,7 @@ export class Repository implements IRepository {
         // Crawl blobs
         // TODO: REVIEW: do we really want to await here?
         await this.crawlBlobs();
+        this.world.logger.log('Initialization complete');
     }
 
     private async crawlBlobs() {
@@ -160,7 +172,7 @@ export class Repository implements IRepository {
     }
 
     private async processBenchmark(blob: string) {
-        console.log(`repository: processBenchmark ${blob}`);
+        this.world.logger.log(`processBenchmark ${blob}`);
         const benchmark = await this.getBenchmark(blob);
 
         // Ensure benchmarks table.
@@ -177,7 +189,7 @@ export class Repository implements IRepository {
     }
 
     private async processCandidate(blob: string) {
-        console.log(`repository: processCandidate ${blob}`);
+        this.world.logger.log(`processCandidate ${blob}`);
         const candidate = await loadCandidate(blob, this.world.cloudStorage, false);
 
         // Ensure suites table.
@@ -191,11 +203,11 @@ export class Repository implements IRepository {
     }
 
     private async processRun(blob: string) {
-        console.log(`repository: processRun ${blob}`);
+        this.world.logger.log(`processRun ${blob}`);
         const run = await loadRun(blob, this.world.cloudStorage, false);
         const benchmarkId = run.benchmarkId;
         const benchmarkBlob = encodeBenchmark(benchmarkId);
-        console.log(`Run ${run.name}: benchmarkId: ${benchmarkId}`);
+        // console.log(`Run ${run.name}: benchmarkId: ${benchmarkId}`);
         const benchmark = await this.getBenchmark(benchmarkBlob);
 
         // TODO: add to runs table.
@@ -236,7 +248,7 @@ export class Repository implements IRepository {
     }
 
     private async processSuite(blob: string) {
-        console.log(`repository: processSuite ${blob}`);
+        this.world.logger.log(`processSuite ${blob}`);
         const suite = await loadSuite(blob, this.world.cloudStorage, false);
 
         // Ensure suites table.

@@ -89,7 +89,8 @@ Deploy Einstein immediately check services. Nothing running yet.
 ~~~
 einstein:/% einstein deploy lab
 Deploying to lab.
-depoying einstein to lab
+Depoying einstein Laboratory to lab
+Depoying einstein Repository to repository
 
 einstein:/% services
 no services running
@@ -101,8 +102,9 @@ Wait a few seconds and check services again. Can see that the host lab is runnin
 ~~~
 einstein:/% # wait 10 seconds for service to start ...
 einstein:/% services
-image           host   port
-labratory:1.0   lab    8080
+image            host         port
+repository:1.0   repository   8080
+labratory:1.0    lab          8080
 ~~~
 
 We can use the `cloud ls` command to see that logging has started for the laboratory service:
@@ -111,15 +113,27 @@ We can use the `cloud ls` command to see that logging has started for the labora
 ~~~
 einstein:/% cloud ls
 logs/lab
+logs/repository
 ~~~
 
-If we examine the log, we can see that the Laboratory service has started:
+If we examine the logs, we can see that the Laboratory and Repository services have started:
 
 [//]: # (shell)
 ~~~
-einstein:/% cloud more logs/lab 
+einstein:/% cloud more logs/lab
 lab: Labratory.entryPoint()
+lab: laboratory: starting up
+lab: laboratory: fully initialized
 lab: Labratory service running at lab:8080
+
+
+einstein:/% cloud more logs/repository
+repository: Repository.entryPoint()
+repository: starting up
+repository: fully initialized
+repository: Initializing
+repository: Repository service running at repository:8080
+repository: Initialization complete
 ~~~
 
 
@@ -142,6 +156,7 @@ true_or_false_candidate:1.0
 alwaysTrue_candidate:1.0
 alwaysFalse_candidate:1.0
 labratory:1.0
+repository:1.0
 ~~~
 
 Shell also pre-provisions yaml configuration files:
@@ -151,7 +166,9 @@ Shell also pre-provisions yaml configuration files:
 einstein:/% ls
 benchmark.yaml
 candidate.yaml
+false_candidate.yaml
 suite.yaml
+true_candidate.yaml
 ~~~
 
 Here's the benchmark configuration file:
@@ -166,6 +183,17 @@ description: A sample benchmark for boolean expressions evaluation.
 owner: Mike
 created: '2020-01-07T04:09:18.721Z'
 image: 'true_or_false_benchmark:1.0'
+columns:
+  - name: candidateId
+    type: string
+  - name: suiteId
+    type: string
+  - name: created
+    type: string
+  - name: passed
+    type: string
+  - name: failed
+    type: string
 ~~~
 
 Uploading the benchmark:
@@ -187,6 +215,7 @@ We can even see the blob has been written. Note that end users won't be able to 
 einstein:/% cloud ls
 benchmarks/eht7atazdxt5ytk1dhtpaqv2cnq66u3dc5t6pehh5rr0
 logs/lab
+logs/repository
 
 einstein:/% cloud more benchmarks/eht7atazdxt5ytk1dhtpaqv2cnq66u3dc5t6pehh5rr0
 apiVersion: 0.0.1
@@ -196,6 +225,17 @@ description: A sample benchmark for boolean expressions evaluation.
 owner: Mike
 created: '2020-01-07T04:09:18.721Z'
 image: 'true_or_false_benchmark:1.0'
+columns:
+  - name: candidateId
+    type: string
+  - name: suiteId
+    type: string
+  - name: created
+    type: string
+  - name: passed
+    type: string
+  - name: failed
+    type: string
 ~~~
 
 ## Submitting a Suite
@@ -217,114 +257,115 @@ description: A sample suite.
 owner: Mike
 created: '2020-01-07T04:09:18.721Z'
 benchmarkId: 'true_or_false_benchmark:1.0'
-domainData:
-  - name: a
-    value: true
-  - name: b
-    value: true
-  - name: c
-    value: true
-  - name: x
-    value: false
-  - name: 'y'
-    value: false
-  - name: z
-    value: false
-testCases:
-  - input: a
-    expected: true
-  - input: b
-    expected: true
-  - input: x
-    expected: false
-  - input: '!a'
-    expected: false
-  - input: '!b'
-    expected: false
-  - input: '!x'
-    expected: true
-  - input: (a)
-    expected: true
-  - input: (x)
-    expected: false
-  - input: a & b
-    expected: true
-  - input: a & b & c
-    expected: true
-  - input: a & x
-    expected: false
-  - input: a & b & x
-    expected: false
-  - input: a | b
-    expected: true
-  - input: a | x
-    expected: true
-  - input: x | y | z | a
-    expected: true
-  - input: x | y
-    expected: false
-  - input: '!(x & y)'
-    expected: true
-  - input: '!(a | b)'
-    expected: false
-  - input: '!a & !x'
-    expected: false
-  - input: '!x & !y'
-    expected: true
-  - input: '!a & !b'
-    expected: false
-  - input: '!x & !b'
-    expected: false
-  - input: '!!a'
-    expected: true
-  - input: '!!!a'
-    expected: false
-  - input: x & a | b
-    expected: true
-  - input: (x & a) | b
-    expected: true
-  - input: x & (a | b)
-    expected: false
-  - input: ((a | x) & (b | y) & ((c | x) | (d | y)))
-    expected: true
-  - input: foo
-    expected: true
-  - input: bar
-    expected: true
-  - input: foo-bar
-    expected: true
-  - input: foo & bar & !baz-baz
-    expected: true
-  - input: '    a   &b & c   '
-    expected: true
-  - input: a&b&c
-    expected: true
-  - input: (a&b
-    expected: Expected ')'
-  - input: (a|b
-    expected: Expected ')'
-  - input: a&
-    expected: Expected a variable
-  - input: a |
-    expected: Expected a variable
-  - input: '&'
-    expected: Unexpected operator "&"
-  - input: '|'
-    expected: Unexpected operator "|"
-  - input: '!'
-    expected: Expected a variable
-  - input: (
-    expected: Expected a variable
-  - input: )
-    expected: Unexpected operator ")"
-  - input: a b
-    expected: Expected '&' or '|' operator
-  - input: (a+b))
-    expected: Expected '&' or '|' operator
-  - input: ''
-    expected: Expected a variable
-  - input: '   '
-    expected: Expected a variable
+data:
+  domainData:
+    - name: a
+      value: true
+    - name: b
+      value: true
+    - name: c
+      value: true
+    - name: x
+      value: false
+    - name: 'y'
+      value: false
+    - name: z
+      value: false
+  testCases:
+    - input: a
+      expected: true
+    - input: b
+      expected: true
+    - input: x
+      expected: false
+    - input: '!a'
+      expected: false
+    - input: '!b'
+      expected: false
+    - input: '!x'
+      expected: true
+    - input: (a)
+      expected: true
+    - input: (x)
+      expected: false
+    - input: a & b
+      expected: true
+    - input: a & b & c
+      expected: true
+    - input: a & x
+      expected: false
+    - input: a & b & x
+      expected: false
+    - input: a | b
+      expected: true
+    - input: a | x
+      expected: true
+    - input: x | y | z | a
+      expected: true
+    - input: x | y
+      expected: false
+    - input: '!(x & y)'
+      expected: true
+    - input: '!(a | b)'
+      expected: false
+    - input: '!a & !x'
+      expected: false
+    - input: '!x & !y'
+      expected: true
+    - input: '!a & !b'
+      expected: false
+    - input: '!x & !b'
+      expected: false
+    - input: '!!a'
+      expected: true
+    - input: '!!!a'
+      expected: false
+    - input: x & a | b
+      expected: true
+    - input: (x & a) | b
+      expected: true
+    - input: x & (a | b)
+      expected: false
+    - input: ((a | x) & (b | y) & ((c | x) | (d | y)))
+      expected: true
+    - input: foo
+      expected: true
+    - input: bar
+      expected: true
+    - input: foo-bar
+      expected: true
+    - input: foo & bar & !baz-baz
+      expected: true
+    - input: '    a   &b & c   '
+      expected: true
+    - input: a&b&c
+      expected: true
+    - input: (a&b
+      expected: Expected ')'
+    - input: (a|b
+      expected: Expected ')'
+    - input: a&
+      expected: Expected a variable
+    - input: a |
+      expected: Expected a variable
+    - input: '&'
+      expected: Unexpected operator "&"
+    - input: '|'
+      expected: Unexpected operator "|"
+    - input: '!'
+      expected: Expected a variable
+    - input: (
+      expected: Expected a variable
+    - input: )
+      expected: Unexpected operator ")"
+    - input: a b
+      expected: Expected '&' or '|' operator
+    - input: (a+b))
+      expected: Expected '&' or '|' operator
+    - input: ''
+      expected: Expected a variable
+    - input: '   '
+      expected: Expected a variable
 ~~~
 
 Uploading the suite:
@@ -359,8 +400,9 @@ owner: Mike
 created: '2020-01-07T04:09:18.721Z'
 benchmarkId: 'true_or_false_benchmark:1.0'
 image: 'true_or_false_candidate:1.0'
-password:
-  secret: my-password
+data:
+  password:
+    secret: my-password
 whitelist:
   - 'http://www.wikipedia.org'
 ~~~
@@ -380,9 +422,10 @@ owner: Mike
 created: '2020-01-07T04:09:18.721Z'
 benchmarkId: 'true_or_false_benchmark:1.0'
 image: 'true_or_false_candidate:1.0'
-password:
-  secret: >-
-    XW48Kl6zD002aFVf1+aYQjtIhtf0aTMDQGQS0TyUiFR1t1ZtT2eWp6CdmI9/EwXxVG5pmhgmZi3lBMMRp//Y6A1v8A23YF+lvrgzro9wNSjIEPlpZiiYJRGg9h1z1jMkrR7a6Y8nHpCeZYsF5UcAuoTOkPPKJHcxMzCgInEBpkb2zL0aCHyBvq1LvGnh50zFtYNRjqo7jjaByOcrxNtpjAYGU/Icr3ct9zm+t+2g9P7elzzlCKQgxMk1TUWLRqhdmtQr960jdrYpDva8N068nqSejAjuTNOHmbCR4F+L6WrjHfUUq0DBXHR5DLze2pKMVMxJ0rn/ltiFObtMbw0jUgcr6DQfSH3Od0Gj9Cw3pIStkdqIT0+AwHcY50KLyNx5JrjChq6qT2sfslKh2O5XFvjHUx5cDeDQ4tX2n5gmy+FJTta/TGp485aWcABk8YHljOvMyrkvOp6388b4xF8FfNJnx3fwFeiH3fZiXah0JZT2/9CEmtMe+8kGPXFpJzZUWlXPtjV2oSWWggQcwbT5VSXWNWFJa/VmB1Fs7xQL/Dyxxssp1dPTuty1E3piFMfHYNbl2fJ0exNl8Qb1SQVvrXkPX2V0fp59mZAAhanqiazyiJ6CQDjFvrlfzy03dJByX41tx9xNn29Gnko3KBqUAOrNI7kHhHlVyJM/cQQGeIY=:eWuy2Op3Pd6u5mXNZh37Lg==:pNwZexF4g461IB/JxODNgQ==
+data:
+  password:
+    secret: >-
+      lVGEWLMWSoU+IiycH04rNhytCKr3zcVoily1jCZiU8lHI1deqebATqF/VUYzE/jUDCF4QSwunJmILPbeVhymS8HUMm+I35xPCe5d3e3LDPGnp6AmpvFNLW4BwFmsRe5mTlBdDFJfrD8JeLfUQKXJi7m6eztHC3yazHKaqM3jaAGt5Cm0HwPyFD0CWcuA18asjFoOWaYMPRqsk/OPYGLXik8+YS2IeR5yZPwAOQ2Q/4kfBF2CVLXMjehjTOF/+UtISB/A9f8j27hq5dawk+uwvQGRkrKPfS3xH4p3cNujuOUSQ9qh8T+Z+Ulrk0V7etM3iGlSTPpygL7DDnHu42UZO45Hm3/ZPMp/oIlel2pkPXIO/1zokPM6kyXSlUGQtBEfhc1JS9SEPyfMBS5HoXrHeyr/H+VtosxVzaUza+Okph6tzpFXsFqiYhxrt2WlCGMqGf0zcz5y+fLr2h7vtiXKQJVBRMkdieiMBIl3MIGbPIvmvE2RsS9GmSi9jR/6vOSBU05XBJz3wm+Q9gGEBAUbJCwaXeKpH2OfI6m/umlN9A94lvm8mLuB12wwh8LT34aNYNQtBdTtH6L9xYhXlARw8JGKqdYUvvhPgo3PFv+QujgULFt0XVBPJZXR1oGTyuNycqiYKPNcVYMVl/pmJSw0McRGUOPJhRuCDry+w56ABak=:oXGAR7ZKSMG+Bix58CzvEA==:+mBtmlu4rDQMFkpgEvnWpg==
 whitelist:
   - 'http://www.wikipedia.org'
 ~~~
@@ -394,9 +437,17 @@ Uploading the candidate:
 einstein:/% einstein create candidate.yaml
 Uploaded to /candidates/eht7atazdxt5ytk1dhtpaqv3c5q68ub4c5u6aehh5rr0
 
+einstein:/% einstein create true_candidate.yaml
+Uploaded to /candidates/c5p7erbteda74xb5bxhp2vk4d5j62x3578rjwc0
+
+einstein:/% einstein create false_candidate.yaml
+Uploaded to /candidates/c5p7erbted362v3kcnfp6rbechmp8rbmcmx32bhg
+
 einstein:/% einstein list candidates
-image                         name            owner   created                 
-true_or_false_candidate:1.0   True_Or_False   Mike    2020-01-07T04:09:18.721Z
+image                         name            owner    created                 
+true_or_false_candidate:1.0   True_Or_False   Mike     2020-01-07T04:09:18.721Z
+alwaysTrue_candidate:1.0      Always_True     Briana   2020-01-07T04:09:18.721Z
+alwaysFalse_candidate:1.0     Always_False    Noel     2020-01-07T04:09:18.721Z
 ~~~
 
 
@@ -410,9 +461,10 @@ Key points:
 [//]: # (shell)
 ~~~
 einstein:/% einstein run true_or_false_candidate:1.0 True_Or_False
-run(true_or_false_candidate:1.0, True_Or_False)
-Starting candidate true_or_false_candidate:1.0 on e61c370b-0abb-40a4-89b9-fa0b0d4c21d4
-Starting benchmark true_or_false_benchmark:1.0 on f2e2291e-0832-4f9a-ae9a-16c347e0e662
+
+einstein:/% einstein run alwaysTrue_candidate:1.0 True_Or_False
+
+einstein:/% einstein run alwaysFalse_candidate:1.0 True_Or_False
 
 einstein:/% einstein list runs
 name   candidate   benchmark   suite   date
@@ -420,39 +472,92 @@ name   candidate   benchmark   suite   date
 einstein:/% # wait 20 seconds for run to complete ...
 einstein:/% einstein list runs
 name                                   candidate                     benchmark                     suite           date                    
-f2e2291e-0832-4f9a-ae9a-16c347e0e662   true_or_false_candidate:1.0   true_or_false_benchmark:1.0   True_Or_False   2020-01-18T02:50:10.713Z
+0d62d9b8-b6a3-419d-90dc-7f96c2bbd259   alwaysTrue_candidate:1.0      true_or_false_benchmark:1.0   True_Or_False   2020-01-21T06:49:49.641Z
+0090d896-1f2f-421e-9f55-056812062435   alwaysFalse_candidate:1.0     true_or_false_benchmark:1.0   True_Or_False   2020-01-21T06:49:49.654Z
+3df7ae93-4b57-44f6-9793-5c8c29659f21   true_or_false_candidate:1.0   true_or_false_benchmark:1.0   True_Or_False   2020-01-21T06:49:54.632Z
 ~~~
 
-Examining run log:
+Examining run results:
+
+[//]: # (shell)
+~~~
+einstein:/% einstein results true_or_false_benchmark:1.0
+candidateId                   suiteId         created                    passed   failed
+alwaysTrue_candidate:1.0      True_Or_False   2020-01-21T06:49:49.641Z   21       26    
+alwaysFalse_candidate:1.0     True_Or_False   2020-01-21T06:49:49.654Z   13       34    
+true_or_false_candidate:1.0   True_Or_False   2020-01-21T06:49:54.632Z   43       4     
+~~~
+
+The result table was created by crawling the runs-blobs:
 
 [//]: # (shell)
 ~~~
 einstein:/% cloud ls
 benchmarks/eht7atazdxt5ytk1dhtpaqv2cnq66u3dc5t6pehh5rr0
+candidates/c5p7erbted362v3kcnfp6rbechmp8rbmcmx32bhg
+candidates/c5p7erbteda74xb5bxhp2vk4d5j62x3578rjwc0
 candidates/eht7atazdxt5ytk1dhtpaqv3c5q68ub4c5u6aehh5rr0
-logs/e61c370b-0abb-40a4-89b9-fa0b0d4c21d4
-logs/f2e2291e-0832-4f9a-ae9a-16c347e0e662
+logs/0090d896-1f2f-421e-9f55-056812062435
+logs/0d62d9b8-b6a3-419d-90dc-7f96c2bbd259
+logs/3df7ae93-4b57-44f6-9793-5c8c29659f21
+logs/794c9e7d-afae-4dd8-9e87-77b832c1e071
+logs/8ca8a6d6-5653-4404-87ed-3b567a78ef57
+logs/f422a029-44ac-455c-9e54-44a29a4d38ca
 logs/lab
-runs/f2e2291e-0832-4f9a-ae9a-16c347e0e662
+logs/repository
+runs/0090d896-1f2f-421e-9f55-056812062435
+runs/0d62d9b8-b6a3-419d-90dc-7f96c2bbd259
+runs/3df7ae93-4b57-44f6-9793-5c8c29659f21
 suites/aht7ataz9xt5yhk1dhtpa
 
 einstein:/% cloud more runs/*
-Contents of /runs/f2e2291e-0832-4f9a-ae9a-16c347e0e662:
+Contents of /runs/0d62d9b8-b6a3-419d-90dc-7f96c2bbd259:
 kind: Run
 apiVersion: 0.0.1
-runId: f2e2291e-0832-4f9a-ae9a-16c347e0e662
+runId: 0d62d9b8-b6a3-419d-90dc-7f96c2bbd259
+candidateId: 'alwaysTrue_candidate:1.0'
+suiteId: True_Or_False
+benchmarkId: 'true_or_false_benchmark:1.0'
+name: foo
+description: foo
+owner: foo
+created: '2020-01-21T06:49:49.641Z'
+data:
+  passed: 21
+  failed: 26
+
+
+Contents of /runs/0090d896-1f2f-421e-9f55-056812062435:
+kind: Run
+apiVersion: 0.0.1
+runId: 0090d896-1f2f-421e-9f55-056812062435
+candidateId: 'alwaysFalse_candidate:1.0'
+suiteId: True_Or_False
+benchmarkId: 'true_or_false_benchmark:1.0'
+name: foo
+description: foo
+owner: foo
+created: '2020-01-21T06:49:49.654Z'
+data:
+  passed: 13
+  failed: 34
+
+
+Contents of /runs/3df7ae93-4b57-44f6-9793-5c8c29659f21:
+kind: Run
+apiVersion: 0.0.1
+runId: 3df7ae93-4b57-44f6-9793-5c8c29659f21
 candidateId: 'true_or_false_candidate:1.0'
 suiteId: True_Or_False
 benchmarkId: 'true_or_false_benchmark:1.0'
 name: foo
 description: foo
 owner: foo
-created: '2020-01-18T02:50:10.713Z'
-results:
+created: '2020-01-21T06:49:54.632Z'
+data:
   passed: 43
   failed: 4
 ~~~
-
 
 ## Examining Cloud Storage
 
@@ -460,19 +565,28 @@ Key points:
 * Logging for Einstein laboratory service.
 * Run logging for candidate and benchmark.
 * Run results.
-* Benchmark manifests.
-* Suite manifests.
-* Candidate manifests.
+* Benchmark specifications.
+* Suite specifications.
+* Candidate specifications.
 
 [//]: # (shell)
 ~~~
 einstein:/% cloud ls
 benchmarks/eht7atazdxt5ytk1dhtpaqv2cnq66u3dc5t6pehh5rr0
+candidates/c5p7erbted362v3kcnfp6rbechmp8rbmcmx32bhg
+candidates/c5p7erbteda74xb5bxhp2vk4d5j62x3578rjwc0
 candidates/eht7atazdxt5ytk1dhtpaqv3c5q68ub4c5u6aehh5rr0
-logs/e61c370b-0abb-40a4-89b9-fa0b0d4c21d4
-logs/f2e2291e-0832-4f9a-ae9a-16c347e0e662
+logs/0090d896-1f2f-421e-9f55-056812062435
+logs/0d62d9b8-b6a3-419d-90dc-7f96c2bbd259
+logs/3df7ae93-4b57-44f6-9793-5c8c29659f21
+logs/794c9e7d-afae-4dd8-9e87-77b832c1e071
+logs/8ca8a6d6-5653-4404-87ed-3b567a78ef57
+logs/f422a029-44ac-455c-9e54-44a29a4d38ca
 logs/lab
-runs/f2e2291e-0832-4f9a-ae9a-16c347e0e662
+logs/repository
+runs/0090d896-1f2f-421e-9f55-056812062435
+runs/0d62d9b8-b6a3-419d-90dc-7f96c2bbd259
+runs/3df7ae93-4b57-44f6-9793-5c8c29659f21
 suites/aht7ataz9xt5yhk1dhtpa
 ~~~
 

@@ -1,9 +1,10 @@
 import * as path from 'path';
 
-import { CLI } from '.';
 import { World, IStorage } from '../cloud';
-import { Shell } from '../shell';
+import { formatSelectResults } from '../utilities';
+
 import { listCommandInternal } from './list';
+import { CLI } from './cliCore';
 
 interface CommandDescription {
     name: string,
@@ -46,6 +47,12 @@ export class CLIMain {
                 args: ['candidateId', 'suiteId'],
                 description: 'Run specified suite <suiteId> on candidate <candidateId>',
                 command: context.runCommand
+            },
+            {
+                name: 'results',
+                args: ['benchmarkId'],
+                description: 'Print test run results for <benchmarkId>',
+                command: context.resultsCommand
             },
             {
                 name: 'list',
@@ -128,6 +135,15 @@ export class CLIMain {
     private async runCommand(args: string[]): Promise<number> {
         const [candidateId, suiteId] = args;
         await this.cli.run(candidateId, suiteId);
+        return 0;
+    }
+
+    private async resultsCommand(args: string[]): Promise<number> {
+        const [benchmarkId] = args;
+        const results = await this.cli.results(benchmarkId);
+        for (const line of formatSelectResults(results)) {
+            console.log(line);
+        }
         return 0;
     }
 

@@ -98,11 +98,12 @@ We can use the `cloud ls` command to see that logging has started for the labora
 einstein:/% cloud ls
 ~~~
 
-If we examine the log, we can see that the Laboratory service has started:
+If we examine the logs, we can see that the Laboratory and Repository services have started:
 
 [//]: # (shell)
 ~~~
-einstein:/% cloud more logs/lab 
+einstein:/% cloud more logs/lab
+einstein:/% cloud more logs/repository
 ~~~
 
 
@@ -201,6 +202,8 @@ Uploading the candidate:
 [//]: # (shell)
 ~~~
 einstein:/% einstein create candidate.yaml
+einstein:/% einstein create true_candidate.yaml
+einstein:/% einstein create false_candidate.yaml
 einstein:/% einstein list candidates
 ~~~
 
@@ -215,6 +218,8 @@ Key points:
 [//]: # (shell)
 ~~~
 einstein:/% einstein run true_or_false_candidate:1.0 True_Or_False
+einstein:/% einstein run alwaysTrue_candidate:1.0 True_Or_False
+einstein:/% einstein run alwaysFalse_candidate:1.0 True_Or_False
 einstein:/% einstein list runs
 einstein:/% # wait 20 seconds for run to complete ...
 einstein:/% einstein list runs
@@ -224,10 +229,16 @@ Examining run results:
 
 [//]: # (shell)
 ~~~
+einstein:/% einstein results true_or_false_benchmark:1.0
+~~~
+
+The result table was created by crawling the runs-blobs:
+
+[//]: # (shell)
+~~~
 einstein:/% cloud ls
 einstein:/% cloud more runs/*
 ~~~
-
 
 ## Examining Cloud Storage
 
@@ -235,9 +246,9 @@ Key points:
 * Logging for Einstein laboratory service.
 * Run logging for candidate and benchmark.
 * Run results.
-* Benchmark manifests.
-* Suite manifests.
-* Candidate manifests.
+* Benchmark specifications.
+* Suite specifications.
+* Candidate specifications.
 
 [//]: # (shell)
 ~~~

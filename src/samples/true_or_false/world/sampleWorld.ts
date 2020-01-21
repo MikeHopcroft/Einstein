@@ -11,7 +11,15 @@ import {
     World,
 } from '../../../cloud';
 
-import { Kind, Laboratory, BenchmarkDescription, CandidateDescription, SuiteDescription } from '../../../laboratory';
+import {
+    BenchmarkDescription,
+    CandidateDescription,
+    Kind,
+    Laboratory,
+    SuiteDescription
+} from '../../../laboratory';
+
+import { Repository } from '../../../repository';
 
 import { Benchmark, Candidate, TrivialCandidate } from '..'
 
@@ -39,10 +47,13 @@ export function sampleWorld(localDiskPath?: string) {
     world.orchestrator.pushImage(TrivialCandidate.imageTrue);
     world.orchestrator.pushImage(TrivialCandidate.imageFalse);
     world.orchestrator.pushImage(Laboratory.image);
+    world.orchestrator.pushImage(Repository.image);
 
     // TODO: copy sample yaml files to ramdisk
     copyYaml(world.localStorage, 'benchmark.yaml', benchmark);
     copyYaml(world.localStorage, 'candidate.yaml', candidate);
+    copyYaml(world.localStorage, 'true_candidate.yaml', alwaysTrueCandidate);
+    copyYaml(world.localStorage, 'false_candidate.yaml', alwaysFalseCandidate);
     copyYaml(world.localStorage, 'suite.yaml', suite);
 
     return world;
@@ -81,6 +92,45 @@ const candidate: CandidateDescription = {
     created: '2020-01-07T04:09:18.721Z',
     benchmarkId: 'true_or_false_benchmark:1.0',
     image: 'true_or_false_candidate:1.0',
+    data: {
+        password: {
+            secret: 'my-password'
+        }
+    },
+    whitelist: [
+        'http://www.wikipedia.org'
+    ]
+};
+
+const alwaysTrueCandidate: CandidateDescription = {
+    apiVersion: '0.0.1',
+    kind: Kind.CANDIDATE,
+    name: 'Always_True',
+    description: 'A candidate that always returns true.',
+    owner: 'Briana',
+    created: '2020-01-07T04:09:18.721Z',
+    benchmarkId: 'true_or_false_benchmark:1.0',
+    image: 'alwaysTrue_candidate:1.0',
+    data: {
+        password: {
+            secret: 'my-password'
+        }
+    },
+    whitelist: [
+        'http://www.wikipedia.org'
+    ]
+};
+
+
+const alwaysFalseCandidate: CandidateDescription = {
+    apiVersion: '0.0.1',
+    kind: Kind.CANDIDATE,
+    name: 'Always_False',
+    description: 'A candidate that always returns false.',
+    owner: 'Noel',
+    created: '2020-01-07T04:09:18.721Z',
+    benchmarkId: 'true_or_false_benchmark:1.0',
+    image: 'alwaysFalse_candidate:1.0',
     data: {
         password: {
             secret: 'my-password'

@@ -11,18 +11,22 @@ import {
     BlobLogger
 } from '../cloud';
 
-import { Laboratory, ILaboratory, SuiteDescription } from '../laboratory';
-import { encodeBenchmark, encodeCandidate, encodeSuite, encodeLog } from '../naming';
+import { Laboratory, ILaboratory } from '../laboratory';
+import { encodeLog } from '../naming';
 import { encryptSecrets, generateKeys } from '../secrets';
-import { loadSuite, loadCandidate, loadBenchmark, loadEntity } from '../laboratory/loaders';
+import { loadEntity } from '../laboratory/loaders';
+import { IRepository, Repository, SelectResults } from '../repository';
 
 export class CLI {
     private orchestrator: IOrchestrator;
     private cloudStorage: IStorage;
     private localStorage: IStorage;
 
-    private hostName: string | undefined;
+    private labHostname: string | undefined;
     private lab: ILaboratory | undefined;
+
+    private repositoryHostname: string | undefined;
+    private repository: IRepository | undefined;
 
     constructor(world: World) {
         this.orchestrator = world.orchestrator;
@@ -33,11 +37,22 @@ export class CLI {
     async deploy(
         hostname: string
     ): Promise<void> {
+        // //
+        // // The deploy functionality runs locally in the CLI application.
+        // //
+        this.labHostname = hostname;
+        this.deployLaboratory(hostname);
+
+        this.repositoryHostname = 'repository';
+        this.deployRepository(this.repositoryHostname);
+    }
+
+    private async deployLaboratory(hostname: string) {
         //
         // The deploy functionality runs locally in the CLI application.
         //
 
-        console.log(`Depoying einstein to ${hostname}`);
+        console.log(`Depoying einstein Laboratory to ${hostname}`);
 
         // TODO: generate keys here and store in CLI local store
         // and in worker's attached volume.
@@ -55,8 +70,8 @@ export class CLI {
 
         const environment = new Environment();
 
-        // Create worker
-        await this.orchestrator.createWorker(
+        // Create worker for Laboratory
+        this.orchestrator.createWorker(
             hostname,
             Laboratory.image.tag,
             this.cloudStorage,
@@ -64,10 +79,24 @@ export class CLI {
             environment,
             new BlobLogger(this.cloudStorage, hostname, encodeLog(hostname))
         );
+    }
 
-        // TODO: this should be set through the connect mechanism
-        // that inspects a configuration file.
-        this.hostName = hostname;
+    private async deployRepository(hostname: string) {
+        //
+        // The deploy functionality runs locally in the CLI application.
+        //
+
+        console.log(`Depoying einstein Repository to ${hostname}`);
+
+        // Create worker for Repository
+        this.orchestrator.createWorker(
+            hostname,
+            Repository.image.tag,
+            this.cloudStorage,
+            [],
+            new Environment(),
+            new BlobLogger(this.cloudStorage, hostname, encodeLog(hostname))
+        );
     }
 
     async encrypt(filename: string): Promise<void> {
@@ -106,21 +135,40 @@ export class CLI {
         await lab.run(candidateId, suiteId);
     }
 
+    async results(benchmarkId: string): Promise<SelectResults> {
+        const repository = await this.getRepository();
+        // TODO: use name service here.
+        return repository.select(benchmarkId);
+    }
+
     // async connect(hostname: string) {
     //     // Read hostname from connection file.
     //     this.lab = (await this.orchestrator.connect<ILaboratory>(hostname, 8080));
     // }
 
     private async getLab(): Promise<ILaboratory> {
-        if (!this.hostName) {
+        if (!this.labHostname) {
             const message = 'Not connected to a Labratory';
             throw new TypeError(message);
         }
         if (!this.lab) {
             // TODO: better handling of connection timeout exception here.
             // TODO: don't hard-code port.
-            this.lab = await this.orchestrator.connect<ILaboratory>(this.hostName, 8080);
+            this.lab = await this.orchestrator.connect<ILaboratory>(this.labHostname, 8080);
         }
         return this.lab;
+    }
+
+    private async getRepository(): Promise<IRepository> {
+        if (!this.repositoryHostname) {
+            const message = 'Not connected to a Repository';
+            throw new TypeError(message);
+        }
+        if (!this.repository) {
+            // TODO: better handling of connection timeout exception here.
+            // TODO: don't hard-code port.
+            this.repository = await this.orchestrator.connect<IRepository>(this.repositoryHostname, 8080);
+        }
+        return this.repository;
     }
 }

@@ -8,25 +8,35 @@
 * x worker.log replaces console.log
 * x schema verification for TestSuite (vs SuiteDescription)
 * x catching exceptions in shell.processline
+* Setting create time automatically
+* Setting owner/submitter automatically
+* Whitelist approval
 * repository service
-    * x cloud abstraction for tables - does prototype need this abstraction? Can't it just inline its own implementation of tables?
-    * x cloud events for blobs
-    * x benchmark table schemas
-    * unit test helper that waits for new run blob - remove sleeps
-    * einstein deploy starts repository
-    * data-driven schemas for benchmarks, candidate, runs, suites tables?
-    * alwaysFalse_candidate:1.0
-    * alwaysTrue_candidate:1.0
-    * benchmark table formatters - specific numberical, fixed, date, etc.
-    * benchmark table aligners - left, right
-    * benchmark table captions - specify captions that are not the same as column names.
-    * x crawl benchmarks
-    * x crawl runs
-    * crawl suites
-    * crawl candidates
-    * integrate with cli
-      * einstein summarize benchmarkId|suiteId|CandidateId
-      * einstein results benchmarkId|suiteId|CandidateId
+  * einstein deploy from yaml specification
+  * add delay to repository startup
+  * cloud ls logs* - need to handle optional argument
+  * einstein list uses CLICore
+  * unit test helper that waits for new run blob - remove sleeps
+  * x einstein deploy starts repository
+  * data-driven schemas for benchmarks, candidate, runs, suites tables?
+  * x alwaysFalse_candidate:1.0
+  * x alwaysTrue_candidate:1.0
+  * benchmark table formatters - specific numberical, fixed, date, etc.
+  * benchmark table aligners - left, right
+  * benchmark table captions - specify captions that are not the same as column names.
+  * integrate with cli
+    * minimist? -b=, -c=, -s=
+    * einstein summarize benchmarkId|suiteId|CandidateId?
+    * einstein results benchmarkId|suiteId|CandidateId?
+  * x cloud abstraction for tables
+    * x does prototype need this abstraction?
+    * x Can't it just inline its own implementation of tables?
+  * x cloud events for blobs
+  * x benchmark table schemas
+  * x crawl benchmarks
+  * x crawl runs
+  * x crawl suites
+  * x crawl candidates
 * IDatabase, LocalDatabase
   * primary key uniqueness => important for avoiding duplicates
   * column type checking
