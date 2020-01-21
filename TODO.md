@@ -1,33 +1,19 @@
 # TODO LIST
 
 ## Next
-* x true or false repl
-* x Logging
-* x cloud more
-* x einstein create gets type from yaml
-* x worker.log replaces console.log
-* x schema verification for TestSuite (vs SuiteDescription)
-* x catching exceptions in shell.processline
-* Setting create time automatically
-* Setting owner/submitter automatically
-* Whitelist approval
 * repository service
-  * einstein deploy from yaml specification
-  * add delay to repository startup
-  * cloud ls logs* - need to handle optional argument
   * einstein list uses CLICore
+  * einstein deploy from yaml specification
+  * uniform use of naming library in repository
   * unit test helper that waits for new run blob - remove sleeps
-  * x einstein deploy starts repository
   * data-driven schemas for benchmarks, candidate, runs, suites tables?
-  * x alwaysFalse_candidate:1.0
-  * x alwaysTrue_candidate:1.0
-  * benchmark table formatters - specific numberical, fixed, date, etc.
-  * benchmark table aligners - left, right
   * benchmark table captions - specify captions that are not the same as column names.
-  * integrate with cli
+  * benchmark table formatters - specific numerical, fixed, date, etc.
+  * benchmark table aligners - left, right
+  * . integrate with cli
     * minimist? -b=, -c=, -s=
-    * einstein summarize benchmarkId|suiteId|CandidateId?
-    * einstein results benchmarkId|suiteId|CandidateId?
+    * x einstein summarize benchmarkId|suiteId|CandidateId?
+    * x einstein results benchmarkId|suiteId|CandidateId?
   * x cloud abstraction for tables
     * x does prototype need this abstraction?
     * x Can't it just inline its own implementation of tables?
@@ -37,17 +23,38 @@
   * x crawl runs
   * x crawl suites
   * x crawl candidates
+  * x add delay to repository startup
+  * x einstein deploy starts repository
+  * x alwaysFalse_candidate:1.0
+  * x alwaysTrue_candidate:1.0
 * IDatabase, LocalDatabase
   * primary key uniqueness => important for avoiding duplicates
   * column type checking
   * numeric column types
   * using object with properties, rather than arrays for rows??
-* . repository tabular view of run results with schema from benchmark spec
+* Setting create time automatically
+* Setting owner/submitter automatically
+  * shell su command?
+* Animal/Mineral/Vegitable?
+* Whitelist approval
 * einstein create vm
-* einstein deploy from spec
 * einstein connect
 * ssh to other hosts - need to modify tutorial builder to detect prompts on other servers
 * Set up unit testing
+* x repository tabular view of run results with schema from benchmark spec
+* x true or false repl
+* x Logging
+* x cloud more
+* x einstein create gets type from yaml
+* x worker.log replaces console.log
+* x schema verification for TestSuite (vs SuiteDescription)
+* x catching exceptions in shell.processline
+
+## Tutorial script
+
+* cloud ls logs* - need to handle optional argument
+* architecture diagram for each step
+
 
 ## Housekeeping
 * Improve top-level README.md
@@ -57,11 +64,11 @@
 * Prettier clean
 
 ## Easy
+* Hard-coded port numbers: 8080
 * LoadFoo() splits into LoadFooFromId() and LoadFooFromBlob().
 * Better error message for "RamDisk: file /suites/aht7ataz9xt5yhk1dhtpa not found". Really want "Can't open suite True_Or_False".
   * RamDisk: file /candidates/c5p7erbteda74xb5bxhp2vk4d5j62x3578rjwc0 not found.
 * Living spec: name, description, owner = 'foo'
-* x BUG: can run test without candidate schema
 * BUG: can run test without benchmark schema
 * Rename camelCase files to under_score?
 * Rename tutorial to tutorial_builder
@@ -74,6 +81,7 @@
 * - Use chalk or ansi-styles in tutorial
 * - Shell print list of commands
 * - Redirect recorded output to stderr to allow results on stdout
+* x BUG: can run test without candidate schema
 * x TypeError() => new TypeError()
 * x Tutorial read from file specified on command line
 * x Unify EntityDescription with SuiteDescription
