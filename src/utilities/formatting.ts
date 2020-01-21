@@ -1,4 +1,5 @@
 import { ColumnDescription } from "../cloud";
+import { SelectResults } from "../repository";
 
 export function leftJustify(text: string, width: number) {
     if (text.length >= width) {
@@ -45,22 +46,22 @@ export function* formatTable(
     }
 }
 
-export function* formatTable2(
-    columns: ColumnDescription[],
-    // tslint:disable-next-line:no-any
-    data: any[][]
+export function* formatSelectResults(
+    results: SelectResults
 ): IterableIterator<string> {
+    const { columns, rows } = results;
+
     const alignments = columns.map(
         column => (column.type === 'number') ? 'right' : 'left'
     );
 
-    const rows: string[][] = [
+    const data: string[][] = [
         columns.map(column => column.name)
     ];
 
-    for (const row of data) {
-        rows.push(row.map(x => x.toString()));
+    for (const row of rows) {
+        data.push(row.map(x => x.toString()));
     }
 
-    yield* formatTable(alignments, rows);
+    yield* formatTable(alignments, data);
 }

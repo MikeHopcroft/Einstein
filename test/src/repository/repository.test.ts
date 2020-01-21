@@ -9,7 +9,7 @@ import {
     Repository,
     sleep,
     formatTable,
-    formatTable2,
+    formatSelectResults,
 } from '../../../src';
 
 async function go() {
@@ -36,47 +36,44 @@ async function go() {
 
     console.log('Creating candidate');
     await cli.create('/candidate.yaml');
+    // TODO: need candidate.yaml files for alwaysFalse and alwaysTrue.
 
     console.log('Running test');
     await cli.run('true_or_false_candidate:1.0','True_Or_False');
+    // await cli.run('alwaysFalse_candidate:1.0','True_Or_False');
+    // await cli.run('alwaysTrue_candidate:1.0','True_Or_False');
 
     console.log('Selecting from benchmarks table');
     {
-        const { columns, rows } = await repository.select('benchmarks');
-
-        for (const line of formatTable2(columns, rows)) {
+        const results = await repository.select('benchmarks');
+        for (const line of formatSelectResults(results)) {
             console.log(line);
         }
-        // console.log(columns.map(a => a.name).join(' | '));
-        // for (const row of rows) {
-        //     console.log(row.join(' | '));
-        // }
+    }
+
+    console.log('Selecting from candidates table');
+    {
+        const results = await repository.select('candidates');
+        for (const line of formatSelectResults(results)) {
+            console.log(line);
+        }
+    }
+
+    console.log('Selecting from suites table');
+    {
+        const results = await repository.select('suites');
+        for (const line of formatSelectResults(results)) {
+            console.log(line);
+        }
     }
 
     await sleep(20000);
     console.log('Selecting from results table');
     {
-        const { columns, rows } = await repository.select('true_or_false_benchmark:1.0');
-        for (const line of formatTable2(columns, rows)) {
+        const results = await repository.select('true_or_false_benchmark:1.0');
+        for (const line of formatSelectResults(results)) {
             console.log(line);
         }
-
-        // // console.log(columns.map(a => a.name).join(' | '));
-        // // for (const row of rows) {
-        // //     console.log(row.join(' | '));
-        // // }
-        // const alignments = columns.map(x => 'right');
-        // // const contents = [columns, ...rows];
-        // const contents: string[][] = [];
-        // contents.push(columns.map(x => x.name));
-        // for (const row of rows) {
-        //     // tslint:disable-next-line:no-any
-        //     contents.push(row.map((x:any) => x.toString()));
-        // }
-
-        // for (const line of formatTable(alignments, contents)) {
-        //     console.log(line);
-        // }
     }
 
     console.log('done');

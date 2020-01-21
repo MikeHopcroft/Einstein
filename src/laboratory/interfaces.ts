@@ -51,17 +51,10 @@ export interface RunDescription extends EntityDescription {
     candidateId: string;
     benchmarkId: string;
     suiteId: string;
-    // data: {
-    //     // tslint:disable-next-line:no-any
-    //     [key: string]: any,
-    // };
     // Important that data is 'object' and not 'Object'
     // 'object' specifies non-primitive and therefore doesn't
     // allow 'undefined'
-    // tslint:disable-next-line:no-any
     data: object
-    // tslint:disable-next-line:no-any
-    // results: any;
 }
 
 // TODO: Make this any "uploadable" description by excluding RunDescription?
@@ -76,12 +69,6 @@ export interface ILaboratory {
     getPublicKey(): Promise<string>;
 
     create(description: AnyDescription): Promise<string>;
-
-    // createCandidate(description: CandidateDescription): Promise<string>;
-    
-    // createBenchmark(description: BenchmarkDescription): Promise<string>;
-    
-    // createSuite(description: SuiteDescription): Promise<string>;
     
     run(candidateId: string, suiteId: string): Promise<void>;
 }

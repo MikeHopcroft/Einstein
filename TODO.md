@@ -12,16 +12,21 @@
     * x cloud abstraction for tables - does prototype need this abstraction? Can't it just inline its own implementation of tables?
     * x cloud events for blobs
     * x benchmark table schemas
+    * unit test helper that waits for new run blob - remove sleeps
+    * einstein deploy starts repository
+    * data-driven schemas for benchmarks, candidate, runs, suites tables?
+    * alwaysFalse_candidate:1.0
+    * alwaysTrue_candidate:1.0
     * benchmark table formatters - specific numberical, fixed, date, etc.
     * benchmark table aligners - left, right
     * benchmark table captions - specify captions that are not the same as column names.
-    * unit test helper that waits for new run blob - remove sleeps
-    * einstein deploy starts repository
     * x crawl benchmarks
     * x crawl runs
     * crawl suites
     * crawl candidates
-    * integrate with cli - einstein summarize benchmarkId|suiteId|CandidateId
+    * integrate with cli
+      * einstein summarize benchmarkId|suiteId|CandidateId
+      * einstein results benchmarkId|suiteId|CandidateId
 * IDatabase, LocalDatabase
   * primary key uniqueness => important for avoiding duplicates
   * column type checking

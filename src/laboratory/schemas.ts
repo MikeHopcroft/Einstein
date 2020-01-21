@@ -27,6 +27,12 @@ const anyDescriptionSchema = {
                 "apiVersion": {
                     "type": "string"
                 },
+                "columns": {
+                    "items": {
+                        "$ref": "#/definitions/ColumnDescription"
+                    },
+                    "type": "array"
+                },
                 "created": {
                     "type": "string"
                 },
@@ -51,6 +57,7 @@ const anyDescriptionSchema = {
             },
             "required": [
                 "apiVersion",
+                "columns",
                 "created",
                 "description",
                 "image",
@@ -116,6 +123,21 @@ const anyDescriptionSchema = {
             ],
             "type": "object"
         },
+        "ColumnDescription": {
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "type"
+            ],
+            "type": "object"
+        },
         "RunDescription": {
             "properties": {
                 "apiVersion": {
@@ -129,6 +151,12 @@ const anyDescriptionSchema = {
                 },
                 "created": {
                     "type": "string"
+                },
+                "data": {
+                    "additionalProperties": true,
+                    "properties": {
+                    },
+                    "type": "object"
                 },
                 "description": {
                     "type": "string"
@@ -145,8 +173,6 @@ const anyDescriptionSchema = {
                 "owner": {
                     "type": "string"
                 },
-                "results": {
-                },
                 "runId": {
                     "type": "string"
                 },
@@ -159,11 +185,11 @@ const anyDescriptionSchema = {
                 "benchmarkId",
                 "candidateId",
                 "created",
+                "data",
                 "description",
                 "kind",
                 "name",
                 "owner",
-                "results",
                 "runId",
                 "suiteId"
             ],

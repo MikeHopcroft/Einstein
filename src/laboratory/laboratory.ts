@@ -148,7 +148,8 @@ export class Laboratory implements ILaboratory {
         // Start the candidate container.
         const candidateHost = uuid();
         this.world.logger.log(`Starting candidate ${candidateId} on ${candidateHost}`);
-        await this.orchestrator.createWorker(
+        // Don't await createWorker(). Want to model separate process.
+        this.orchestrator.createWorker(
             candidateHost,
             candidateId,
             this.cloudStorage,
@@ -160,7 +161,8 @@ export class Laboratory implements ILaboratory {
         // Start the benchmark container.
         const benchmarkHost = uuid();
         this.world.logger.log(`Starting benchmark ${suiteData.benchmarkId} on ${benchmarkHost}`);
-        await this.orchestrator.createWorker(
+        // Don't await createWorker(). Want to model separate process.
+        this.orchestrator.createWorker(
             benchmarkHost,
             suiteData.benchmarkId,
             this.cloudStorage,
