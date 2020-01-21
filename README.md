@@ -17,6 +17,8 @@ For more information, please see the [Einstein Overview](documentation/overview.
 
 ## Try Project Einstein
 
+Einstein is currently in the design phase. We have built a mockup of the Einstein services. You can see an interactive session in our [living spec](documentation/test.out.md). 
+
 * TODO: instructions for building and deploying Einstein.
 * TODO: sample benchmark and candidate tutorial
 
