@@ -1,3 +1,5 @@
+import { ColumnDescription } from "../cloud";
+
 export function leftJustify(text: string, width: number) {
     if (text.length >= width) {
         return text;
@@ -41,4 +43,24 @@ export function* formatTable(
 
         yield fields.join('   ');
     }
+}
+
+export function* formatTable2(
+    columns: ColumnDescription[],
+    // tslint:disable-next-line:no-any
+    data: any[][]
+): IterableIterator<string> {
+    const alignments = columns.map(
+        column => (column.type === 'number') ? 'right' : 'left'
+    );
+
+    const rows: string[][] = [
+        columns.map(column => column.name)
+    ];
+
+    for (const row of data) {
+        rows.push(row.map(x => x.toString()));
+    }
+
+    yield* formatTable(alignments, rows);
 }

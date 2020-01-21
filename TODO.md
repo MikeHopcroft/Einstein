@@ -10,19 +10,24 @@
 * x catching exceptions in shell.processline
 * repository service
     * x cloud abstraction for tables - does prototype need this abstraction? Can't it just inline its own implementation of tables?
-    * cloud events for blobs
-    * benchmark table schemas
+    * x cloud events for blobs
+    * x benchmark table schemas
+    * benchmark table formatters - specific numberical, fixed, date, etc.
+    * benchmark table aligners - left, right
+    * benchmark table captions - specify captions that are not the same as column names.
+    * unit test helper that waits for new run blob - remove sleeps
     * einstein deploy starts repository
     * x crawl benchmarks
-    * crawl runs
+    * x crawl runs
     * crawl suites
     * crawl candidates
-    * integrate with cli
+    * integrate with cli - einstein summarize benchmarkId|suiteId|CandidateId
 * IDatabase, LocalDatabase
-  * primary key uniqueness
+  * primary key uniqueness => important for avoiding duplicates
   * column type checking
+  * numeric column types
   * using object with properties, rather than arrays for rows??
-* repository tabular view of run results with schema from benchmark spec
+* . repository tabular view of run results with schema from benchmark spec
 * einstein create vm
 * einstein deploy from spec
 * einstein connect
@@ -37,6 +42,7 @@
 * Prettier clean
 
 ## Easy
+* LoadFoo() splits into LoadFooFromId() and LoadFooFromBlob().
 * Better error message for "RamDisk: file /suites/aht7ataz9xt5yhk1dhtpa not found". Really want "Can't open suite True_Or_False".
   * RamDisk: file /candidates/c5p7erbteda74xb5bxhp2vk4d5j62x3578rjwc0 not found.
 * Living spec: name, description, owner = 'foo'

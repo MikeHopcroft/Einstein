@@ -103,7 +103,7 @@ export class CLI {
         // Impemented as an RPC to the Lab service
         //
         const lab = await this.getLab();
-        lab.run(candidateId, suiteId);
+        await lab.run(candidateId, suiteId);
     }
 
     // async connect(hostname: string) {

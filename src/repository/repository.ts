@@ -6,8 +6,8 @@ import {
 } from '../cloud';
 
 import { IRepository, SelectResults } from './interfaces';
-import { getCollection } from '../naming';
-import { loadBenchmark, BenchmarkDescription } from '../laboratory';
+import { getCollection, encodeBenchmark } from '../naming';
+import { loadBenchmark, BenchmarkDescription, loadRun } from '../laboratory';
 
 export class Repository implements IRepository {
     static getPort() {
@@ -79,24 +79,6 @@ export class Repository implements IRepository {
         const blobs = await cloudStorage.listBlobs();
         for (const blob of blobs) {
             this.processOneBlob(blob);
-            // const collection = getCollection(blob);
-            // switch (collection) {
-            //     case 'benchmarks':
-            //         await this.processBenchmark(blob);
-            //         break;
-            //     case 'candidates':
-            //         await this.processCandidate(blob);
-            //         break;
-            //     case 'suites':
-            //         await this.processSuite(blob);
-            //         break;
-            //     case 'runs':
-            //         await this.processRun(blob);
-            //         break;
-            //     default:
-            //         // This blob is not a member of a collection
-            //         // that we process. Skip it.
-            // }
         }
     }
 
@@ -164,34 +146,52 @@ export class Repository implements IRepository {
         );
     }
 
-    private async processRun(name: string) {
-        // If runs table, add to runs table
-        // Otherwise, add to orphan's table
+    private async processRun(blob: string) {
+        console.log(`repository: processRun ${blob}`);
+        const run = await loadRun(blob, this.world.cloudStorage, false);
+        const benchmarkId = run.benchmarkId;
+        const benchmarkBlob = encodeBenchmark(benchmarkId);
+        console.log(`Run ${run.name}: benchmarkId: ${benchmarkId}`);
+        const benchmark = await this.getBenchmark(benchmarkBlob);
 
-        // Adding to table involves pulling fields from run,
-        // based on column schema in benchmark.
+        // Ensure results table.
+        await this.database.ensureTable(
+            benchmarkId,
+            benchmark.columns
+        );
 
-        // // Ensure results table for this benchmark.
-        // // TODO: get results column schema from benchmark YAML file
-        // const columns = [
-        //     { name: 'candidate', type: 'string' },
-        //     { name: 'suite', type: 'string' },
-        //     { name: 'date', type: 'string' },
-        //     { name: 'passed', type: 'string' },
-        //     { name: 'failed', type: 'string' },
-        // ];
-        // await this.database.ensureTable(
-        //     benchmark.image,
+        // Copy results to results table.
+        // const row = {};
+        // tslint:disable-next-line:no-any
+        const row: any[] = [];
+        for (const column of benchmark.columns) {
+            const value = 
+                // tslint:disable-next-line:no-any
+                (run.data as any)[column.name] ||
+                // tslint:disable-next-line:no-any
+                (run as any)[column.name];
 
-        // // Process orphaned runs associated with this benchmark.
+            if (value !== undefined) {
+                // // tslint:disable-next-line:no-any
+                // (row as any)[column.name] = value;
+                row.push(value);
+            } else {
+                const message = `Expected field "${column.name}"`;
+                throw new TypeError(message);
+            }
+        }
+
+        await this.database.insert(benchmarkId, row);
     }
 
-    private async processSuite(name: string) {
+    private async processSuite(blob: string) {
+        console.log(`repository: processSuite ${blob}`);
         // Ensure suites table.
         // Add to suites table.
     }
 
-    private async processCandidate(name: string) {
+    private async processCandidate(blob: string) {
+        console.log(`repository: processCandidate ${blob}`);
         // Ensure candidates table.
         // Add to candidates table.
     }

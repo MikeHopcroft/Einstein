@@ -116,7 +116,7 @@ export class Benchmark {
             const description = 'foo';
             const owner = 'foo';
             const created = new Date().toISOString();
-            const results = { passed, failed };
+            const data = { passed, failed };
             const rd: RunDescription = {
                 kind: Kind.RUN,
                 apiVersion: '0.0.1',
@@ -128,7 +128,7 @@ export class Benchmark {
                 description,
                 owner,
                 created,
-                results
+                data
             };
             const text = yaml.safeDump(rd);
             const buffer = Buffer.from(text, 'utf8');

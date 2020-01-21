@@ -71,6 +71,12 @@ const anyDescriptionSchema = {
                 "created": {
                     "type": "string"
                 },
+                "data": {
+                    "additionalProperties": true,
+                    "properties": {
+                    },
+                    "type": "object"
+                },
                 "description": {
                     "type": "string"
                 },
@@ -88,17 +94,25 @@ const anyDescriptionSchema = {
                 },
                 "owner": {
                     "type": "string"
+                },
+                "whitelist": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 }
             },
             "required": [
                 "apiVersion",
                 "benchmarkId",
                 "created",
+                "data",
                 "description",
                 "image",
                 "kind",
                 "name",
-                "owner"
+                "owner",
+                "whitelist"
             ],
             "type": "object"
         },

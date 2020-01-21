@@ -50,7 +50,7 @@ export class Laboratory implements ILaboratory {
     };
 
     // TODO: this should do a bind, not a connect.
-    static async entryPoint(worker: IWorker) {
+    static async entryPoint(worker: IWorker): Promise<void> {
         worker.log(`Labratory.entryPoint()`);
 
         // Simulate server startup time.
@@ -148,7 +148,7 @@ export class Laboratory implements ILaboratory {
         // Start the candidate container.
         const candidateHost = uuid();
         this.world.logger.log(`Starting candidate ${candidateId} on ${candidateHost}`);
-        this.orchestrator.createWorker(
+        await this.orchestrator.createWorker(
             candidateHost,
             candidateId,
             this.cloudStorage,
@@ -160,7 +160,7 @@ export class Laboratory implements ILaboratory {
         // Start the benchmark container.
         const benchmarkHost = uuid();
         this.world.logger.log(`Starting benchmark ${suiteData.benchmarkId} on ${benchmarkHost}`);
-        this.orchestrator.createWorker(
+        await this.orchestrator.createWorker(
             benchmarkHost,
             suiteData.benchmarkId,
             this.cloudStorage,

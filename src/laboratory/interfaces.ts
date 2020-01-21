@@ -1,3 +1,5 @@
+import { ColumnDescription } from "../cloud";
+
 export enum Kind {
     BENCHMARK = 'Benchmark',
     CANDIDATE = 'Candidate',
@@ -18,12 +20,18 @@ export interface EntityDescription {
 export interface BenchmarkDescription extends EntityDescription {
     kind: Kind.BENCHMARK,
     image: string;
+    columns: ColumnDescription[]
 }
 
 export interface CandidateDescription extends EntityDescription {
     kind: Kind.CANDIDATE,
     benchmarkId: string;
     image: string;
+    whitelist: string[];
+    // Important that data is 'object' and not 'Object'
+    // 'object' specifies non-primitive and therefore doesn't
+    // allow 'undefined'
+    data: object
 }
 
 // TODO: ISSUE: do suites refer to versioned or unversioned benchmark
@@ -43,10 +51,20 @@ export interface RunDescription extends EntityDescription {
     candidateId: string;
     benchmarkId: string;
     suiteId: string;
+    // data: {
+    //     // tslint:disable-next-line:no-any
+    //     [key: string]: any,
+    // };
+    // Important that data is 'object' and not 'Object'
+    // 'object' specifies non-primitive and therefore doesn't
+    // allow 'undefined'
     // tslint:disable-next-line:no-any
-    results: any;
+    data: object
+    // tslint:disable-next-line:no-any
+    // results: any;
 }
 
+// TODO: Make this any "uploadable" description by excluding RunDescription?
 export type AnyDescription = 
     BenchmarkDescription |
     CandidateDescription |

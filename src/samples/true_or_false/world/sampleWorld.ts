@@ -11,7 +11,7 @@ import {
     World,
 } from '../../../cloud';
 
-import { Kind, Laboratory } from '../../../laboratory';
+import { Kind, Laboratory, BenchmarkDescription, CandidateDescription, SuiteDescription } from '../../../laboratory';
 
 import { Benchmark, Candidate, TrivialCandidate } from '..'
 
@@ -55,17 +55,24 @@ function copyYaml(storage: IStorage, filename: string, data: any) {
     storage.writeBlob(normalized, Buffer.from(yamlText, 'utf8'));
 }
 
-const benchmark = {
+const benchmark: BenchmarkDescription = {
     apiVersion: '0.0.1',
     kind: Kind.BENCHMARK,
     name: 'True_Or_False',
     description: 'A sample benchmark for boolean expressions evaluation.',
     owner: 'Mike',
     created: '2020-01-07T04:09:18.721Z',
-    image: 'true_or_false_benchmark:1.0'
+    image: 'true_or_false_benchmark:1.0',
+    columns: [
+        { name: 'candidateId', type: 'string' },
+        { name: 'suiteId', type: 'string' },
+        { name: 'created', type: 'string' },
+        { name: 'passed', type: 'string' },
+        { name: 'failed', type: 'string' }
+    ]
 };
 
-const candidate = {
+const candidate: CandidateDescription = {
     apiVersion: '0.0.1',
     kind: Kind.CANDIDATE,
     name: 'True_Or_False',
@@ -74,15 +81,17 @@ const candidate = {
     created: '2020-01-07T04:09:18.721Z',
     benchmarkId: 'true_or_false_benchmark:1.0',
     image: 'true_or_false_candidate:1.0',
-    password: {
-        secret: 'my-password'
+    data: {
+        password: {
+            secret: 'my-password'
+        }
     },
     whitelist: [
         'http://www.wikipedia.org'
     ]
 };
 
-const suite = {
+const suite: SuiteDescription = {
     apiVersion: '0.0.1',
     kind: Kind.SUITE,
     name: 'True_Or_False',
