@@ -127,18 +127,32 @@ export class CLI {
         console.log(`Uploaded to ${destination}`);
     }
 
+    async list(collection: string): Promise<SelectResults> {
+        //
+        // Impemented as an RPC to the Repository service
+        //
+        const repository = await this.getRepository();
+        // TODO: use name service here.
+        // TODO: catch bad collection name
+        return repository.select(collection);
+    }
+
+    async results(benchmarkId: string): Promise<SelectResults> {
+        //
+        // Impemented as an RPC to the Repository service
+        //
+        const repository = await this.getRepository();
+        // TODO: use name service here.
+        // TODO: error check for non-existant table
+        return repository.select(benchmarkId);
+    }
+
     async run(candidateId: string, suiteId: string): Promise<void> {
         //
         // Impemented as an RPC to the Lab service
         //
         const lab = await this.getLab();
         await lab.run(candidateId, suiteId);
-    }
-
-    async results(benchmarkId: string): Promise<SelectResults> {
-        const repository = await this.getRepository();
-        // TODO: use name service here.
-        return repository.select(benchmarkId);
     }
 
     // async connect(hostname: string) {

@@ -54,9 +54,10 @@ export class Laboratory implements ILaboratory {
         worker.log(`Labratory.entryPoint()`);
 
         // Simulate server startup time.
-        worker.log('laboratory: starting up');
-        await sleep(9000);
-        worker.log('laboratory: fully initialized');
+        const startupDelaySeconds = 9;
+        worker.log(`sleeping for ${startupDelaySeconds} seconds`);
+        await sleep(startupDelaySeconds * 1000);
+        worker.log('woke up');
 
         // TODO: get KeyPair from local storage instead.
         const keys: KeyPair = generateKeys();

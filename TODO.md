@@ -2,7 +2,13 @@
 
 ## Next
 * repository service
-  * einstein list uses CLICore
+  * audit table
+  * benchmarks, candidates, runs, suites tables not initialized on startup
+    * Remove cli/list.ts - dead code
+    * Create results table on benchmark upload. Do this before uploading benchmark yaml. This doesn't work on rebuild of database.
+    * LocalTableSet.getTable(): unknown table "runs"
+    * Better error message
+  * x einstein list uses CLICore
   * einstein deploy from yaml specification
   * uniform use of naming library in repository
   * unit test helper that waits for new run blob - remove sleeps
@@ -183,6 +189,20 @@
 * Disk based IStorage - write/append, command-line arguments
 
 ## Research
+* Threat modelling
+  * SQL injection
+  * Other injection attacks, e.g. other command-line or HTTP text
+    * Blob name escaping
+    * Blob name length violation - could make different logical blobs map to same physical blob
+    * Blob names with slashes in them
+  * Running a container that wasn't configured VIA a properly uploaded spec
+  * Writing a rogue spec to blob storage
+  * Impersonating another user
+  * Candidate viewing private data
+  * Candidate configuring environment
+  * Candidate exfiltrating private data
+  * Unauthorized uploads and runs
+  * Denial of service
 * Naming schemes that don't exceed blob and container length limits (https://docs.microsoft.com/en-us/rest/api/storageservices/naming-and-referencing-containers--blobs--and-metadata)
 * RBAC
 * Figure out pattern for file name combination

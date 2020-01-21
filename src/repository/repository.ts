@@ -22,12 +22,19 @@ import { IRepository, SelectResults } from './interfaces';
 
 // TODO: perhaps get these from the naming library.
 // TODO: guard against name collisions between results and other tables.
+const auditTableName = 'audits';
 const benchmarkTableName = 'benchmarks';
 const candidateTableName = 'candidates';
 const runTableName = 'runs';
 const suiteTableName = 'suites';
 
 // TODO: perhaps move the ColumnDescriptions to a config file.
+const auditColumns: ColumnDescription[] = [
+    { name: 'date', type: 'string' },
+    { name: 'user', type: 'string' },
+    { name: 'action', type: 'string' },
+];
+
 const benchmarkColumns: ColumnDescription[] = [
     { name: 'image', type: 'string' },
     { name: 'name', type: 'string' },
@@ -73,14 +80,18 @@ export class Repository implements IRepository {
         worker.log(`Repository.entryPoint()`);
 
         // Simulate server startup time.
-        worker.log('starting up');
-        await sleep(6000);
-        worker.log('fully initialized');
+        const startupDelaySeconds = 6;
+        worker.log(`sleeping for ${startupDelaySeconds} seconds`);
+        await sleep(startupDelaySeconds * 1000);
+        worker.log('woke up');
 
         // Construct and bind service RPC stub. 
         const world = worker.getWorld();
         const myService = new Repository(world);
-        myService.initialize();
+
+        // DESIGN NOTE: await is important here because we want to ensure that
+        // tables have been created before binding the service.
+        await myService.initialize();
 
         const port = Repository.getPort();
         worker.bind(worker.getWorld(), myService, port);
@@ -114,6 +125,10 @@ export class Repository implements IRepository {
         // DESIGN NOTE: Have to assume that blob creation events could arrive
         // out of order.
 
+        // DESIGN NOTE: await is essential here to ensure that tables all exist
+        // before initialize() completes and the service binds.
+        await this.ensureTables();
+
         // Alias 'this' for use in anonymous function.
         const repository = this;
 
@@ -131,7 +146,26 @@ export class Repository implements IRepository {
         this.world.logger.log('Initialization complete');
     }
 
-    private async crawlBlobs() {
+    // TODO: this can just create, rather than ensure because it now runs in
+    // initialize(), before events are wired.
+    private async ensureTables(): Promise<void> {
+        // Ensure benchmarks table.
+        await this.database.ensureTable(
+            benchmarkTableName,
+            benchmarkColumns
+        );
+
+        // Ensure candidates table.
+        await this.database.ensureTable(candidateTableName, candidateColumns);
+
+        // Ensure runs table.
+        await this.database.ensureTable(runTableName, runColumns);
+
+        // Ensure suites table.
+        await this.database.ensureTable(suiteTableName, suiteColumns);
+    }
+
+    private async crawlBlobs(): Promise<void> {
         // console.log('repository: beginning crawl')
         const cloudStorage = this.world.cloudStorage;
         const blobs = await cloudStorage.listBlobs();
@@ -175,11 +209,11 @@ export class Repository implements IRepository {
         this.world.logger.log(`processBenchmark ${blob}`);
         const benchmark = await this.getBenchmark(blob);
 
-        // Ensure benchmarks table.
-        await this.database.ensureTable(
-            benchmarkTableName,
-            benchmarkColumns
-        );
+        // // Ensure benchmarks table.
+        // await this.database.ensureTable(
+        //     benchmarkTableName,
+        //     benchmarkColumns
+        // );
 
         // Add to benchmarks table.
         // TODO: uniqueness constraint ensures that only first instance of
@@ -192,8 +226,8 @@ export class Repository implements IRepository {
         this.world.logger.log(`processCandidate ${blob}`);
         const candidate = await loadCandidate(blob, this.world.cloudStorage, false);
 
-        // Ensure suites table.
-        await this.database.ensureTable(candidateTableName, candidateColumns);
+        // // Ensure candidates table.
+        // await this.database.ensureTable(candidateTableName, candidateColumns);
 
         // Add to suites table.
         // TODO: uniqueness constraint ensures that only first instance of
@@ -212,10 +246,24 @@ export class Repository implements IRepository {
 
         // TODO: add to runs table.
 
-        // Ensure results table.
+        // Ensure results table for this benchmark.
         await this.database.ensureTable(benchmarkId, benchmark.columns);
 
         this.addRow(benchmarkId, benchmark.columns, run);
+    }
+
+    private async processSuite(blob: string) {
+        this.world.logger.log(`processSuite ${blob}`);
+        const suite = await loadSuite(blob, this.world.cloudStorage, false);
+
+        // // Ensure suites table.
+        // await this.database.ensureTable(suiteTableName, suiteColumns);
+
+        // Add to suites table.
+        // TODO: uniqueness constraint ensures that only first instance of
+        // benchmark is added. Could get one from the crawl and another from
+        // a blob creation event.
+        this.addRow(suiteTableName, suiteColumns, suite);
     }
 
     private async addRow(
@@ -245,19 +293,5 @@ export class Repository implements IRepository {
         }
 
         this.database.insert(table, row);
-    }
-
-    private async processSuite(blob: string) {
-        this.world.logger.log(`processSuite ${blob}`);
-        const suite = await loadSuite(blob, this.world.cloudStorage, false);
-
-        // Ensure suites table.
-        await this.database.ensureTable(suiteTableName, suiteColumns);
-
-        // Add to suites table.
-        // TODO: uniqueness constraint ensures that only first instance of
-        // benchmark is added. Could get one from the crawl and another from
-        // a blob creation event.
-        this.addRow(suiteTableName, suiteColumns, suite);
     }
 }

@@ -3,7 +3,6 @@ import * as path from 'path';
 import { World, IStorage } from '../cloud';
 import { formatSelectResults } from '../utilities';
 
-import { listCommandInternal } from './list';
 import { CLI } from './cliCore';
 
 interface CommandDescription {
@@ -132,9 +131,12 @@ export class CLIMain {
         return 0;
     }
 
-    private async runCommand(args: string[]): Promise<number> {
-        const [candidateId, suiteId] = args;
-        await this.cli.run(candidateId, suiteId);
+    private async listCommand(args: string[]): Promise<number> {
+        const [container] = args;
+        const results = await this.cli.list(container);
+        for (const line of formatSelectResults(results)) {
+            console.log(line);
+        }
         return 0;
     }
 
@@ -147,14 +149,9 @@ export class CLIMain {
         return 0;
     }
 
-    private async listCommand(args: string[]): Promise<number> {
-        //
-        // Currently implemented directly on the cloud IStorage.
-        // TODO: Intention is to implement via RPC to Repository service.
-        //
-
-        const [collection] = args;
-        await listCommandInternal(this.cloudStorage, collection);
+    private async runCommand(args: string[]): Promise<number> {
+        const [candidateId, suiteId] = args;
+        await this.cli.run(candidateId, suiteId);
         return 0;
     }
 
