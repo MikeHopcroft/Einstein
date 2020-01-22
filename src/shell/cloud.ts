@@ -69,11 +69,13 @@ export class CloudMain {
             console.log(`cloud more: expected a filename: ${args}`);
             return 1;
         } else if (args[0].includes('*')) {
+            // TODO: really want to escape re syntax here.
+            const reArg = args[0].replace('*', '.+');
             // Special case for demo.
             // Use regular expression matching to display multiple files.
             // This is essential for the demo script, since we don't know
             // the uuid values before the run.
-            const pattern = path.posix.join(this.cwd, args[0]);
+            const pattern = path.posix.join(this.cwd, reArg);
             const re = new RegExp(pattern);
             const storage = this.world.cloudStorage;
             const blobs = await storage.listBlobs('');
@@ -152,3 +154,24 @@ export class CloudMain {
 function formatArgs(args: string[]) {
     return args.map(x => `<${x}>`).join(' ');
 }
+
+// function go() {
+//     const blobs: string[] = [
+//         '/logs/c123',
+//         '/logs/b123'
+//     ];
+//     const cwd = '/';
+//     const arg = 'logs/b.+';
+
+//     const pattern = path.posix.join(cwd, arg);
+//     const re = new RegExp(pattern);
+//     for (const filePath of blobs) {
+//         const matches = filePath.match(re);
+//         if (matches) {
+//             console.log(matches);
+//             console.log(`=== Contents of ${filePath} ===`);
+//         }
+//     }
+// }
+
+// go();

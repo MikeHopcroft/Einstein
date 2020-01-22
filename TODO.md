@@ -1,7 +1,7 @@
 # TODO LIST
 
 ## Next
-* "cloud more logs/c*" matches everything in logs
+* x "cloud more logs/c*" matches everything in logs
 * Create a "no-symbols" suite
 * Demonstrate encryption in candidate log
 * x Consider murmurhash then base32 for guids
@@ -22,7 +22,7 @@
   * benchmarks, candidates, runs, suites tables not initialized on startup
     * Remove cli/list.ts - dead code
     * Create results table on benchmark upload. Do this before uploading benchmark yaml. This doesn't work on rebuild of database.
-    * LocalTableSet.getTable(): unknown table "runs"
+    * x LocalTableSet.getTable(): unknown table "runs"
     * Better error message
   * x einstein list uses CLICore
   * einstein deploy from yaml specification
