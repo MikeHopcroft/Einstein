@@ -64,13 +64,6 @@ export class Benchmark {
     async run(candidate: ICandidate, candidateId: string, suiteId: string) {
         this.worker.log('Benchmark: run()');
 
-        // TODO: error handling for async APIs
-
-        // // Get private key from secrets.txt
-        // const secrets =
-        //     (await this.localStorage.readBlob('secrets.txt')).toString('utf-8');
-        // console.log(`Benchmark: secrets = "${secrets}"`);
-
         // Load suite from cloud storage.
         const suite = await loadSuite(suiteId, this.cloudStorage);
 
@@ -107,6 +100,7 @@ export class Benchmark {
             await candidate.shutdown();
 
             // Compute measures
+            const data = { passed, failed };
 
             // Write results
             this.worker.log('Benchmark: writing results');
@@ -117,7 +111,6 @@ export class Benchmark {
             const description = 'foo';
             const owner = 'foo';
             const created = new Date().toISOString();
-            const data = { passed, failed };
             const rd: RunDescription = {
                 kind: Kind.RUN,
                 apiVersion: '0.0.1',

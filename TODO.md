@@ -1,13 +1,14 @@
 # TODO LIST
 
 ## Next
-* back to back runs of "einstein deploy lab" - error messages print over prompt
+* x Orchestrator.createWorker() should create proper volume
 * einstein list runs shows name=foo
+* Demonstrate encryption in candidate log
+* back to back runs of "einstein deploy lab" - error messages print over prompt
 * Naming service container parts - name from component, not version. Version in table column.
 * x LocalTableSet.getTable(): unknown table "true_or_false_benchmark:1.0" - einstein results before running
 * x Broken: einstein list runs
 * x Broken: crawling runs
-* Demonstrate encryption in candidate log
 * Naming service should get Ids from instances of Benchmark, Candidate, Suite, Run, Audit, etc.
 * Naming service should base32 encode table names for results
 * show tables command?

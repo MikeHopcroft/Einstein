@@ -2,7 +2,7 @@ import * as path from 'path';
 
 import { BlobCreateHandler, IStorage, Volume } from '../interfaces';
 
-class MountedVolumes implements IStorage {
+export class MountedVolumes implements IStorage {
     private volumes = new Map<string, IStorage>();
     private blobCreateHandlers: BlobCreateHandler[] = [];
 
@@ -18,9 +18,8 @@ class MountedVolumes implements IStorage {
     }
 
     async appendBlob(name: string, buffer: Buffer): Promise<void> {
-        // TODO: implement
-        const message = "MountedVolumes: appendBlob() not implemented";
-        throw new TypeError(message);
+        const { storage, relative } = this.translatePath(name);
+        storage.appendBlob(relative, buffer);
     }
 
     async writeBlob(name: string, buffer: Buffer): Promise<void> {

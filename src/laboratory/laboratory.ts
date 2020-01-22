@@ -53,6 +53,11 @@ export class Laboratory implements ILaboratory {
     static async entryPoint(worker: IWorker): Promise<void> {
         worker.log(`Labratory.entryPoint()`);
 
+        // // Get private key from secrets.txt
+        // const secrets =
+        //     (await worker.getWorld().localStorage.readBlob('secrets/keys')).toString('utf-8');
+        // console.log(`Benchmark: secrets = "${secrets}"`);
+
         // Simulate server startup time.
         const startupDelaySeconds = 9;
         worker.log(`sleeping for ${startupDelaySeconds} seconds`);

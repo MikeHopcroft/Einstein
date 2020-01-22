@@ -1,4 +1,4 @@
-import { RamDisk } from '../../cloud';
+import { MountedVolumes } from '../../cloud';
 import { sleep } from '../../utilities';
 
 import {
@@ -12,7 +12,6 @@ import {
     ServiceInfo
 } from '../interfaces';
 
-import { ConsoleLogger } from './consoleLogger';
 import { LocalWorker } from './localWorker';
 
 export interface Service {
@@ -79,17 +78,7 @@ export class LocalOrchestrator implements IOrchestrator {
             throw new TypeError(message);
         }
 
-        // TODO: correct implementation.
-        // For now, just create LocalStorage from the first Volume. Ignore mount point.
-        let localStorage: IStorage;
-        if (volumes.length === 1) {
-            localStorage = volumes[0].storage;
-        } else if (volumes.length === 0) {
-            localStorage = new RamDisk();
-        } else {
-            const message = "createWorker(): expected zero or one volumes";
-            throw new TypeError(message);
-        }
+        const localStorage = new MountedVolumes(volumes);
 
         const world: World = {
             hostname,
