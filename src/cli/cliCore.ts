@@ -12,7 +12,7 @@ import {
 } from '../cloud';
 
 import { Laboratory, ILaboratory } from '../laboratory';
-import { encodeLog } from '../naming';
+import { encodeLog, getCollectionTable, getResultsTable } from '../naming';
 import { encryptSecrets, generateKeys } from '../secrets';
 import { loadEntity } from '../laboratory/loaders';
 import { IRepository, Repository, SelectResults } from '../repository';
@@ -86,7 +86,7 @@ export class CLI {
         // The deploy functionality runs locally in the CLI application.
         //
 
-        console.log(`Depoying einstein Repository to ${hostname}`);
+        console.log(`Deploying einstein Repository to ${hostname}`);
 
         // Create worker for Repository
         this.orchestrator.createWorker(
@@ -134,7 +134,7 @@ export class CLI {
         const repository = await this.getRepository();
         // TODO: use name service here.
         // TODO: catch bad collection name
-        return repository.select(collection);
+        return repository.select(getCollectionTable(collection));
     }
 
     async results(benchmarkId: string): Promise<SelectResults> {
@@ -144,7 +144,7 @@ export class CLI {
         const repository = await this.getRepository();
         // TODO: use name service here.
         // TODO: error check for non-existant table
-        return repository.select(benchmarkId);
+        return repository.select(getResultsTable(benchmarkId));
     }
 
     async run(candidateId: string, suiteId: string): Promise<void> {

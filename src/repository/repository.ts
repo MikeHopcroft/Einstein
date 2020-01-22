@@ -6,7 +6,12 @@ import {
     ColumnDescription,
 } from '../cloud';
 
-import { getCollection, encodeBenchmark } from '../naming';
+import {
+    encodeBenchmark,
+    getCollection,
+    getCollectionTable,
+    getResultsTable
+} from '../naming';
 
 import {
     loadBenchmark,
@@ -89,6 +94,9 @@ export class Repository implements IRepository {
         const world = worker.getWorld();
         const myService = new Repository(world);
 
+        // TODO: startup parameter that indicated whether to rebuild the
+        // database or connect to an existing one.
+        
         // DESIGN NOTE: await is important here because we want to ensure that
         // tables have been created before binding the service.
         await myService.initialize();
@@ -109,6 +117,27 @@ export class Repository implements IRepository {
     constructor(world: World) {
         this.database = new LocalDatabase();
         this.world = world;
+    }
+
+    async selectFromCollection(collection: string): Promise<SelectResults> {
+        const table = getCollectionTable(collection);
+        const columns = await this.database.getColumns(table);
+        const rows = await this.database.select(table);
+        return { columns, rows };
+    }
+
+    async selectFromResults(benchmarkId: string): Promise<SelectResults> {
+        // See if benchmarkId actually corresponds to a benchmark.
+        // getBenchmark() will throw if blob doesn't exist.
+        const encoded = encodeBenchmark(benchmarkId);
+        const benchmark = this.getBenchmark(encoded);
+
+        // If we got this far, benchmarkId is valid, so it is ok to use as a
+        // table name.
+        const table = getResultsTable(benchmarkId);
+        const columns = await this.database.getColumns(table);
+        const rows = await this.database.select(table);
+        return { columns, rows };
     }
 
     async select(from: string): Promise<SelectResults> {

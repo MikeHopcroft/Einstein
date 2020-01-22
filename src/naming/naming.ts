@@ -12,8 +12,26 @@ interface IBase32 {
 // Look at declartions for 'prefixes' and 'collectionToPrefix'
 const benchmarks = 'benchmarks';
 const candidates = 'candidates';
+const logs = 'logs';
 const runs = 'runs';
 const suites = 'suites';
+
+const prefixes: Array<[string, string]> = [
+    ['benchmarks', '/benchmarks'],
+    ['candidates', '/candidates'],
+    ['suites', '/suites'],
+    ['runs', '/runs'],
+];
+
+const collectionToPrefix = new Map<string, string>(prefixes);
+
+const collectionToTable = new Map<string, string>([
+    // ['audits', 'audits'],
+    ['benchmarks', 'benchmarks'],
+    ['candidates', 'candidates'],
+    ['suites', 'suites'],
+    ['runs', 'runs'],
+]);
 
 export function encodeBenchmark(name: string): string {
     return encode(benchmarks, name)
@@ -40,23 +58,15 @@ export function decodeSuite(encoded: string): string {
 }
 
 // NOTE: run encoding differs from benchmarks, candidates, and suites.
+// Does not base32 encode uid.
 export function encodeRun(uid: string): string {
     return `/${runs}/${uid}`
 }
 
+// NOTE: log encoding differs from benchmarks, candidates, and suites.
+// Does not base32 encode name.
 export function encodeLog(name: string): string {
-    return `/logs/${name}`;
-}
-
-// NOTE: run encoding differs from benchmarks, candidates, and suites.
-export function decodeRun(encoded: string): string {
-    const parts = encoded.split('/');
-    if (parts.length === 3) {
-        return parts[1];
-    } else {
-        const message = `decode: invalid encoding "${encoded}"`;
-        throw new TypeError(message);
-    }
+    return `/${logs}/${name}`;
 }
 
 function encode(collection: string, name: string) {
@@ -78,18 +88,6 @@ function decode(collection: string, encoded: string) {
     }
 }
 
-const prefixes: Array<[string, string]> = [
-    ['benchmarks', '/benchmarks'],
-    ['candidates', '/candidates'],
-    ['suites', '/suites'],
-    ['runs', '/runs'],
-]
-
-const collectionToPrefix = new Map<string, string>(prefixes);
-// const prefixToCollection = new Map<string, string>(
-//     prefixes.map(x => [x[1], x[0]])
-// );
-
 export function getPrefix(collection: string): string {
     const prefix = collectionToPrefix.get(collection);
     if (prefix === undefined) {
@@ -97,19 +95,6 @@ export function getPrefix(collection: string): string {
         throw new TypeError(message);
     }
     return prefix;
-    // switch (collection) {
-    //     case 'benchmarks':
-    //         return '/benchmarks';
-    //     case 'candidates':
-    //         return '/candidates';
-    //     case 'suites':
-    //         return '/suites';
-    //     case 'runs':
-    //         return '/runs';
-    //     default:
-    //         const message = `Bad collection "${collection}"`;
-    //         throw new TypeError(message);
-    // }
 }
 
 export function getCollection(blob: string): string | null {
@@ -119,6 +104,22 @@ export function getCollection(blob: string): string | null {
         }
     }
     return null;
+}
+
+export function getCollectionTable(collection: string): string {
+    const table = collectionToTable.get(collection);
+    if (table === undefined) {
+        const message = `Collection "${collection}" is not associated with a table`;
+        throw new TypeError(message);
+    }
+    return table;
+}
+
+export function getResultsTable(benchmarkId: string): string {
+    // TODO: REVIEW: WARNING: assumes at entry that benchmarkId is valid.
+    // Consider SQL-escaping, blob-name escaping.
+    // Consider looking up benchmarkId in database table.
+    return benchmarkId;
 }
 
 

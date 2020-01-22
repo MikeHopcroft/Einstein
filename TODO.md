@@ -195,6 +195,7 @@
     * Blob name escaping
     * Blob name length violation - could make different logical blobs map to same physical blob
     * Blob names with slashes in them
+    * .. and / in names
   * Running a container that wasn't configured VIA a properly uploaded spec
   * Writing a rogue spec to blob storage
   * Impersonating another user
