@@ -1,9 +1,10 @@
 # TODO LIST
 
 ## Next
-* "no-symbols" suite
+* "cloud more logs/c*" matches everything in logs
+* Create a "no-symbols" suite
 * Demonstrate encryption in candidate log
-* Consider murmurhash then base32 for guids
+* x Consider murmurhash then base32 for guids
 * einstein:/% einstein run alwaysTrue_candidate:1.0 True_Or_False
   * RamDisk: file /candidates/c5p7erbteda74xb5bxhp2vk4d5j62x3578rjwc0 not found.
 * x Orchestrator.createWorker() should create proper volume

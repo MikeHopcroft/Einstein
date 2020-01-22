@@ -1,4 +1,6 @@
 const base32 = require('base32') as IBase32;
+import { v3 } from 'murmurhash';
+import * as uuid from 'uuid';
 
 // base32 packages doesn't have a .d.ts file or an @types/base32
 // Define type for package here.
@@ -32,6 +34,15 @@ const collectionToTable = new Map<string, string>([
     ['suites', 'suites'],
     ['runs', 'runs'],
 ]);
+
+// Murmurhash seed.
+const seed = 1234567;
+
+export function createRunId(): string {
+    const id = uuid();
+    const hashed = v3(id, seed);
+    return hashed.toString();
+}
 
 export function encodeBenchmark(name: string): string {
     return encode(benchmarks, name)

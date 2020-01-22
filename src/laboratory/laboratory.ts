@@ -1,15 +1,10 @@
 import * as yaml from 'js-yaml';
-import * as uuid from 'uuid';
-// import { v3 } from 'murmurhash';
-// import * as uuid from 'uuid';
 
 import {
     Environment,
     IOrchestrator,
     IStorage,
     IWorker,
-    RamDisk,
-    Volume,
     World,
     BlobLogger
 } from '../cloud';
@@ -18,7 +13,8 @@ import {
     encodeBenchmark,
     encodeCandidate,
     encodeSuite,
-    encodeLog
+    encodeLog,
+    createRunId
 } from '../naming';
 
 import { generateKeys, KeyPair } from '../secrets';
@@ -34,9 +30,6 @@ import {
 } from './interfaces';
 
 import { loadCandidate, loadSuite } from './loaders';
-
-// Murmurhash seed.
-const seed = 1234567;
 
 export class Laboratory implements ILaboratory {
     static getPort() {
@@ -150,9 +143,12 @@ export class Laboratory implements ILaboratory {
             throw new TypeError(message);
         }
 
+        const runId = createRunId();
+
         // Decrypt candidate manifest secrets
         // Start the candidate container.
-        const candidateHost = uuid();
+        // TODO: use naming service for host name
+        const candidateHost = 'c' + runId;
         this.world.logger.log(`Starting candidate ${candidateId} on ${candidateHost}`);
         // Don't await createWorker(). Want to model separate process.
         this.orchestrator.createWorker(
@@ -165,7 +161,8 @@ export class Laboratory implements ILaboratory {
         );
 
         // Start the benchmark container.
-        const benchmarkHost = uuid();
+        // TODO: use naming service for host name
+        const benchmarkHost = 'b' + runId;
         this.world.logger.log(`Starting benchmark ${suiteData.benchmarkId} on ${benchmarkHost}`);
         // Don't await createWorker(). Want to model separate process.
         this.orchestrator.createWorker(
@@ -177,7 +174,7 @@ export class Laboratory implements ILaboratory {
                 ['candidate', candidateId],
                 ['host', candidateHost],
                 // TODO: use naming service for runId
-                ['run', benchmarkHost],
+                ['run', 'r' + runId],
                 ['suite', suiteId],
             ]),
             new BlobLogger(this.cloudStorage, benchmarkHost, encodeLog(benchmarkHost))
