@@ -176,6 +176,8 @@ export class Laboratory implements ILaboratory {
             new Environment([
                 ['candidate', candidateId],
                 ['host', candidateHost],
+                // TODO: use naming service for runId
+                ['run', benchmarkHost],
                 ['suite', suiteId],
             ]),
             new BlobLogger(this.cloudStorage, benchmarkHost, encodeLog(benchmarkHost))

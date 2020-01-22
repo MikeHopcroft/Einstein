@@ -26,6 +26,7 @@ export class Benchmark {
         const env =  worker.getWorld().environment;
         const candidateId = env.get('candidate');
         const candidateHost = env.get('host');
+        const runId = env.get('run');
         const suiteId = env.get('suite');
         // TODO: check for undefined candidateHost, candidateId, suiteName
         worker.log(`Candidate host is ${candidateHost}`);
@@ -43,7 +44,7 @@ export class Benchmark {
         const candidate =
             (await worker.connect<ICandidate>(candidateHost, Benchmark.candidatePort())) as ICandidate;
 
-        await benchmark.run(candidate, candidateId, suiteId);
+        await benchmark.run(candidate, candidateId, runId, suiteId);
     }
 
     private worker: IWorker;
@@ -61,7 +62,12 @@ export class Benchmark {
         this.cloudStorage = worker.getWorld().cloudStorage;
     }
 
-    async run(candidate: ICandidate, candidateId: string, suiteId: string) {
+    async run(
+        candidate: ICandidate,
+        candidateId: string,
+        runId: string,
+        suiteId: string
+    ) {
         this.worker.log('Benchmark: run()');
 
         // Load suite from cloud storage.
@@ -104,10 +110,10 @@ export class Benchmark {
 
             // Write results
             this.worker.log('Benchmark: writing results');
-            const runId = this.worker.getWorld().hostname;
+            const world = this.worker.getWorld();
             // TODO: use naming service for benchmarkId.
             const benchmarkId = Benchmark.image.tag;
-            const name = 'foo';
+            const name = runId;
             const description = 'foo';
             const owner = 'foo';
             const created = new Date().toISOString();
@@ -132,9 +138,6 @@ export class Benchmark {
             );
             this.worker.log('Benchmark finished');
         }
-
-        // // Simulate delay in shutting down
-        // await sleep(10000);
 
         return;
     }

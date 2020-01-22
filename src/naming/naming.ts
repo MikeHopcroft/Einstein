@@ -59,6 +59,7 @@ export function decodeSuite(encoded: string): string {
 
 // NOTE: run encoding differs from benchmarks, candidates, and suites.
 // Does not base32 encode uid.
+// TODO: still need to protect from injection attacks.
 export function encodeRun(uid: string): string {
     return `/${runs}/${uid}`
 }

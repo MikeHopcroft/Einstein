@@ -107,7 +107,11 @@ export class CLIMain {
     }
 
     private usage() {
-        console.log('TODO: show einstein command usage');
+        console.log(`Expected a sub-command:`);
+        for (const command of this.commands) {
+            console.log(`  ${command.name} ${formatArgs(command.args)}`);
+        }
+        console.log('Type "einstein help" for more information.');
     }
 
     private async deployCommand(args: string[]): Promise<number> {
