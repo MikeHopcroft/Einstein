@@ -115,6 +115,8 @@ export class CLI {
         const buffer = Buffer.from(yamlText2, 'utf8');
 
         await this.localStorage.writeBlob(filename, buffer);
+
+        console.log(`Encrypted ${filename}`);
     }
 
     async create(specFile: string): Promise<void> {
@@ -144,7 +146,12 @@ export class CLI {
         const repository = await this.getRepository();
         // TODO: use name service here.
         // TODO: error check for non-existant table
-        return repository.select(getResultsTable(benchmarkId));
+        try {
+            return await repository.select(getResultsTable(benchmarkId));
+        } catch (e) {
+            const message = `Unable to find results for benchmark ${benchmarkId}`;
+            throw new TypeError(message);
+        }
     }
 
     async run(candidateId: string, suiteId: string): Promise<void> {

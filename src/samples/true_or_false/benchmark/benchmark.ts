@@ -111,6 +111,7 @@ export class Benchmark {
             // Write results
             this.worker.log('Benchmark: writing results');
             const runId = this.worker.getWorld().hostname;
+            // TODO: use naming service for benchmarkId.
             const benchmarkId = Benchmark.image.tag;
             const name = 'foo';
             const description = 'foo';

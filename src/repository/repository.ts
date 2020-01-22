@@ -141,9 +141,14 @@ export class Repository implements IRepository {
     }
 
     async select(from: string): Promise<SelectResults> {
-        const columns = await this.database.getColumns(from);
-        const rows = await this.database.select(from);
-        return { columns, rows };
+        try {
+            const columns = await this.database.getColumns(from);
+            const rows = await this.database.select(from);
+            return { columns, rows };
+        } catch (e) {
+            const message = `Unable to select from ${from}`;
+            throw new TypeError(message);
+        }
     }
 
     // TODO: container instantiation requires differentation between invoking
@@ -238,6 +243,10 @@ export class Repository implements IRepository {
         this.world.logger.log(`processBenchmark ${blob}`);
         const benchmark = await this.getBenchmark(blob);
 
+        // Ensure results table for this benchmark.
+        // TODO: use naming services
+        await this.database.ensureTable(getResultsTable(benchmark.image), benchmark.columns);
+
         // // Ensure benchmarks table.
         // await this.database.ensureTable(
         //     benchmarkTableName,
@@ -249,6 +258,10 @@ export class Repository implements IRepository {
         // benchmark is added. Could get one from the crawl and another from
         // a blob creation event.
         this.addRow(benchmarkTableName, benchmarkColumns, benchmark);
+
+        // Ensure results table for this benchmark.
+        // TODO: use naming service for benchmarkId
+        await this.database.ensureTable(benchmark.image, benchmark.columns);
     }
 
     private async processCandidate(blob: string) {
@@ -273,7 +286,12 @@ export class Repository implements IRepository {
         // console.log(`Run ${run.name}: benchmarkId: ${benchmarkId}`);
         const benchmark = await this.getBenchmark(benchmarkBlob);
 
-        // TODO: add to runs table.
+        // Add to runs table.
+        this.addRow(
+            getCollectionTable('runs'),
+            runColumns,
+            run
+        );
 
         // Ensure results table for this benchmark.
         await this.database.ensureTable(benchmarkId, benchmark.columns);

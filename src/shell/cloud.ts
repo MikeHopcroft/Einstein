@@ -79,7 +79,7 @@ export class CloudMain {
             const blobs = await storage.listBlobs('');
             for (const filePath of blobs) {
                 if (filePath.match(re)) {
-                    console.log(`Contents of ${filePath}:`);
+                    console.log(`=== Contents of ${filePath} ===`);
                     const fileData = await storage.readBlob(filePath);
                     console.log(fileData.toString('utf8'));       
                     console.log();

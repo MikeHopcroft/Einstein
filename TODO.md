@@ -1,6 +1,16 @@
 # TODO LIST
 
 ## Next
+* back to back runs of "einstein deploy lab" - error messages print over prompt
+* einstein list runs shows name=foo
+* Naming service container parts - name from component, not version. Version in table column.
+* x LocalTableSet.getTable(): unknown table "true_or_false_benchmark:1.0" - einstein results before running
+* x Broken: einstein list runs
+* x Broken: crawling runs
+* Demonstrate encryption in candidate log
+* Naming service should get Ids from instances of Benchmark, Candidate, Suite, Run, Audit, etc.
+* Naming service should base32 encode table names for results
+* show tables command?
 * repository service
   * audit table
   * benchmarks, candidates, runs, suites tables not initialized on startup

@@ -202,6 +202,8 @@ export class Shell {
             'einstein create true_candidate.yaml',
             'einstein deploy ',
             'einstein deploy lab',
+            'einstein encrypt ',
+            'einstein encrypt candidate.yaml',
             'einstein help',
             'einstein results ',
             'einstein results true_or_false_benchmark:1.0',
