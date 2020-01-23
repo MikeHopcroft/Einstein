@@ -22,6 +22,10 @@ export class RamDisk implements IStorage {
 
     async writeBlob(name: string, buffer: Buffer): Promise<void> {
         // TODO: copy buffer here?
+        // if (this.blobs.has(name)) {
+        //     const message = `Attempting to overwrite blob ${name}`;
+        //     throw new TypeError(message);
+        // }
         this.blobs.set(name, buffer);
         for (const handler of this.blobCreateHandlers) {
             await handler(name);

@@ -1,34 +1,40 @@
 # TODO LIST
 
 ## Next
+* Shouldn't be able to upload a candidate/benchmark/suite multiple times.
+  * Need to add overwrite parameter to blob write method.
+* Trivial candidate log mode - always true or always false
+* einstein deploy from yaml specification
+* Prevent overwrite of blog on all IStorage implementations.
+* Services like Laboratory should log exceptions
+  * e.g. Invalid format for decryption.
 * Sort out use of "/" in Volume. Are mount points relative to "/"?
-* x Demonstrate encryption in candidate log
-* x "cloud more logs/c*" matches everything in logs
 * Create a "no-symbols" suite
-* x Consider murmurhash then base32 for guids
 * einstein:/% einstein run true_or_false_candidate:1.0 T
   * RamDisk: file /suites/ag not found.
 * einstein:/% einstein run alwaysTrue_candidate:1.0 True_Or_False
   * RamDisk: file /candidates/c5p7erbteda74xb5bxhp2vk4d5j62x3578rjwc0 not found.
 * back to back runs of "einstein deploy lab" - error messages print over prompt
 * Naming service container parts - name from component, not version. Version in table column.
+* Naming service should get Ids from instances of Benchmark, Candidate, Suite, Run, Audit, etc.
+* Naming service should base32 encode table names for results
+* show tables command?
+* x Demonstrate encryption in candidate log
+* x "cloud more logs/c*" matches everything in logs
+* x Consider murmurhash then base32 for guids
 * x Orchestrator.createWorker() should create proper volume
 * x einstein list runs shows name=foo
 * x LocalTableSet.getTable(): unknown table "true_or_false_benchmark:1.0" - einstein results before running
 * x Broken: einstein list runs
 * x Broken: crawling runs
-* Naming service should get Ids from instances of Benchmark, Candidate, Suite, Run, Audit, etc.
-* Naming service should base32 encode table names for results
-* show tables command?
 * repository service
   * audit table
   * benchmarks, candidates, runs, suites tables not initialized on startup
-    * Remove cli/list.ts - dead code
-    * Create results table on benchmark upload. Do this before uploading benchmark yaml. This doesn't work on rebuild of database.
+    * x Remove cli/list.ts - dead code
+    * x Create results table on benchmark upload. Do this before uploading benchmark yaml. This doesn't work on rebuild of database.
     * x LocalTableSet.getTable(): unknown table "runs"
     * Better error message
   * x einstein list uses CLICore
-  * einstein deploy from yaml specification
   * uniform use of naming library in repository
   * unit test helper that waits for new run blob - remove sleeps
   * data-driven schemas for benchmarks, candidate, runs, suites tables?

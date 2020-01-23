@@ -92,14 +92,14 @@ const candidate: CandidateDescription = {
     created: '2020-01-07T04:09:18.721Z',
     benchmarkId: 'true_or_false_benchmark:1.0',
     image: 'true_or_false_candidate:1.0',
+    whitelist: [
+        'http://www.wikipedia.org'
+    ],
     data: {
         password: {
             secret: 'my-password'
         }
     },
-    whitelist: [
-        'http://www.wikipedia.org'
-    ]
 };
 
 const alwaysTrueCandidate: CandidateDescription = {
@@ -111,11 +111,7 @@ const alwaysTrueCandidate: CandidateDescription = {
     created: '2020-01-07T04:09:18.721Z',
     benchmarkId: 'true_or_false_benchmark:1.0',
     image: 'alwaysTrue_candidate:1.0',
-    data: {
-        password: {
-            secret: 'my-password'
-        }
-    },
+    data: {},
     whitelist: [
         'http://www.wikipedia.org'
     ]
@@ -131,11 +127,7 @@ const alwaysFalseCandidate: CandidateDescription = {
     created: '2020-01-07T04:09:18.721Z',
     benchmarkId: 'true_or_false_benchmark:1.0',
     image: 'alwaysFalse_candidate:1.0',
-    data: {
-        password: {
-            secret: 'my-password'
-        }
-    },
+    data: {},
     whitelist: [
         'http://www.wikipedia.org'
     ]

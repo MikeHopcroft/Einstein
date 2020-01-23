@@ -226,6 +226,7 @@ export class Shell {
             'cloud more benchmarks/eht7atazdxt5ytk1dhtpaqv2cnq66u3dc5t6pehh5rr0',
             'cloud more candidates/eht7atazdxt5ytk1dhtpaqv3c5q68ub4c5u6aehh5rr0',
             'cloud more logs/lab',
+            'cloud more logs/repository',
             'images',
             'ls',
             'more ',
