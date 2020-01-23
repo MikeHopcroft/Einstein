@@ -3,6 +3,7 @@ import { ColumnDescription } from "../cloud";
 export enum Kind {
     BENCHMARK = 'Benchmark',
     CANDIDATE = 'Candidate',
+    LABORATORY = 'Laboratory',
     RUN = 'Run',
     SUITE = 'Suite',
     WHITELIST = 'Whitelist'
@@ -15,6 +16,19 @@ export interface EntityDescription {
     description: string;
     owner: string;
     created: string;
+}
+
+export interface LaboratoryDescription extends EntityDescription {
+    kind: Kind.LABORATORY;
+
+    laboratory: {
+        host: string;
+        port: number;
+    }
+    repository: {
+        host: string;
+        port: number;
+    }
 }
 
 export interface BenchmarkDescription extends EntityDescription {

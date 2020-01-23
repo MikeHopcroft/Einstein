@@ -14,7 +14,7 @@ import {
 import { Laboratory, ILaboratory } from '../laboratory';
 import { encodeLog, getCollectionTable, getResultsTable } from '../naming';
 import { encryptSecrets, generateKeys } from '../secrets';
-import { loadEntity } from '../laboratory/loaders';
+import { loadEntity, loadLaboratory } from '../laboratory/loaders';
 import { IRepository, Repository, SelectResults } from '../repository';
 
 export class CLI {
@@ -23,9 +23,11 @@ export class CLI {
     private localStorage: IStorage;
 
     private labHostname: string | undefined;
+    private labPort: number | undefined;
     private lab: ILaboratory | undefined;
 
     private repositoryHostname: string | undefined;
+    private repositoryPort: number | undefined;
     private repository: IRepository | undefined;
 
     constructor(world: World) {
@@ -35,25 +37,28 @@ export class CLI {
     }
 
     async deploy(
-        hostname: string
+        specFile: string
     ): Promise<void> {
-        // //
-        // // The deploy functionality runs locally in the CLI application.
-        // //
-        this.labHostname = hostname;
-        this.deployLaboratory(hostname);
+        //
+        // The deploy functionality runs locally in the CLI application.
+        //
+        const spec = await loadLaboratory(specFile, this.localStorage);
+        this.labHostname = spec.laboratory.host;
+        this.labPort = spec.laboratory.port;
+        this.deployLaboratory(spec.laboratory.host, spec.laboratory.port);
 
-        this.repositoryHostname = 'repository';
-        this.deployRepository(this.repositoryHostname);
+        this.repositoryHostname = spec.repository.host;
+        this.repositoryPort = spec.repository.port;
+        this.deployRepository(spec.repository.host, spec.repository.port);
     }
 
-    private async deployLaboratory(hostname: string) {
+    private async deployLaboratory(host: string, port: number) {
         //
         // The deploy functionality runs locally in the CLI application.
         //
 
-        console.log(`Depoying einstein Laboratory to ${hostname}`);
-
+        console.log(`Depoying einstein Laboratory to ${host}`);
+        console.log('Generating public/private key pair');
         // TODO: generate keys here and store in CLI local store
         // and in worker's attached volume.
         // TODO: use naming library for blob.
@@ -69,34 +74,32 @@ export class CLI {
             storage: secrets
         };
 
-        const environment = new Environment();
-
         // Create worker for Laboratory
         this.orchestrator.createWorker(
-            hostname,
+            host,
             Laboratory.image.tag,
             this.cloudStorage,
             [volume],
-            environment,
-            new BlobLogger(this.cloudStorage, hostname, encodeLog(hostname))
+            new Environment([['port', this.labPort!.toString()]]),
+            new BlobLogger(this.cloudStorage, host, encodeLog(host))
         );
     }
 
-    private async deployRepository(hostname: string) {
+    private async deployRepository(host: string, port: number) {
         //
         // The deploy functionality runs locally in the CLI application.
         //
 
-        console.log(`Deploying einstein Repository to ${hostname}`);
+        console.log(`Deploying einstein Repository to ${host}`);
 
         // Create worker for Repository
         this.orchestrator.createWorker(
-            hostname,
+            host,
             Repository.image.tag,
             this.cloudStorage,
             [],
-            new Environment(),
-            new BlobLogger(this.cloudStorage, hostname, encodeLog(hostname))
+            new Environment([['port', this.repositoryPort!.toString()]]),
+            new BlobLogger(this.cloudStorage, host, encodeLog(host))
         );
     }
 
@@ -176,7 +179,10 @@ export class CLI {
         if (!this.lab) {
             // TODO: better handling of connection timeout exception here.
             // TODO: don't hard-code port.
-            this.lab = await this.orchestrator.connect<ILaboratory>(this.labHostname, 8080);
+            this.lab = await this.orchestrator.connect<ILaboratory>(
+                this.labHostname,
+                this.labPort!
+            );
         }
         return this.lab;
     }
@@ -189,7 +195,10 @@ export class CLI {
         if (!this.repository) {
             // TODO: better handling of connection timeout exception here.
             // TODO: don't hard-code port.
-            this.repository = await this.orchestrator.connect<IRepository>(this.repositoryHostname, 8080);
+            this.repository = await this.orchestrator.connect<IRepository>(
+                this.repositoryHostname,
+                this.repositoryPort!
+            );
         }
         return this.repository;
     }

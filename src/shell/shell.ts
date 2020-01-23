@@ -201,7 +201,7 @@ export class Shell {
             'einstein create suite.yaml',
             'einstein create true_candidate.yaml',
             'einstein deploy ',
-            'einstein deploy lab',
+            'einstein deploy laboratory.yaml',
             'einstein encrypt ',
             'einstein encrypt candidate.yaml',
             'einstein help',
@@ -232,6 +232,7 @@ export class Shell {
             'more ',
             'more candidate.yaml',
             'more benchmark.yaml',
+            'more laboratory.yaml',
             'more suite.yaml',
             'services',
         ];

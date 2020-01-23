@@ -82,6 +82,7 @@ export function encodeLog(name: string): string {
 }
 
 function encode(collection: string, name: string) {
+    // TODO: verify collection is valid.
     return `/${collection}/${base32.encode(name)}`;
 }
 

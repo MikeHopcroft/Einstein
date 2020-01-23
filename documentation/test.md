@@ -76,7 +76,13 @@ Deploy Einstein immediately check services. Nothing running yet.
 
 [//]: # (shell)
 ~~~
-einstein:/% einstein deploy lab
+einstein:/% ls
+einstein:/% more laboratory.yaml
+~~~
+
+[//]: # (shell)
+~~~
+einstein:/% einstein deploy laboratory.yaml
 Deploying to lab.
 einstein:/% services
 no services running

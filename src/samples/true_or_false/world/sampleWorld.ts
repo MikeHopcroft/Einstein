@@ -16,6 +16,7 @@ import {
     CandidateDescription,
     Kind,
     Laboratory,
+    LaboratoryDescription,
     SuiteDescription
 } from '../../../laboratory';
 
@@ -52,6 +53,7 @@ export function sampleWorld(localDiskPath?: string) {
     // TODO: copy sample yaml files to ramdisk
     copyYaml(world.localStorage, 'benchmark.yaml', benchmark);
     copyYaml(world.localStorage, 'candidate.yaml', candidate);
+    copyYaml(world.localStorage, 'laboratory.yaml', laboratory);
     copyYaml(world.localStorage, 'true_candidate.yaml', alwaysTrueCandidate);
     copyYaml(world.localStorage, 'false_candidate.yaml', alwaysFalseCandidate);
     copyYaml(world.localStorage, 'suite.yaml', suite);
@@ -64,6 +66,17 @@ function copyYaml(storage: IStorage, filename: string, data: any) {
     const normalized = path.posix.join('/', filename);
     const yamlText = yaml.safeDump(data);
     storage.writeBlob(normalized, Buffer.from(yamlText, 'utf8'), true);
+}
+
+const laboratory: LaboratoryDescription = {
+    apiVersion: '0.0.1',
+    kind: Kind.LABORATORY,
+    name: 'Einstein',
+    description: 'Einstein services deployment for demo.',
+    owner: 'Mike',
+    created: '2020-01-07T04:09:18.721Z',
+    laboratory: { host: 'lab', port: 1234 },
+    repository: { host: 'repository', port: 5678 },
 }
 
 const benchmark: BenchmarkDescription = {

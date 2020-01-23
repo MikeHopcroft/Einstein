@@ -34,11 +34,6 @@ import {
 import { loadCandidate, loadSuite } from './loaders';
 
 export class Laboratory implements ILaboratory {
-    static getPort() {
-        // TODO: don't hard-code port here.
-        return 8080;
-    }
-
     static image = {
         tag: 'labratory:1.0',
         create: () => Laboratory.entryPoint
@@ -68,7 +63,10 @@ export class Laboratory implements ILaboratory {
         const world = worker.getWorld();
         const myService = new Laboratory(keys, world);
 
-        const port = Laboratory.getPort();
+        const env =  worker.getWorld().environment;
+        // TODO: error check on port number parsing.
+        const port = Number(env.get('port'));
+
         worker.bind(worker.getWorld(), myService, port);
 
         worker.log(`Labratory service running at ${world.hostname}:${port}`);

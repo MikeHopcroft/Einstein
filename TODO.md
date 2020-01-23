@@ -1,21 +1,23 @@
 # TODO LIST
 
 ## Next
-* einstein deploy from yaml specification
-* Prevent overwrite of blog on all IStorage implementations.
 * Services like Laboratory should log exceptions
   * e.g. Invalid format for decryption.
-* Sort out use of "/" in Volume. Are mount points relative to "/"?
 * Create a "no-symbols" suite
-* x einstein:/% einstein run true_or_false_candidate:1.0 T
-  * x RamDisk: file /suites/ag not found.
-* x einstein:/% einstein run alwaysTrue_candidate:1.0 True_Or_False
-  * x RamDisk: file /candidates/c5p7erbteda74xb5bxhp2vk4d5j62x3578rjwc0 not found.
 * back to back runs of "einstein deploy lab" - error messages print over prompt
 * Naming service container parts - name from component, not version. Version in table column.
 * Naming service should get Ids from instances of Benchmark, Candidate, Suite, Run, Audit, etc.
 * Naming service should base32 encode table names for results
 * show tables command?
+* x einstein deploy from yaml specification
+  * x deploy to correct port
+  * x cli saves host and port for laboratory and repository
+* x "einstein list benchmarks" has a hard-coded repository
+* x Prevent overwrite of blob on all IStorage implementations.
+* x einstein:/% einstein run true_or_false_candidate:1.0 T
+  * x RamDisk: file /suites/ag not found.
+* x einstein:/% einstein run alwaysTrue_candidate:1.0 True_Or_False
+  * x RamDisk: file /candidates/c5p7erbteda74xb5bxhp2vk4d5j62x3578rjwc0 not found.
 * x Trivial candidate log mode - always true or always false
 * x Shouldn't be able to upload a candidate/benchmark/suite multiple times.
   * x Need to add overwrite parameter to blob write method.
@@ -29,12 +31,6 @@
 * x Broken: crawling runs
 * repository service
   * audit table
-  * benchmarks, candidates, runs, suites tables not initialized on startup
-    * x Remove cli/list.ts - dead code
-    * x Create results table on benchmark upload. Do this before uploading benchmark yaml. This doesn't work on rebuild of database.
-    * x LocalTableSet.getTable(): unknown table "runs"
-    * Better error message
-  * x einstein list uses CLICore
   * uniform use of naming library in repository
   * unit test helper that waits for new run blob - remove sleeps
   * data-driven schemas for benchmarks, candidate, runs, suites tables?
@@ -45,6 +41,12 @@
     * minimist? -b=, -c=, -s=
     * x einstein summarize benchmarkId|suiteId|CandidateId?
     * x einstein results benchmarkId|suiteId|CandidateId?
+  * x benchmarks, candidates, runs, suites tables not initialized on startup
+    * x Remove cli/list.ts - dead code
+    * x Create results table on benchmark upload. Do this before uploading benchmark yaml. This doesn't work on rebuild of database.
+    * x LocalTableSet.getTable(): unknown table "runs"
+    * x Better error message
+  * x einstein list uses CLICore
   * x cloud abstraction for tables
     * x does prototype need this abstraction?
     * x Can't it just inline its own implementation of tables?
@@ -149,6 +151,7 @@
   * x samples/container.ts
 
 ## Basic
+* Sort out use of "/" in Volume. Are mount points relative to "/"?
 * Error handling design allows detection of certain classes of errors for modification
   * E.g. file not found => cannot find suite
 * Shell process.on('unhandledRejection') - review/remove/replace?
@@ -206,11 +209,34 @@
 
 ## Specs/Design Notes
 * apiVersion
-* YAML files
+* YAML files structure
+  * shared regions
+* error handling
+*   exception hierarchy
+* RPC approach
 * naming
   * use of container names
   * mapping to blob names
-* exception hierarchy
+  * threat modelling
+* cloud abstraction layer
+* Evaluation of golang
+  * base32
+  * uuid
+  * strip-ansi
+  * rpc
+  * encryption
+  * hashing
+  * yaml read/write/schema error messages
+  * readline
+    * history
+    * auto-complete
+  * cloud sdks
+  * unit testing
+* Evaluation of C#
+* Evaluation of Node/Typescript
+  * What version of Node? 10.15.3 and 13.5.0 have different encryption behavior around passphrases
+
+
 
 ## Round-out/Finish-up
 * Disk based IStorage - write/append, command-line arguments

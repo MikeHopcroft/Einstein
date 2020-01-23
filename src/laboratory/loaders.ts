@@ -13,6 +13,7 @@ import {
     BenchmarkDescription,
     CandidateDescription,
     EntityDescription,
+    LaboratoryDescription,
     RunDescription,
     SuiteDescription,
     AnyDescription,
@@ -42,6 +43,16 @@ export async function loadCandidate(
     const buffer = await storage.readBlob(encoded);
     const yamlText = buffer.toString('utf8');
     const data = yaml.safeLoad(yamlText) as CandidateDescription;
+    return data;
+}
+
+export async function loadLaboratory(
+    name: string,
+    storage: IStorage
+): Promise<LaboratoryDescription> {
+    const buffer = await storage.readBlob(name);
+    const yamlText = buffer.toString('utf8');
+    const data = yaml.safeLoad(yamlText) as LaboratoryDescription;
     return data;
 }
 

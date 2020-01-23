@@ -70,11 +70,6 @@ const suiteColumns: ColumnDescription[] = [
 ];
 
 export class Repository implements IRepository {
-    static getPort() {
-        // TODO: don't hard-code port here.
-        return 8080;
-    }
-
     static image = {
         tag: 'repository:1.0',
         create: () => Repository.entryPoint
@@ -101,7 +96,9 @@ export class Repository implements IRepository {
         // tables have been created before binding the service.
         await myService.initialize();
 
-        const port = Repository.getPort();
+        const env =  worker.getWorld().environment;
+        // TODO: error check on port number parsing.
+        const port = Number(env.get('port'));
         worker.bind(worker.getWorld(), myService, port);
 
         worker.log(`Repository service running at ${world.hostname}:${port}`);

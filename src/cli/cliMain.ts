@@ -115,9 +115,10 @@ export class CLIMain {
     }
 
     private async deployCommand(args: string[]): Promise<number> {
-        const [hostname] = args;
-        console.log(`Deploying to ${hostname}.`)
-        await this.cli.deploy(hostname);
+        const [filename] = args;
+        const p = fullPath(this.cwd, filename);
+        console.log(`Deploying from ${p}.`)
+        await this.cli.deploy(p);
         return 0;
     }
 
