@@ -63,7 +63,7 @@ export class CLI {
         const keys = generateKeys();
         const yamlText = yaml.safeDump(keys);
         const secrets = new RamDisk();
-        secrets.writeBlob('keys', Buffer.from(yamlText, 'utf8'));
+        secrets.writeBlob('keys', Buffer.from(yamlText, 'utf8'), true);
         const volume: Volume = {
             mount: 'secrets',
             storage: secrets
@@ -115,7 +115,7 @@ export class CLI {
         const yamlText2 = yaml.safeDump(data);
         const buffer = Buffer.from(yamlText2, 'utf8');
 
-        await this.localStorage.writeBlob(filename, buffer);
+        await this.localStorage.writeBlob(filename, buffer, true);
 
         console.log(`Encrypted ${filename}`);
     }

@@ -26,6 +26,7 @@ export class TrivialCandidate implements ICandidate {
 
     static async entryPoint(worker: IWorker, truthValue: boolean) {
         worker.log(`TrivialCandidate.entryPoint()`);
+        worker.log(`This candidate always returns ${truthValue}`);
 
         // Simulate server startup time.
         worker.log('TrivialCandidate: initializing');

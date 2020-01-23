@@ -13,19 +13,19 @@ export class RamDisk implements IStorage {
     async appendBlob(name: string, buffer: Buffer): Promise<void> {
         const blob = this.blobs.get(name);
         if (blob === undefined) {
-            await this.writeBlob(name, buffer);
+            await this.writeBlob(name, buffer, true);
         } else {
             // TODO: find more efficient way of appending.
             this.blobs.set(name, Buffer.concat([blob, buffer]))
         }
     }
 
-    async writeBlob(name: string, buffer: Buffer): Promise<void> {
+    async writeBlob(name: string, buffer: Buffer, allowOverwrite: boolean): Promise<void> {
         // TODO: copy buffer here?
-        // if (this.blobs.has(name)) {
-        //     const message = `Attempting to overwrite blob ${name}`;
-        //     throw new TypeError(message);
-        // }
+        if (this.blobs.has(name) && !allowOverwrite) {
+            const message = `Attempting to overwrite blob ${name}`;
+            throw new TypeError(message);
+        }
         this.blobs.set(name, buffer);
         for (const handler of this.blobCreateHandlers) {
             await handler(name);

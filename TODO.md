@@ -1,9 +1,6 @@
 # TODO LIST
 
 ## Next
-* Shouldn't be able to upload a candidate/benchmark/suite multiple times.
-  * Need to add overwrite parameter to blob write method.
-* Trivial candidate log mode - always true or always false
 * einstein deploy from yaml specification
 * Prevent overwrite of blog on all IStorage implementations.
 * Services like Laboratory should log exceptions
@@ -19,6 +16,9 @@
 * Naming service should get Ids from instances of Benchmark, Candidate, Suite, Run, Audit, etc.
 * Naming service should base32 encode table names for results
 * show tables command?
+* x Trivial candidate log mode - always true or always false
+* x Shouldn't be able to upload a candidate/benchmark/suite multiple times.
+  * x Need to add overwrite parameter to blob write method.
 * x Demonstrate encryption in candidate log
 * x "cloud more logs/c*" matches everything in logs
 * x Consider murmurhash then base32 for guids

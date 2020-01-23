@@ -4,7 +4,7 @@ export type BlobCreateHandler = (blob: string) => Promise<void>;
 export interface IStorage {
     // TODO: blob creation/update/delete events
     appendBlob(name: string, buffer: Buffer): Promise<void>;
-    writeBlob(name: string, buffer: Buffer): Promise<void>;
+    writeBlob(name: string, buffer: Buffer, allowOverwrite: boolean): Promise<void>;
     readBlob(name: string): Promise<Buffer>;
     listBlobs(prefix?: string): Promise<string[]>;
 

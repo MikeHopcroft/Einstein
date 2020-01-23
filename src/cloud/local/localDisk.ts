@@ -17,7 +17,7 @@ export class LocalDisk implements IStorage {
         throw new TypeError(message);
     }
 
-    async writeBlob(name: string, buffer: Buffer): Promise<void> {
+    async writeBlob(name: string, buffer: Buffer, allowOverwrite: boolean): Promise<void> {
         // TODO: implement
         const message = "LocalDisk: writeBlob() not implemented";
         throw new TypeError(message);

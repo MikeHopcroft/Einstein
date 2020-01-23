@@ -113,7 +113,7 @@ export class Laboratory implements ILaboratory {
         const encoded = encodeBenchmark(description.image);
         const buffer = Buffer.from(yaml.safeDump(description), 'utf8');
         // TODO: check for attempt blob overwrite.
-        await this.cloudStorage.writeBlob(encoded, buffer);
+        await this.cloudStorage.writeBlob(encoded, buffer, false);
         this.world.logger.log(`Uploaded benchmark schema to ${encoded}`);
         return encoded;
     }
@@ -122,7 +122,7 @@ export class Laboratory implements ILaboratory {
         const encoded = encodeCandidate(description.image);
         const buffer = Buffer.from(yaml.safeDump(description), 'utf8');
         // TODO: check for attempt blob overwrite.
-        await this.cloudStorage.writeBlob(encoded, buffer);
+        await this.cloudStorage.writeBlob(encoded, buffer, false);
         this.world.logger.log(`Uploaded candidate schema to ${encoded}`);
         return encoded;
     }
@@ -131,7 +131,7 @@ export class Laboratory implements ILaboratory {
         const encoded = encodeSuite(description.name);
         const buffer = Buffer.from(yaml.safeDump(description), 'utf8');
         // TODO: check for attempt blob overwrite.
-        await this.cloudStorage.writeBlob(encoded, buffer);
+        await this.cloudStorage.writeBlob(encoded, buffer, false);
         this.world.logger.log(`Uploaded suite schema to ${encoded}`);
         return encoded;
     }
@@ -156,7 +156,11 @@ export class Laboratory implements ILaboratory {
         const yamlText = yaml.safeDump(candidateData);
         const secrets = new RamDisk();
         // TODO: use naming service for blob name
-        await secrets.writeBlob('spec.yaml', Buffer.from(yamlText, 'utf8'));
+        await secrets.writeBlob(
+            'spec.yaml',
+            Buffer.from(yamlText, 'utf8'),
+            true
+        );
         const volume: Volume = {
             mount: '/secrets',
             storage: secrets

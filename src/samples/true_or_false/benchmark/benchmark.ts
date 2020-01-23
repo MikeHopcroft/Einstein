@@ -134,7 +134,8 @@ export class Benchmark {
             const buffer = Buffer.from(text, 'utf8');
             await this.cloudStorage.writeBlob(
                 encodeRun(runId),
-                buffer
+                buffer,
+                false
             );
             this.worker.log('Benchmark finished');
         }

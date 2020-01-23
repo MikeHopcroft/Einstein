@@ -22,9 +22,9 @@ export class MountedVolumes implements IStorage {
         storage.appendBlob(relative, buffer);
     }
 
-    async writeBlob(name: string, buffer: Buffer): Promise<void> {
+    async writeBlob(name: string, buffer: Buffer, allowOverwrite: boolean): Promise<void> {
         const { storage, relative } = this.translatePath(name);
-        storage.writeBlob(relative, buffer);
+        storage.writeBlob(relative, buffer, allowOverwrite);
         for (const handler of this.blobCreateHandlers) {
             await handler(name);
         }

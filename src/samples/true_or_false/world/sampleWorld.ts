@@ -63,7 +63,7 @@ export function sampleWorld(localDiskPath?: string) {
 function copyYaml(storage: IStorage, filename: string, data: any) {
     const normalized = path.posix.join('/', filename);
     const yamlText = yaml.safeDump(data);
-    storage.writeBlob(normalized, Buffer.from(yamlText, 'utf8'));
+    storage.writeBlob(normalized, Buffer.from(yamlText, 'utf8'), true);
 }
 
 const benchmark: BenchmarkDescription = {
