@@ -1,12 +1,14 @@
 import * as yaml from 'js-yaml';
 
 import {
+    BlobLogger,
     Environment,
     IOrchestrator,
     IStorage,
     IWorker,
+    RamDisk,
+    Volume,
     World,
-    BlobLogger
 } from '../cloud';
 
 import {
@@ -17,7 +19,7 @@ import {
     createRunId
 } from '../naming';
 
-import { generateKeys, KeyPair } from '../secrets';
+import { decryptSecrets, generateKeys, KeyPair } from '../secrets';
 import { sleep } from '../utilities';
 
 import {
@@ -46,10 +48,12 @@ export class Laboratory implements ILaboratory {
     static async entryPoint(worker: IWorker): Promise<void> {
         worker.log(`Labratory.entryPoint()`);
 
+        // TODO: following code is for scenario where CLI gives existing credentials
+        // to Laboratory.
         // // Get private key from secrets.txt
         // const secrets =
         //     (await worker.getWorld().localStorage.readBlob('secrets/keys')).toString('utf-8');
-        // console.log(`Benchmark: secrets = "${secrets}"`);
+        // console.log(`Labratory: secrets = "${secrets}"`);
 
         // Simulate server startup time.
         const startupDelaySeconds = 9;
@@ -145,7 +149,19 @@ export class Laboratory implements ILaboratory {
 
         const runId = createRunId();
 
+        //
         // Decrypt candidate manifest secrets
+        //
+        decryptSecrets(candidateData, this.keys.privateKey);
+        const yamlText = yaml.safeDump(candidateData);
+        const secrets = new RamDisk();
+        // TODO: use naming service for blob name
+        await secrets.writeBlob('spec.yaml', Buffer.from(yamlText, 'utf8'));
+        const volume: Volume = {
+            mount: '/secrets',
+            storage: secrets
+        };
+
         // Start the candidate container.
         // TODO: use naming service for host name
         const candidateHost = 'c' + runId;
@@ -155,7 +171,7 @@ export class Laboratory implements ILaboratory {
             candidateHost,
             candidateId,
             this.cloudStorage,
-            [],
+            [ volume ],
             new Environment(),
             new BlobLogger(this.cloudStorage, candidateHost, encodeLog(candidateHost))
         );

@@ -56,6 +56,7 @@ export class CLI {
 
         // TODO: generate keys here and store in CLI local store
         // and in worker's attached volume.
+        // TODO: use naming library for blob.
         // Two scenarios:
         //   1. Standing up a new server with new keys
         //   2. Restarting a server with existing keys

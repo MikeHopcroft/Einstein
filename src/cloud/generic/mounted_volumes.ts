@@ -32,6 +32,7 @@ export class MountedVolumes implements IStorage {
 
     async readBlob(name: string): Promise<Buffer> {
         const { storage, relative } = this.translatePath(name);
+        // console.log(`read blob - name: "${name}", relative: "${relative}"`);
         return storage.readBlob(relative);
     }
 
@@ -67,6 +68,7 @@ export class MountedVolumes implements IStorage {
     private translatePath(p: string): { storage: IStorage, relative: string} {
         const normalized = path.posix.normalize(p);
         for (const [mount, storage] of this.volumes) {
+            // console.log(`normalized="${normalized}" mount="${mount}"`);
             if (normalized.startsWith(mount)) {
                 const relative = path.relative(mount, normalized);
                 return { storage, relative }

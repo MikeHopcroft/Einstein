@@ -18,7 +18,12 @@ export class Candidate implements ICandidate {
         worker.log('candidate: initializing');
         await sleep(1000);
         worker.log('candidate: ready');
-    
+
+        // Write spec to log to demonstrate that secrets have been decrypted.
+        const storage = worker.getWorld().localStorage;
+        const spec = (await storage.readBlob('/secrets/spec.yaml')).toString('utf8');
+        worker.log(spec);
+
         // Construct and bind service RPC stub. 
         const myService = new Candidate(worker);
         // TODO: do not bind port here.

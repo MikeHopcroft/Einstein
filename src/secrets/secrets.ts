@@ -1,5 +1,4 @@
 import * as crypto from 'crypto';
-import * as yaml from 'js-yaml';
 
 /******************************************************************************
  * This file contains functions to encrypt and decrypt secrets in configuration

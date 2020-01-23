@@ -1,16 +1,19 @@
 # TODO LIST
 
 ## Next
+* Sort out use of "/" in Volume. Are mount points relative to "/"?
+* x Demonstrate encryption in candidate log
 * x "cloud more logs/c*" matches everything in logs
 * Create a "no-symbols" suite
-* Demonstrate encryption in candidate log
 * x Consider murmurhash then base32 for guids
+* einstein:/% einstein run true_or_false_candidate:1.0 T
+  * RamDisk: file /suites/ag not found.
 * einstein:/% einstein run alwaysTrue_candidate:1.0 True_Or_False
   * RamDisk: file /candidates/c5p7erbteda74xb5bxhp2vk4d5j62x3578rjwc0 not found.
-* x Orchestrator.createWorker() should create proper volume
-* x einstein list runs shows name=foo
 * back to back runs of "einstein deploy lab" - error messages print over prompt
 * Naming service container parts - name from component, not version. Version in table column.
+* x Orchestrator.createWorker() should create proper volume
+* x einstein list runs shows name=foo
 * x LocalTableSet.getTable(): unknown table "true_or_false_benchmark:1.0" - einstein results before running
 * x Broken: einstein list runs
 * x Broken: crawling runs
