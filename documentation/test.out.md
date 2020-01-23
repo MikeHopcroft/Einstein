@@ -87,10 +87,36 @@ Deploy Einstein immediately check services. Nothing running yet.
 
 [//]: # (shell)
 ~~~
-einstein:/% einstein deploy lab
-Deploying to lab.
+einstein:/% ls
+benchmark.yaml
+candidate.yaml
+false_candidate.yaml
+laboratory.yaml
+suite.yaml
+true_candidate.yaml
+
+einstein:/% more laboratory.yaml
+apiVersion: 0.0.1
+kind: Laboratory
+name: Einstein
+description: Einstein services deployment for demo.
+owner: Mike
+created: '2020-01-07T04:09:18.721Z'
+laboratory:
+  host: lab
+  port: 1234
+repository:
+  host: repository
+  port: 5678
+~~~
+
+[//]: # (shell)
+~~~
+einstein:/% einstein deploy laboratory.yaml
+Deploying from /laboratory.yaml.
 Depoying einstein Laboratory to lab
-Depoying einstein Repository to repository
+Generating public/private key pair
+Deploying einstein Repository to repository
 
 einstein:/% services
 no services running
@@ -103,8 +129,8 @@ Wait a few seconds and check services again. Can see that the host lab is runnin
 einstein:/% # wait 10 seconds for service to start ...
 einstein:/% services
 image            host         port
-repository:1.0   repository   8080
-labratory:1.0    lab          8080
+repository:1.0   repository   5678
+labratory:1.0    lab          1234
 ~~~
 
 We can use the `cloud ls` command to see that logging has started for the laboratory service:
@@ -122,18 +148,18 @@ If we examine the logs, we can see that the Laboratory and Repository services h
 ~~~
 einstein:/% cloud more logs/lab
 lab: Labratory.entryPoint()
-lab: laboratory: starting up
-lab: laboratory: fully initialized
-lab: Labratory service running at lab:8080
+lab: sleeping for 9 seconds
+lab: woke up
+lab: Labratory service running at lab:1234
 
 
 einstein:/% cloud more logs/repository
 repository: Repository.entryPoint()
-repository: starting up
-repository: fully initialized
+repository: sleeping for 6 seconds
+repository: woke up
 repository: Initializing
-repository: Repository service running at repository:8080
 repository: Initialization complete
+repository: Repository service running at repository:5678
 ~~~
 
 
@@ -167,6 +193,7 @@ einstein:/% ls
 benchmark.yaml
 candidate.yaml
 false_candidate.yaml
+laboratory.yaml
 suite.yaml
 true_candidate.yaml
 ~~~
@@ -376,7 +403,7 @@ einstein:/% einstein create suite.yaml
 Uploaded to /suites/aht7ataz9xt5yhk1dhtpa
 
 einstein:/% einstein list suites
-name            benchmark                     owner   created                 
+name            benchmarkId                   owner   created                 
 True_Or_False   true_or_false_benchmark:1.0   Mike    2020-01-07T04:09:18.721Z
 ~~~
 
@@ -400,11 +427,11 @@ owner: Mike
 created: '2020-01-07T04:09:18.721Z'
 benchmarkId: 'true_or_false_benchmark:1.0'
 image: 'true_or_false_candidate:1.0'
+whitelist:
+  - 'http://www.wikipedia.org'
 data:
   password:
     secret: my-password
-whitelist:
-  - 'http://www.wikipedia.org'
 ~~~
 
 Encrypting secrets
@@ -412,6 +439,7 @@ Encrypting secrets
 [//]: # (shell)
 ~~~
 einstein:/% einstein encrypt candidate.yaml
+Encrypted /candidate.yaml
 
 einstein:/% more candidate.yaml
 apiVersion: 0.0.1
@@ -422,12 +450,12 @@ owner: Mike
 created: '2020-01-07T04:09:18.721Z'
 benchmarkId: 'true_or_false_benchmark:1.0'
 image: 'true_or_false_candidate:1.0'
+whitelist:
+  - 'http://www.wikipedia.org'
 data:
   password:
     secret: >-
-      lVGEWLMWSoU+IiycH04rNhytCKr3zcVoily1jCZiU8lHI1deqebATqF/VUYzE/jUDCF4QSwunJmILPbeVhymS8HUMm+I35xPCe5d3e3LDPGnp6AmpvFNLW4BwFmsRe5mTlBdDFJfrD8JeLfUQKXJi7m6eztHC3yazHKaqM3jaAGt5Cm0HwPyFD0CWcuA18asjFoOWaYMPRqsk/OPYGLXik8+YS2IeR5yZPwAOQ2Q/4kfBF2CVLXMjehjTOF/+UtISB/A9f8j27hq5dawk+uwvQGRkrKPfS3xH4p3cNujuOUSQ9qh8T+Z+Ulrk0V7etM3iGlSTPpygL7DDnHu42UZO45Hm3/ZPMp/oIlel2pkPXIO/1zokPM6kyXSlUGQtBEfhc1JS9SEPyfMBS5HoXrHeyr/H+VtosxVzaUza+Okph6tzpFXsFqiYhxrt2WlCGMqGf0zcz5y+fLr2h7vtiXKQJVBRMkdieiMBIl3MIGbPIvmvE2RsS9GmSi9jR/6vOSBU05XBJz3wm+Q9gGEBAUbJCwaXeKpH2OfI6m/umlN9A94lvm8mLuB12wwh8LT34aNYNQtBdTtH6L9xYhXlARw8JGKqdYUvvhPgo3PFv+QujgULFt0XVBPJZXR1oGTyuNycqiYKPNcVYMVl/pmJSw0McRGUOPJhRuCDry+w56ABak=:oXGAR7ZKSMG+Bix58CzvEA==:+mBtmlu4rDQMFkpgEvnWpg==
-whitelist:
-  - 'http://www.wikipedia.org'
+      tub8I53IbmzfbHOLNZea8GD9aKg6n9g0MaZ8QScsx+5YdGedjR/huY31chTJupC420Qh7EBFuAmy8249+/WO+1VhJvRqE+GbKtPayAmVscxrbynbykFFF/jxOZrKZeSPAndXGqWefNfpypaEd7KLJbmM5I1dDK5pyALixJmGSkimub1RY/nzxsUi8kINsJ34raS/603NJNf15rsvYP7QSqQXwV8Z3Vuzlq4vLr9D3yTqzZdvyE9w/M42NZy1si02TEVLQFeEOaKy7c6wnozgCy1wxNy5Qn6T87tObHfLSZM9BLGCzdBA7tXsGS6KrzpjOI8wlIK+cV1VQqnEMaOeQCbO7r1J4XPtCupcVkWkuwolhEB1Vkjd6fvszNTJyEGG4ocwGFW1qK9cu7UCUplsZptMgToqb47R6YM4XVGZMyKOIRlXzHq5PST0XM06FWjJDEW7Jt/7JuACY5imFJmwl/KMUjZiaWEqD4heXFGB6iOwLskoK5JsbXy220cOuaONURofJlL9u3wlm1wK2A7FVLFGdWMVq7Sp8Jg6KkW083XX04JFn8/7nPNPuzADSASl7tX4rUhcunUI4xyQ+zAtGZcyOC3oBHyVNeb6QyF6D11honDRM9zg3FHnqq8v2dSYNIH8z216E9jgUWNPoxmKhzh0UbBd2+ri1COs25QS2y0=:AO65VCJuC1CcIdX/Kn3WZQ==:/7u83ycY3+89H0a1lxK39g==
 ~~~
 
 Uploading the candidate:
@@ -467,14 +495,14 @@ einstein:/% einstein run alwaysTrue_candidate:1.0 True_Or_False
 einstein:/% einstein run alwaysFalse_candidate:1.0 True_Or_False
 
 einstein:/% einstein list runs
-name   candidate   benchmark   suite   date
+name   candidateId   benchmarkId   suiteId   created
 
 einstein:/% # wait 20 seconds for run to complete ...
 einstein:/% einstein list runs
-name                                   candidate                     benchmark                     suite           date                    
-0d62d9b8-b6a3-419d-90dc-7f96c2bbd259   alwaysTrue_candidate:1.0      true_or_false_benchmark:1.0   True_Or_False   2020-01-21T06:49:49.641Z
-0090d896-1f2f-421e-9f55-056812062435   alwaysFalse_candidate:1.0     true_or_false_benchmark:1.0   True_Or_False   2020-01-21T06:49:49.654Z
-3df7ae93-4b57-44f6-9793-5c8c29659f21   true_or_false_candidate:1.0   true_or_false_benchmark:1.0   True_Or_False   2020-01-21T06:49:54.632Z
+name          candidateId                   benchmarkId                   suiteId         created                 
+r1430171411   alwaysTrue_candidate:1.0      true_or_false_benchmark:1.0   True_Or_False   2020-01-23T19:53:31.184Z
+r149651062    alwaysFalse_candidate:1.0     true_or_false_benchmark:1.0   True_Or_False   2020-01-23T19:53:31.185Z
+r3637869530   true_or_false_candidate:1.0   true_or_false_benchmark:1.0   True_Or_False   2020-01-23T19:53:37.187Z
 ~~~
 
 Examining run results:
@@ -483,9 +511,9 @@ Examining run results:
 ~~~
 einstein:/% einstein results true_or_false_benchmark:1.0
 candidateId                   suiteId         created                    passed   failed
-alwaysTrue_candidate:1.0      True_Or_False   2020-01-21T06:49:49.641Z   21       26    
-alwaysFalse_candidate:1.0     True_Or_False   2020-01-21T06:49:49.654Z   13       34    
-true_or_false_candidate:1.0   True_Or_False   2020-01-21T06:49:54.632Z   43       4     
+alwaysTrue_candidate:1.0      True_Or_False   2020-01-23T19:53:31.184Z   21       26    
+alwaysFalse_candidate:1.0     True_Or_False   2020-01-23T19:53:31.185Z   13       34    
+true_or_false_candidate:1.0   True_Or_False   2020-01-23T19:53:37.187Z   43       4     
 ~~~
 
 The result table was created by crawling the runs-blobs:
@@ -497,63 +525,63 @@ benchmarks/eht7atazdxt5ytk1dhtpaqv2cnq66u3dc5t6pehh5rr0
 candidates/c5p7erbted362v3kcnfp6rbechmp8rbmcmx32bhg
 candidates/c5p7erbteda74xb5bxhp2vk4d5j62x3578rjwc0
 candidates/eht7atazdxt5ytk1dhtpaqv3c5q68ub4c5u6aehh5rr0
-logs/0090d896-1f2f-421e-9f55-056812062435
-logs/0d62d9b8-b6a3-419d-90dc-7f96c2bbd259
-logs/3df7ae93-4b57-44f6-9793-5c8c29659f21
-logs/794c9e7d-afae-4dd8-9e87-77b832c1e071
-logs/8ca8a6d6-5653-4404-87ed-3b567a78ef57
-logs/f422a029-44ac-455c-9e54-44a29a4d38ca
+logs/b1430171411
+logs/b149651062
+logs/b3637869530
+logs/c1430171411
+logs/c149651062
+logs/c3637869530
 logs/lab
 logs/repository
-runs/0090d896-1f2f-421e-9f55-056812062435
-runs/0d62d9b8-b6a3-419d-90dc-7f96c2bbd259
-runs/3df7ae93-4b57-44f6-9793-5c8c29659f21
+runs/r1430171411
+runs/r149651062
+runs/r3637869530
 suites/aht7ataz9xt5yhk1dhtpa
 
 einstein:/% cloud more runs/*
-Contents of /runs/0d62d9b8-b6a3-419d-90dc-7f96c2bbd259:
+=== Contents of /runs/r1430171411 ===
 kind: Run
 apiVersion: 0.0.1
-runId: 0d62d9b8-b6a3-419d-90dc-7f96c2bbd259
+runId: r1430171411
 candidateId: 'alwaysTrue_candidate:1.0'
 suiteId: True_Or_False
 benchmarkId: 'true_or_false_benchmark:1.0'
-name: foo
+name: r1430171411
 description: foo
 owner: foo
-created: '2020-01-21T06:49:49.641Z'
+created: '2020-01-23T19:53:31.184Z'
 data:
   passed: 21
   failed: 26
 
 
-Contents of /runs/0090d896-1f2f-421e-9f55-056812062435:
+=== Contents of /runs/r149651062 ===
 kind: Run
 apiVersion: 0.0.1
-runId: 0090d896-1f2f-421e-9f55-056812062435
+runId: r149651062
 candidateId: 'alwaysFalse_candidate:1.0'
 suiteId: True_Or_False
 benchmarkId: 'true_or_false_benchmark:1.0'
-name: foo
+name: r149651062
 description: foo
 owner: foo
-created: '2020-01-21T06:49:49.654Z'
+created: '2020-01-23T19:53:31.185Z'
 data:
   passed: 13
   failed: 34
 
 
-Contents of /runs/3df7ae93-4b57-44f6-9793-5c8c29659f21:
+=== Contents of /runs/r3637869530 ===
 kind: Run
 apiVersion: 0.0.1
-runId: 3df7ae93-4b57-44f6-9793-5c8c29659f21
+runId: r3637869530
 candidateId: 'true_or_false_candidate:1.0'
 suiteId: True_Or_False
 benchmarkId: 'true_or_false_benchmark:1.0'
-name: foo
+name: r3637869530
 description: foo
 owner: foo
-created: '2020-01-21T06:49:54.632Z'
+created: '2020-01-23T19:53:37.187Z'
 data:
   passed: 43
   failed: 4
@@ -576,17 +604,17 @@ benchmarks/eht7atazdxt5ytk1dhtpaqv2cnq66u3dc5t6pehh5rr0
 candidates/c5p7erbted362v3kcnfp6rbechmp8rbmcmx32bhg
 candidates/c5p7erbteda74xb5bxhp2vk4d5j62x3578rjwc0
 candidates/eht7atazdxt5ytk1dhtpaqv3c5q68ub4c5u6aehh5rr0
-logs/0090d896-1f2f-421e-9f55-056812062435
-logs/0d62d9b8-b6a3-419d-90dc-7f96c2bbd259
-logs/3df7ae93-4b57-44f6-9793-5c8c29659f21
-logs/794c9e7d-afae-4dd8-9e87-77b832c1e071
-logs/8ca8a6d6-5653-4404-87ed-3b567a78ef57
-logs/f422a029-44ac-455c-9e54-44a29a4d38ca
+logs/b1430171411
+logs/b149651062
+logs/b3637869530
+logs/c1430171411
+logs/c149651062
+logs/c3637869530
 logs/lab
 logs/repository
-runs/0090d896-1f2f-421e-9f55-056812062435
-runs/0d62d9b8-b6a3-419d-90dc-7f96c2bbd259
-runs/3df7ae93-4b57-44f6-9793-5c8c29659f21
+runs/r1430171411
+runs/r149651062
+runs/r3637869530
 suites/aht7ataz9xt5yhk1dhtpa
 ~~~
 
