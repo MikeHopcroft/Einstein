@@ -138,8 +138,24 @@ export class Laboratory implements ILaboratory {
 
     async run(candidateId: string, suiteId: string): Promise<void> {
         this.world.logger.log(`run(${candidateId}, ${suiteId})`);
-        const suiteData = await loadSuite(suiteId, this.cloudStorage);
-        const candidateData = await loadCandidate(candidateId, this.cloudStorage);
+
+        let suiteData: SuiteDescription;
+        try {
+            suiteData = await loadSuite(suiteId, this.cloudStorage);
+        } catch (e) {
+            // TODO: only change exception when file not found.
+            const message = `Cannot find suite ${suiteId}`;
+            throw new TypeError(message);
+        }
+
+        let candidateData: CandidateDescription;
+        try {
+            candidateData = await loadCandidate(candidateId, this.cloudStorage);
+        } catch (e) {
+            // TODO: only change exception when file not found.
+            const message = `Cannot find candidate ${candidateId}`;
+            throw new TypeError(message);
+        }
 
         if (suiteData.benchmarkId !== candidateData.benchmarkId) {
             const message = "Suite and Candidate benchmarks don't match.";

@@ -7,10 +7,10 @@
   * e.g. Invalid format for decryption.
 * Sort out use of "/" in Volume. Are mount points relative to "/"?
 * Create a "no-symbols" suite
-* einstein:/% einstein run true_or_false_candidate:1.0 T
-  * RamDisk: file /suites/ag not found.
-* einstein:/% einstein run alwaysTrue_candidate:1.0 True_Or_False
-  * RamDisk: file /candidates/c5p7erbteda74xb5bxhp2vk4d5j62x3578rjwc0 not found.
+* x einstein:/% einstein run true_or_false_candidate:1.0 T
+  * x RamDisk: file /suites/ag not found.
+* x einstein:/% einstein run alwaysTrue_candidate:1.0 True_Or_False
+  * x RamDisk: file /candidates/c5p7erbteda74xb5bxhp2vk4d5j62x3578rjwc0 not found.
 * back to back runs of "einstein deploy lab" - error messages print over prompt
 * Naming service container parts - name from component, not version. Version in table column.
 * Naming service should get Ids from instances of Benchmark, Candidate, Suite, Run, Audit, etc.
@@ -149,6 +149,8 @@
   * x samples/container.ts
 
 ## Basic
+* Error handling design allows detection of certain classes of errors for modification
+  * E.g. file not found => cannot find suite
 * Shell process.on('unhandledRejection') - review/remove/replace?
 * Managing white lists
 * Managing roles
