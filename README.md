@@ -8,7 +8,7 @@ Einstein is a secure execution environment for conducting machine learning trial
 The goal of Einstein is to enable collaboration between data scientists and organizations with interesting problems.
 The challenge is that interesting problems come with interesting data sets that are almost always proprietary. These data sets are rich with trade secrets and personably identifiable information, and are usually encumbered by contracts, regulated by statute, and subject to corporate data stewardship policies.
 
-In-house data science departments know how to work with this data, but the compliance issues make it is hard for them to collaborate with third parties and experts from industry and academia.
+In-house data science departments know how to work with this data, but the compliance issues make it hard for them to collaborate with third parties and experts from industry and academia.
 
 Einstein aims to solve this problem by creating a sandbox for machine learning experiments inside the environment that hosts sensitive data.
 With Einstein, a company can host machine learning challenges and invite third parties to submit solutions for evaluation against sensitive data that would otherwise be unavailable.
