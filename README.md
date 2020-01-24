@@ -13,7 +13,11 @@ In-house data science departments know how to work with this data, but the compl
 Einstein aims to solve this problem by creating a sandbox for machine learning experiments inside the environment that hosts sensitive data.
 With Einstein, a company can host machine learning challenges and invite third parties to submit solutions for evaluation against sensitive data that would otherwise be unavailable.
 
-For more information, please see the [Einstein Overview](documentation/overview.md) and [Architectural Design](documentation/architecture/architecture.md).
+For more information, please see the [Einstein Design Overview](documentation/architecture/overview.md), which defines terminology, goals, design facets, and a Russian doll model for feature delivery.
+
+The [Living Specification](documentation/test.out.md) shows proposed workflows, based on a command-line tool.
+
+The [Architectural Design](documentation/architecture/architecture.md) page contains links to other design documents.
 
 ## Try Project Einstein
 

@@ -1,7 +1,8 @@
 # Einstein Architecture
 
 * [Open questions](open-questions.md)
-* TODO: Overview
+* [Design Overview](overview.md)
+* [Living Specification](../test.out.md)
 * TODO: Goals and Priciples
 * TODO: Concepts
 * TODO: Labratory Service
