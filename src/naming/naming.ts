@@ -48,25 +48,25 @@ export function encodeBenchmark(name: string): string {
     return encode(benchmarks, name)
 }
 
-export function decodeBenchmark(encoded: string): string {
-    return decode(benchmarks, encoded);
-}
+// export function decodeBenchmark(encoded: string): string {
+//     return decode(benchmarks, encoded);
+// }
 
 export function encodeCandidate(name: string): string {
     return encode(candidates, name)
 }
 
-export function decodeCandidate(encoded: string): string {
-    return decode(candidates, encoded);
-}
+// export function decodeCandidate(encoded: string): string {
+//     return decode(candidates, encoded);
+// }
 
 export function encodeSuite(name: string): string {
     return encode(suites, name)
 }
 
-export function decodeSuite(encoded: string): string {
-    return decode(suites, encoded);
-}
+// export function decodeSuite(encoded: string): string {
+//     return decode(suites, encoded);
+// }
 
 // NOTE: run encoding differs from benchmarks, candidates, and suites.
 // Does not base32 encode uid.
@@ -101,14 +101,14 @@ function decode(collection: string, encoded: string) {
     }
 }
 
-export function getPrefix(collection: string): string {
-    const prefix = collectionToPrefix.get(collection);
-    if (prefix === undefined) {
-        const message = `Bad collection "${collection}"`;
-        throw new TypeError(message);
-    }
-    return prefix;
-}
+// export function getPrefix(collection: string): string {
+//     const prefix = collectionToPrefix.get(collection);
+//     if (prefix === undefined) {
+//         const message = `Bad collection "${collection}"`;
+//         throw new TypeError(message);
+//     }
+//     return prefix;
+// }
 
 export function getCollection(blob: string): string | null {
     for (const [collection, prefix] of collectionToPrefix) {
