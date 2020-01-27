@@ -2,13 +2,17 @@
 
 Einstein provides an interactive `Shell` for trying out concepts in a self-contained, simulated cloud environement that runs on the local machine. This tutorial introduces the `Shell` and then uses it to walk through the following concepts
 
-* Deploying the `Einstein Service`
-* Uploading a `Benchmark`
-* Uploading a `Suite`
-* Uploading a `Candidate`
-* Running a `Suite` for a `Benchmark` on a specified `Candidate`
-* Examining the results of the `Run`
-* Administering the `Einstein Service`
+* Persona: Einstein Administrator
+  * Deploying the `Einstein Service`
+  * Administering the `Einstein Service`
+* Persona: Benchmark Designer
+  * Uploading a `Benchmark`
+  * Uploading a `Suite`
+* Persona: Contestant
+  * Uploading a `Candidate`
+  * Running a `Suite` for a `Benchmark` on a specified `Candidate`
+* Personas: Contestant and Business Decision Makers
+  * Examining the results of the `Run`
 
 Our first step is to get a copy of `Einstein`. Currently the only way to install `Einstein` is to build it from source code.
 
@@ -70,6 +74,8 @@ You can read more about the shell commands [here](shell_commands.md).
 
 
 ## Deploying Einstein
+
+The persona for this section is the `Einstein Administrator`. This would typically be a member of the IT department, tasked with providing a safe environment for storing and accessing sensitive data.
 
 Key points:
 * Einstein is a service that runs in the environment
@@ -164,6 +170,8 @@ repository: Repository service running at repository:5678
 
 
 ## Submitting a Benchmark
+
+The persona for this section is the `Benchmark Designer`. This is a person who is designing and running a contest. They implement a `Benchmark` to conduct the assessment of each `Candidate` solution and measure its characteristics.
 
 Key points:
 * Description of contest
@@ -266,6 +274,12 @@ columns:
 ~~~
 
 ## Submitting a Suite
+
+The persona for this section is, again, the `Benchmark Designer`. In this section, we're creating different `Test Suites` for the `Benchmark`. `Suites` may be crafted for a variety of purposes, including
+* Providing sample data for algorithm development and testing.
+* Providing training data.
+* Testing `Candidates` for the contest.
+* Providing diagnostic slices of the data (e.g. audio recordings of just male or just female voices).
 
 Key points:
 * Suite description file
@@ -409,6 +423,8 @@ True_Or_False   true_or_false_benchmark:1.0   Mike    2020-01-07T04:09:18.721Z
 
 ## Submitting a Candidate
 
+The persona for this section is the `Contestant` who is developing a `Candidate` solution for a `Benchmark`.
+
 Key points:
 * Candidate description file
 * Secrets and encryption
@@ -455,7 +471,7 @@ whitelist:
 data:
   password:
     secret: >-
-      tub8I53IbmzfbHOLNZea8GD9aKg6n9g0MaZ8QScsx+5YdGedjR/huY31chTJupC420Qh7EBFuAmy8249+/WO+1VhJvRqE+GbKtPayAmVscxrbynbykFFF/jxOZrKZeSPAndXGqWefNfpypaEd7KLJbmM5I1dDK5pyALixJmGSkimub1RY/nzxsUi8kINsJ34raS/603NJNf15rsvYP7QSqQXwV8Z3Vuzlq4vLr9D3yTqzZdvyE9w/M42NZy1si02TEVLQFeEOaKy7c6wnozgCy1wxNy5Qn6T87tObHfLSZM9BLGCzdBA7tXsGS6KrzpjOI8wlIK+cV1VQqnEMaOeQCbO7r1J4XPtCupcVkWkuwolhEB1Vkjd6fvszNTJyEGG4ocwGFW1qK9cu7UCUplsZptMgToqb47R6YM4XVGZMyKOIRlXzHq5PST0XM06FWjJDEW7Jt/7JuACY5imFJmwl/KMUjZiaWEqD4heXFGB6iOwLskoK5JsbXy220cOuaONURofJlL9u3wlm1wK2A7FVLFGdWMVq7Sp8Jg6KkW083XX04JFn8/7nPNPuzADSASl7tX4rUhcunUI4xyQ+zAtGZcyOC3oBHyVNeb6QyF6D11honDRM9zg3FHnqq8v2dSYNIH8z216E9jgUWNPoxmKhzh0UbBd2+ri1COs25QS2y0=:AO65VCJuC1CcIdX/Kn3WZQ==:/7u83ycY3+89H0a1lxK39g==
+      Uyi4PIQME14JaiiEzM+jQUput/7ghQwATaSM7vhIgYr6ct0a3ODVTFHJu+Dy95iMhjlUBrJJURcP929G5zrA81/raZUSE7zuA5VXDJymMWJ39XKoZvFosN33BsE0vuq7KCDp5O5UO3a8YAalsFJhkJmduWdLNVfHlQhqyJaaEH48ZSGOnOYSk3zCXx/etRoOK1phRU9BQygFtw0p34cwo8BlvAXlPXE/sObZVLlyDUd38Z6SVwEOplvapjnytDsfFsJlM8GYm6hDJ0JmF2wzvVuqIYsRivS9uZEnHj17fw/9p/ppOosOzB6PLgirtqukHM3aWqt0vze3jxMZODujrzeRzeeGOMgST9Sr0ZlxZNL7Jm65qvhb9vZ+oG7ROKKTMcc+6iJC6UPocShU6cnIiFqIjX3p5pgP376hbDuFUXYX/I1BLv2KYbtg2mTFttvw/1MsV9R+u03s4AdGFi6T3huT29rIjwJEYzFak4mWhIVVhUkp3LgR+vxIslk+CZeBxWKSU2Dz6a0xyxeBxH1vArjpPYcNZWkbZ/vsr1jcj9vDdBf/i9i3E8g8R1Op32Up9wYpKjvQpHlpIj1UTjwuHnAoYpzS8Q3+k9H4nDJTtqZtX3DfHHS4NXu2dVo1k9X2WjCF6ZUZDZwqJY+WMNr2OvYlG8Fasrb2Zh++PCX68B8=:ImxXcAavBH3d19hnFVNqVA==:93BLdn2SXcyV9GcI9/8vPQ==
 ~~~
 
 Uploading the candidate:
@@ -481,6 +497,8 @@ alwaysFalse_candidate:1.0     Always_False    Noel     2020-01-07T04:09:18.721Z
 
 ## Running a Suite
 
+The persona for this section is the `Contestant` who wants to run their `Candidate` solution against a `Benchmark`.
+
 Key points:
 * einstein run
 * einstein list runs
@@ -500,9 +518,9 @@ name   candidateId   benchmarkId   suiteId   created
 einstein:/% # wait 20 seconds for run to complete ...
 einstein:/% einstein list runs
 name          candidateId                   benchmarkId                   suiteId         created                 
-r1430171411   alwaysTrue_candidate:1.0      true_or_false_benchmark:1.0   True_Or_False   2020-01-23T19:53:31.184Z
-r149651062    alwaysFalse_candidate:1.0     true_or_false_benchmark:1.0   True_Or_False   2020-01-23T19:53:31.185Z
-r3637869530   true_or_false_candidate:1.0   true_or_false_benchmark:1.0   True_Or_False   2020-01-23T19:53:37.187Z
+r4177148946   alwaysTrue_candidate:1.0      true_or_false_benchmark:1.0   True_Or_False   2020-01-27T18:23:06.736Z
+r4563331      alwaysFalse_candidate:1.0     true_or_false_benchmark:1.0   True_Or_False   2020-01-27T18:23:06.737Z
+r692935681    true_or_false_candidate:1.0   true_or_false_benchmark:1.0   True_Or_False   2020-01-27T18:23:12.740Z
 ~~~
 
 Examining run results:
@@ -511,9 +529,9 @@ Examining run results:
 ~~~
 einstein:/% einstein results true_or_false_benchmark:1.0
 candidateId                   suiteId         created                    passed   failed
-alwaysTrue_candidate:1.0      True_Or_False   2020-01-23T19:53:31.184Z   21       26    
-alwaysFalse_candidate:1.0     True_Or_False   2020-01-23T19:53:31.185Z   13       34    
-true_or_false_candidate:1.0   True_Or_False   2020-01-23T19:53:37.187Z   43       4     
+alwaysTrue_candidate:1.0      True_Or_False   2020-01-27T18:23:06.736Z   21       26    
+alwaysFalse_candidate:1.0     True_Or_False   2020-01-27T18:23:06.737Z   13       34    
+true_or_false_candidate:1.0   True_Or_False   2020-01-27T18:23:12.740Z   43       4     
 ~~~
 
 The result table was created by crawling the runs-blobs:
@@ -525,69 +543,71 @@ benchmarks/eht7atazdxt5ytk1dhtpaqv2cnq66u3dc5t6pehh5rr0
 candidates/c5p7erbted362v3kcnfp6rbechmp8rbmcmx32bhg
 candidates/c5p7erbteda74xb5bxhp2vk4d5j62x3578rjwc0
 candidates/eht7atazdxt5ytk1dhtpaqv3c5q68ub4c5u6aehh5rr0
-logs/b1430171411
-logs/b149651062
-logs/b3637869530
-logs/c1430171411
-logs/c149651062
-logs/c3637869530
+logs/b4177148946
+logs/b4563331
+logs/b692935681
+logs/c4177148946
+logs/c4563331
+logs/c692935681
 logs/lab
 logs/repository
-runs/r1430171411
-runs/r149651062
-runs/r3637869530
+runs/r4177148946
+runs/r4563331
+runs/r692935681
 suites/aht7ataz9xt5yhk1dhtpa
 
 einstein:/% cloud more runs/*
-=== Contents of /runs/r1430171411 ===
+=== Contents of /runs/r4177148946 ===
 kind: Run
 apiVersion: 0.0.1
-runId: r1430171411
+runId: r4177148946
 candidateId: 'alwaysTrue_candidate:1.0'
 suiteId: True_Or_False
 benchmarkId: 'true_or_false_benchmark:1.0'
-name: r1430171411
+name: r4177148946
 description: foo
 owner: foo
-created: '2020-01-23T19:53:31.184Z'
+created: '2020-01-27T18:23:06.736Z'
 data:
   passed: 21
   failed: 26
 
 
-=== Contents of /runs/r149651062 ===
+=== Contents of /runs/r4563331 ===
 kind: Run
 apiVersion: 0.0.1
-runId: r149651062
+runId: r4563331
 candidateId: 'alwaysFalse_candidate:1.0'
 suiteId: True_Or_False
 benchmarkId: 'true_or_false_benchmark:1.0'
-name: r149651062
+name: r4563331
 description: foo
 owner: foo
-created: '2020-01-23T19:53:31.185Z'
+created: '2020-01-27T18:23:06.737Z'
 data:
   passed: 13
   failed: 34
 
 
-=== Contents of /runs/r3637869530 ===
+=== Contents of /runs/r692935681 ===
 kind: Run
 apiVersion: 0.0.1
-runId: r3637869530
+runId: r692935681
 candidateId: 'true_or_false_candidate:1.0'
 suiteId: True_Or_False
 benchmarkId: 'true_or_false_benchmark:1.0'
-name: r3637869530
+name: r692935681
 description: foo
 owner: foo
-created: '2020-01-23T19:53:37.187Z'
+created: '2020-01-27T18:23:12.740Z'
 data:
   passed: 43
   failed: 4
 ~~~
 
 ## Examining Cloud Storage
+
+The persona for this section is the `Einstein Administrator` who wants to perform auditing and forensics on the system.
 
 Key points:
 * Logging for Einstein laboratory service.
@@ -604,21 +624,23 @@ benchmarks/eht7atazdxt5ytk1dhtpaqv2cnq66u3dc5t6pehh5rr0
 candidates/c5p7erbted362v3kcnfp6rbechmp8rbmcmx32bhg
 candidates/c5p7erbteda74xb5bxhp2vk4d5j62x3578rjwc0
 candidates/eht7atazdxt5ytk1dhtpaqv3c5q68ub4c5u6aehh5rr0
-logs/b1430171411
-logs/b149651062
-logs/b3637869530
-logs/c1430171411
-logs/c149651062
-logs/c3637869530
+logs/b4177148946
+logs/b4563331
+logs/b692935681
+logs/c4177148946
+logs/c4563331
+logs/c692935681
 logs/lab
 logs/repository
-runs/r1430171411
-runs/r149651062
-runs/r3637869530
+runs/r4177148946
+runs/r4563331
+runs/r692935681
 suites/aht7ataz9xt5yhk1dhtpa
 ~~~
 
 ## Managing VMs
+
+The persona for this section is the `Data Scientist`.
 
 Key points
 * Data scientists need to interactively explore sample data to gain insights into feature extraction and model design.
@@ -633,7 +655,13 @@ einstein:/% einstein destroy vm
 einstein: unknown command 'destroy'
 ~~~
 
+## Training Models
+
+**TODO:** write this section.
+
 ## Administering the Einstein Laboratory Service
+
+The persona for this section is the `Einstein Administrator`.
 
 Key points:
 * Approving and revoking white listed services.
