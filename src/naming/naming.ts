@@ -2,6 +2,8 @@ const base32 = require('base32') as IBase32;
 import { v3 } from 'murmurhash';
 import * as uuid from 'uuid';
 
+import { EntityDescription } from '../laboratory';
+
 // base32 packages doesn't have a .d.ts file or an @types/base32
 // Define type for package here.
 // tslint:disable-next-line:interface-name
@@ -42,6 +44,10 @@ export function createRunId(): string {
     const id = uuid();
     const hashed = v3(id, seed);
     return hashed.toString();
+}
+
+export function getBlobPath(d: EntityDescription): string | null {
+    throw new TypeError('not implemented');
 }
 
 export function encodeBenchmark(name: string): string {
