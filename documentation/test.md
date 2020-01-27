@@ -2,13 +2,17 @@
 
 Einstein provides an interactive `Shell` for trying out concepts in a self-contained, simulated cloud environement that runs on the local machine. This tutorial introduces the `Shell` and then uses it to walk through the following concepts
 
-* Deploying the `Einstein Service`
-* Uploading a `Benchmark`
-* Uploading a `Suite`
-* Uploading a `Candidate`
-* Running a `Suite` for a `Benchmark` on a specified `Candidate`
-* Examining the results of the `Run`
-* Administering the `Einstein Service`
+* Persona: Einstein Administrator
+  * Deploying the `Einstein Service`
+  * Administering the `Einstein Service`
+* Persona: Benchmark Designer
+  * Uploading a `Benchmark`
+  * Uploading a `Suite`
+* Persona: Contestant
+  * Uploading a `Candidate`
+  * Running a `Suite` for a `Benchmark` on a specified `Candidate`
+* Personas: Contestant and Business Decision Makers
+  * Examining the results of the `Run`
 
 Our first step is to get a copy of `Einstein`. Currently the only way to install `Einstein` is to build it from source code.
 
@@ -59,6 +63,8 @@ You can read more about the shell commands [here](shell_commands.md).
 
 
 ## Deploying Einstein
+
+The persona for this section is the `Einstein Administrator`. This would typically be a member of the IT department, tasked with providing a safe environment for storing and accessing sensitive data.
 
 Key points:
 * Einstein is a service that runs in the environment
@@ -115,6 +121,8 @@ einstein:/% cloud more logs/repository
 
 ## Submitting a Benchmark
 
+The persona for this section is the `Benchmark Designer`. This is a person who is designing and running a contest. They implement a `Benchmark` to conduct the assessment of each `Candidate` solution and measure its characteristics.
+
 Key points:
 * Description of contest
 * Benchmark description file
@@ -161,6 +169,12 @@ einstein:/% cloud more benchmarks/eht7atazdxt5ytk1dhtpaqv2cnq66u3dc5t6pehh5rr0
 
 ## Submitting a Suite
 
+The persona for this section is, again, the `Benchmark Designer`. In this section, we're creating different `Test Suites` for the `Benchmark`. `Suites` may be crafted for a variety of purposes, including
+* Providing sample data for algorithm development and testing.
+* Providing training data.
+* Testing `Candidates` for the contest.
+* Providing diagnostic slices of the data (e.g. audio recordings of just male or just female voices).
+
 Key points:
 * Suite description file
 * Domain data
@@ -182,6 +196,8 @@ einstein:/% einstein list suites
 ~~~
 
 ## Submitting a Candidate
+
+The persona for this section is the `Contestant` who is developing a `Candidate` solution for a `Benchmark`.
 
 Key points:
 * Candidate description file
@@ -216,6 +232,8 @@ einstein:/% einstein list candidates
 
 ## Running a Suite
 
+The persona for this section is the `Contestant` who wants to run their `Candidate` solution against a `Benchmark`.
+
 Key points:
 * einstein run
 * einstein list runs
@@ -248,6 +266,8 @@ einstein:/% cloud more runs/*
 
 ## Examining Cloud Storage
 
+The persona for this section is the `Einstein Administrator` who wants to perform auditing and forensics on the system.
+
 Key points:
 * Logging for Einstein laboratory service.
 * Run logging for candidate and benchmark.
@@ -263,6 +283,8 @@ einstein:/% cloud ls
 
 ## Managing VMs
 
+The persona for this section is the `Data Scientist`.
+
 Key points
 * Data scientists need to interactively explore sample data to gain insights into feature extraction and model design.
 * Interactive access through VMs deployed to cluster.
@@ -273,7 +295,13 @@ einstein:/% einstein create vm
 einstein:/% einstein destroy vm
 ~~~
 
+## Training Models
+
+**TODO:** write this section.
+
 ## Administering the Einstein Laboratory Service
+
+The persona for this section is the `Einstein Administrator`.
 
 Key points:
 * Approving and revoking white listed services.
