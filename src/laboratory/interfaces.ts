@@ -4,6 +4,7 @@ export enum Kind {
     BENCHMARK = 'Benchmark',
     CANDIDATE = 'Candidate',
     LABORATORY = 'Laboratory',
+    LOG = 'Log',
     RUN = 'Run',
     SUITE = 'Suite',
     WHITELIST = 'Whitelist'

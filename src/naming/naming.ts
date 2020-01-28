@@ -2,7 +2,7 @@ const base32 = require('base32') as IBase32;
 import { v3 } from 'murmurhash';
 import * as uuid from 'uuid';
 
-import { EntityDescription } from '../laboratory';
+import { AnyDescription, Kind } from '../laboratory';
 
 // base32 packages doesn't have a .d.ts file or an @types/base32
 // Define type for package here.
@@ -37,6 +37,14 @@ const collectionToTable = new Map<string, string>([
     ['runs', 'runs'],
 ]);
 
+const kindToCollection = new Map<Kind, string>([
+    [Kind.BENCHMARK, 'benchmarks'],
+    [Kind.CANDIDATE, 'candidates'],
+    [Kind.LOG, 'logs'],
+    [Kind.RUN, 'runs'],
+    [Kind.SUITE, 'suites']
+]);
+
 // Murmurhash seed.
 const seed = 1234567;
 
@@ -46,50 +54,92 @@ export function createRunId(): string {
     return hashed.toString();
 }
 
-export function getBlobPath(d: EntityDescription): string | null {
-    throw new TypeError('not implemented');
+export function getBlobPath(d: AnyDescription): string {
+    switch (d.kind) {
+        case Kind.BENCHMARK:
+            return encode2(d.kind, d.image);
+        case Kind.CANDIDATE:
+            return encode2(d.kind, d.image);
+        case Kind.SUITE:
+            return encode2(d.kind, d.name);
+        default:
+            const message = `Unsupported kind "${d.kind}"`;
+            throw new TypeError(message);
+    }
 }
 
 export function encodeBenchmark(name: string): string {
-    return encode(benchmarks, name)
+    return encode2(Kind.BENCHMARK, name);
 }
-
-// export function decodeBenchmark(encoded: string): string {
-//     return decode(benchmarks, encoded);
-// }
 
 export function encodeCandidate(name: string): string {
-    return encode(candidates, name)
+    return encode2(Kind.CANDIDATE, name);
 }
-
-// export function decodeCandidate(encoded: string): string {
-//     return decode(candidates, encoded);
-// }
 
 export function encodeSuite(name: string): string {
-    return encode(suites, name)
+    return encode2(Kind.SUITE, name);
 }
-
-// export function decodeSuite(encoded: string): string {
-//     return decode(suites, encoded);
-// }
 
 // NOTE: run encoding differs from benchmarks, candidates, and suites.
 // Does not base32 encode uid.
-// TODO: still need to protect from injection attacks.
 export function encodeRun(uid: string): string {
-    return `/${runs}/${uid}`
+    return encode2(Kind.RUN, uid);
+    // return `/${getCollection2(Kind.RUN)}/${escapeBlobPath(uid)}`;
 }
 
 // NOTE: log encoding differs from benchmarks, candidates, and suites.
 // Does not base32 encode name.
 export function encodeLog(name: string): string {
-    return `/${logs}/${name}`;
+    return encode2(Kind.LOG, name);
+//    return `/${getCollection2(Kind.LOG)}/${escapeBlobPath(name)}`;
 }
 
-function encode(collection: string, name: string) {
-    // TODO: verify collection is valid.
-    return `/${collection}/${base32.encode(name)}`;
+function encode2(kind: Kind, name: string) {
+    const collection = getCollectionFromKind(kind);
+
+    switch (kind) {
+        case Kind.BENCHMARK:
+        case Kind.CANDIDATE:
+        case Kind.SUITE:
+            return `/${collection}/${base32.encode(name)}`;
+        case Kind.RUN:
+        case Kind.LOG:
+            return `/${collection}/${escapeBlobPath(name)}`;
+        default:
+            const message = `Unsupported kind "${kind}"`;
+            throw new TypeError(message);
+    }
+}
+
+const maxNameLength = 64;
+
+// This function ensures that a blob path is legal.
+// The current implementation does not escape the path.
+// It accepts alphanumeric names (upper and lower case)
+// length > 0 and length <= maxNameLength. It raises a
+// TypeError for non-conforming names.
+// https://docs.microsoft.com/en-us/rest/api/storageservices/naming-and-referencing-containers--blobs--and-metadata
+function escapeBlobPath(name: string): string {
+    if (name.match(/^[A-Za-z0-9]+$/i) && name.length <= maxNameLength) {
+        return name;
+    }
+
+    const message = `Invalid name "${name}"`;
+    throw new TypeError(message);
+}
+
+// function encode(kind: Kind, name: string) {
+//     return `/${getCollection2(kind)}/${base32.encode(name)}`;
+// }
+
+
+function getCollectionFromKind(kind: Kind): string {
+    const collection = kindToCollection.get(kind);
+    if (!collection) {
+        const message = `Unknown collection kind "${kind}"`;
+        throw new TypeError(message);
+    }
+    return collection;
 }
 
 function decode(collection: string, encoded: string) {
@@ -116,7 +166,7 @@ function decode(collection: string, encoded: string) {
 //     return prefix;
 // }
 
-export function getCollection(blob: string): string | null {
+export function getCollectionFromBlob(blob: string): string | null {
     for (const [collection, prefix] of collectionToPrefix) {
         if (blob.startsWith(prefix)) {
             return collection;

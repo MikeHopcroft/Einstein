@@ -8,7 +8,7 @@ import {
 
 import {
     encodeBenchmark,
-    getCollection,
+    getCollectionFromBlob,
     getCollectionTable,
     getResultsTable
 } from '../naming';
@@ -126,6 +126,7 @@ export class Repository implements IRepository {
     async selectFromResults(benchmarkId: string): Promise<SelectResults> {
         // See if benchmarkId actually corresponds to a benchmark.
         // getBenchmark() will throw if blob doesn't exist.
+        // TODO: should getBenchmark() take benchmarkId?
         const encoded = encodeBenchmark(benchmarkId);
         const benchmark = this.getBenchmark(encoded);
 
@@ -206,7 +207,7 @@ export class Repository implements IRepository {
     }
 
     private async processOneBlob(blob: string): Promise<void> {
-        const collection = getCollection(blob);
+        const collection = getCollectionFromBlob(blob);
         switch (collection) {
             case 'benchmarks':
                 await this.processBenchmark(blob);
