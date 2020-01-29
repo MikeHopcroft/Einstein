@@ -12,11 +12,11 @@ import {
 } from '../cloud';
 
 import {
-    encodeBenchmark,
-    encodeCandidate,
-    encodeSuite,
+    createRunId,
     encodeLog,
-    createRunId
+    getBenchmarkHost,
+    getBlobPath,
+    getCandidateHost,
 } from '../naming';
 
 import { decryptSecrets, generateKeys, KeyPair } from '../secrets';
@@ -92,45 +92,23 @@ export class Laboratory implements ILaboratory {
         return this.keys.publicKey;
     }
 
-    async create(description: AnyDescription): Promise<string> {
-        switch (description.kind) {
-            case Kind.BENCHMARK:
-                return this.createBenchmark(description);
-            case Kind.CANDIDATE:
-                return this.createCandidate(description);
-            case Kind.SUITE:
-                return this.createSuite(description);
-            default:
-                const message = `Laboratory.create(): unsupported kind==="${description.kind}"`;
-                this.world.logger.log(message);
-                throw new TypeError(message);
+    async create(spec: AnyDescription): Promise<string> {
+        if ([Kind.BENCHMARK, Kind.CANDIDATE, Kind.SUITE].includes(spec.kind)) {
+            return this.uploadSpec(spec);
+        } else {
+            const message = `Laboratory.create(): unsupported kind==="${spec.kind}"`;
+            this.world.logger.log(message);
+            throw new TypeError(message);
         }
     }
 
-    private async createBenchmark(description: BenchmarkDescription): Promise<string> {
-        const encoded = encodeBenchmark(description.image);
-        const buffer = Buffer.from(yaml.safeDump(description), 'utf8');
+    // TODO: REVIEW: consider moving this function into it's sole caller?
+    private async uploadSpec(spec: AnyDescription): Promise<string> {
+        const encoded = getBlobPath(spec);
+        const buffer = Buffer.from(yaml.safeDump(spec), 'utf8');
         // TODO: check for attempt blob overwrite.
         await this.cloudStorage.writeBlob(encoded, buffer, false);
-        this.world.logger.log(`Uploaded benchmark schema to ${encoded}`);
-        return encoded;
-    }
-
-    private async createCandidate(description: CandidateDescription): Promise<string> {
-        const encoded = encodeCandidate(description.image);
-        const buffer = Buffer.from(yaml.safeDump(description), 'utf8');
-        // TODO: check for attempt blob overwrite.
-        await this.cloudStorage.writeBlob(encoded, buffer, false);
-        this.world.logger.log(`Uploaded candidate schema to ${encoded}`);
-        return encoded;
-    }
-
-    private async createSuite(description: SuiteDescription): Promise<string> {
-        const encoded = encodeSuite(description.name);
-        const buffer = Buffer.from(yaml.safeDump(description), 'utf8');
-        // TODO: check for attempt blob overwrite.
-        await this.cloudStorage.writeBlob(encoded, buffer, false);
-        this.world.logger.log(`Uploaded suite schema to ${encoded}`);
+        this.world.logger.log(`Uploaded ${spec.kind} schema to ${encoded}`);
         return encoded;
     }
 
@@ -156,7 +134,7 @@ export class Laboratory implements ILaboratory {
         }
 
         if (suiteData.benchmarkId !== candidateData.benchmarkId) {
-            const message = "Suite and Candidate benchmarks don't match.";
+            const message = "Suite and Candidate benchmarks must match.";
             this.world.logger.log(message);
             throw new TypeError(message);
         }
@@ -169,20 +147,20 @@ export class Laboratory implements ILaboratory {
         decryptSecrets(candidateData, this.keys.privateKey);
         const yamlText = yaml.safeDump(candidateData);
         const secrets = new RamDisk();
-        // TODO: use naming service for blob name
+        // TODO: use naming service for spec blob name
         await secrets.writeBlob(
             'spec.yaml',
             Buffer.from(yamlText, 'utf8'),
             true
         );
         const volume: Volume = {
+            // TODO: use naming library for secrets mount
             mount: '/secrets',
             storage: secrets
         };
 
         // Start the candidate container.
-        // TODO: use naming service for host name
-        const candidateHost = 'c' + runId;
+        const candidateHost = getCandidateHost(runId);
         this.world.logger.log(`Starting candidate ${candidateId} on ${candidateHost}`);
         // Don't await createWorker(). Want to model separate process.
         this.orchestrator.createWorker(
@@ -195,8 +173,7 @@ export class Laboratory implements ILaboratory {
         );
 
         // Start the benchmark container.
-        // TODO: use naming service for host name
-        const benchmarkHost = 'b' + runId;
+        const benchmarkHost = getBenchmarkHost(runId);
         this.world.logger.log(`Starting benchmark ${suiteData.benchmarkId} on ${benchmarkHost}`);
         // Don't await createWorker(). Want to model separate process.
         this.orchestrator.createWorker(
@@ -207,70 +184,10 @@ export class Laboratory implements ILaboratory {
             new Environment([
                 ['candidate', candidateId],
                 ['host', candidateHost],
-                // TODO: use naming service for runId
-                ['run', 'r' + runId],
+                ['run', runId],
                 ['suite', suiteId],
             ]),
             new BlobLogger(this.cloudStorage, benchmarkHost, encodeLog(benchmarkHost))
         );
     }
 }
-
-// TODO: save for unit tests
-// async function go() {
-//     const keys = generateKeys();
-//     const cloudStorage = new RamDisk();
-//     const lab = new Laboratory(keys, cloudStorage);
-
-//     const benchmark: BenchmarkDescription = {
-//         name: 'Sample True_Or_False Benchmark',
-//         description: 'A sample benchmark for boolean expressions evaluation.',
-//         owner: 'Mike',
-//         created: new Date().toISOString(),
-//         image: 'myregistry.azurecr.io/true_or_false_benchmark:1.0'
-//     };
-//     const benchmarkId = await lab.createBenchmark(benchmark);
-
-//     const suite: SuiteDescription = {
-//         name: 'Sample True_Or_False Suite',
-//         description: 'A sample benchmark for boolean expressions evaluation.',
-//         owner: 'Mike',
-//         created: new Date().toISOString(),
-//         benchmarkId,
-//         // domainData: [],
-//         // testData: []
-//     };
-//     const suiteId = await lab.createSuite(suite);
-
-//     const candidate: CandidateDescription = {
-//         name: 'Sample True_Or_False Candidate',
-//         description: 'A sample candidate that implements a boolean expression parser.',
-//         owner: 'Mike',
-//         created: new Date().toISOString(),
-//         benchmarkId,
-//         image: 'myregistry.azurecr.io/true_or_false_candidate:1.0'
-//     };
-//     const candidateId = await lab.createCandidate(candidate);
-
-//     lab.run(candidateId, suiteId);
-// }
-
-// go();
-
-///////////////////////////////////////////////////////////////////////////////
-// TODO: Save for Analysis service
-
-// async listBenchmarks(pattern: CandidateDescription): Promise<BenchmarkDescription[]> {
-//     // TODO: implement wildcard matching
-//     return [];
-// }
-
-// async listCandidates(pattern: CandidateDescription): Promise<CandidateDescription[]> {
-//     // TODO: implement wildcard matching
-//     return [];
-// }
-
-// async listSuites(pattern: SuiteDescription): Promise<BenchmarkDescription[]> {
-//     // TODO: implement wildcard matching
-//     return [];
-// }

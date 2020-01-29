@@ -1,5 +1,4 @@
 import * as yaml from 'js-yaml';
-import * as uuid from 'uuid';
 
 import {
     Environment,
@@ -12,7 +11,7 @@ import {
 } from '../cloud';
 
 import { Laboratory, ILaboratory } from '../laboratory';
-import { encodeLog, getCollectionTable, getResultsTable } from '../naming';
+import { encodeLog, getCollectionTable } from '../naming';
 import { encryptSecrets, generateKeys } from '../secrets';
 import { loadEntity, loadLaboratory } from '../laboratory/loaders';
 import { IRepository, Repository, SelectResults } from '../repository';
@@ -138,7 +137,7 @@ export class CLI {
         // Impemented as an RPC to the Repository service
         //
         const repository = await this.getRepository();
-        // TODO: use name service here.
+        
         // TODO: catch bad collection name
         return repository.select(getCollectionTable(collection));
     }
@@ -148,10 +147,9 @@ export class CLI {
         // Impemented as an RPC to the Repository service
         //
         const repository = await this.getRepository();
-        // TODO: use name service here.
-        // TODO: error check for non-existant table
+
         try {
-            return await repository.select(getResultsTable(benchmarkId));
+            return await repository.selectFromResults(benchmarkId);
         } catch (e) {
             const message = `Unable to find results for benchmark ${benchmarkId}`;
             throw new TypeError(message);

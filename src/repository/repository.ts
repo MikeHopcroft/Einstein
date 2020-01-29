@@ -7,38 +7,41 @@ import {
 } from '../cloud';
 
 import {
+    benchmarkCollection,
+    candidateCollection,
     encodeBenchmark,
-    getCollectionFromBlob,
+    getBenchmarkId,
     getCollectionTable,
-    getResultsTable
+    getKindFromBlob,
+    getResultsTable,
+    runCollection,
+    suiteCollection
 } from '../naming';
 
 import {
+    BenchmarkDescription,
     loadBenchmark,
     loadCandidate,
-    BenchmarkDescription,
     loadRun,
-    loadSuite
+    loadSuite,
+    Kind
 } from '../laboratory';
 
 import { sleep } from '../utilities';
 
 import { IRepository, SelectResults } from './interfaces';
 
-// TODO: perhaps get these from the naming library.
-// TODO: guard against name collisions between results and other tables.
-const auditTableName = 'audits';
-const benchmarkTableName = 'benchmarks';
-const candidateTableName = 'candidates';
-const runTableName = 'runs';
-const suiteTableName = 'suites';
-
+//
+// Column descriptions for built-in database tables
+//
 // TODO: perhaps move the ColumnDescriptions to a config file.
-const auditColumns: ColumnDescription[] = [
-    { name: 'date', type: 'string' },
-    { name: 'user', type: 'string' },
-    { name: 'action', type: 'string' },
-];
+//
+
+// const auditColumns: ColumnDescription[] = [
+//     { name: 'date', type: 'string' },
+//     { name: 'user', type: 'string' },
+//     { name: 'action', type: 'string' },
+// ];
 
 const benchmarkColumns: ColumnDescription[] = [
     { name: 'image', type: 'string' },
@@ -89,7 +92,7 @@ export class Repository implements IRepository {
         const world = worker.getWorld();
         const myService = new Repository(world);
 
-        // TODO: startup parameter that indicated whether to rebuild the
+        // TODO: startup parameter that indicates whether to rebuild the
         // database or connect to an existing one.
         
         // DESIGN NOTE: await is important here because we want to ensure that
@@ -118,24 +121,22 @@ export class Repository implements IRepository {
 
     async selectFromCollection(collection: string): Promise<SelectResults> {
         const table = getCollectionTable(collection);
-        const columns = await this.database.getColumns(table);
-        const rows = await this.database.select(table);
-        return { columns, rows };
+        return this.select(table);
     }
 
     async selectFromResults(benchmarkId: string): Promise<SelectResults> {
         // See if benchmarkId actually corresponds to a benchmark.
         // getBenchmark() will throw if blob doesn't exist.
-        // TODO: should getBenchmark() take benchmarkId?
+        // TODO: REVIEW: is this check really necessary? What does it buy us?
+        // Perhaps this check is preventing the caller from accessing an
+        // arbitrary table whose name has the form produced by getResultsTable().
         const encoded = encodeBenchmark(benchmarkId);
-        const benchmark = this.getBenchmark(encoded);
+        this.getBenchmark(encoded);
 
         // If we got this far, benchmarkId is valid, so it is ok to use as a
         // table name.
         const table = getResultsTable(benchmarkId);
-        const columns = await this.database.getColumns(table);
-        const rows = await this.database.select(table);
-        return { columns, rows };
+        return this.select(table);
     }
 
     async select(from: string): Promise<SelectResults> {
@@ -183,18 +184,24 @@ export class Repository implements IRepository {
     private async ensureTables(): Promise<void> {
         // Ensure benchmarks table.
         await this.database.ensureTable(
-            benchmarkTableName,
+            getCollectionTable(benchmarkCollection),
             benchmarkColumns
         );
 
         // Ensure candidates table.
-        await this.database.ensureTable(candidateTableName, candidateColumns);
+        await this.database.ensureTable(
+            getCollectionTable(candidateCollection),
+            candidateColumns);
 
         // Ensure runs table.
-        await this.database.ensureTable(runTableName, runColumns);
+        await this.database.ensureTable(
+            getCollectionTable(runCollection),
+            runColumns);
 
         // Ensure suites table.
-        await this.database.ensureTable(suiteTableName, suiteColumns);
+        await this.database.ensureTable(
+            getCollectionTable(suiteCollection),
+            suiteColumns);
     }
 
     private async crawlBlobs(): Promise<void> {
@@ -207,18 +214,18 @@ export class Repository implements IRepository {
     }
 
     private async processOneBlob(blob: string): Promise<void> {
-        const collection = getCollectionFromBlob(blob);
-        switch (collection) {
-            case 'benchmarks':
+        const kind = getKindFromBlob(blob);
+        switch (kind) {
+            case Kind.BENCHMARK:
                 await this.processBenchmark(blob);
                 break;
-            case 'candidates':
+            case Kind.CANDIDATE:
                 await this.processCandidate(blob);
                 break;
-            case 'suites':
+            case Kind.SUITE:
                 await this.processSuite(blob);
                 break;
-            case 'runs':
+            case Kind.RUN:
                 await this.processRun(blob);
                 break;
             default:
@@ -241,38 +248,32 @@ export class Repository implements IRepository {
         this.world.logger.log(`processBenchmark ${blob}`);
         const benchmark = await this.getBenchmark(blob);
 
-        // Ensure results table for this benchmark.
-        // TODO: use naming services
-        await this.database.ensureTable(getResultsTable(benchmark.image), benchmark.columns);
-
-        // // Ensure benchmarks table.
-        // await this.database.ensureTable(
-        //     benchmarkTableName,
-        //     benchmarkColumns
-        // );
-
-        // Add to benchmarks table.
-        // TODO: uniqueness constraint ensures that only first instance of
-        // benchmark is added. Could get one from the crawl and another from
-        // a blob creation event.
+        // Add this benchmark to the benchmarks table.
+        // TODO: uniqueness constraint must ensure that only first instance of
+        // the benchmark is added. Could get one from the crawl and another
+        // from a blob creation event.
+        const benchmarkTableName = getCollectionTable(benchmarkCollection);
         this.addRow(benchmarkTableName, benchmarkColumns, benchmark);
 
         // Ensure results table for this benchmark.
-        // TODO: use naming service for benchmarkId
-        await this.database.ensureTable(benchmark.image, benchmark.columns);
+        const benchmarkId = getBenchmarkId(benchmark);
+        const resultsTable = getResultsTable(benchmarkId);
+        await this.database.ensureTable(resultsTable, benchmark.columns);
+
+        // // Ensure results table for this benchmark.
+        // const resultsTable = getResultsTable(benchmarkId);
+        // await this.database.ensureTable(benchmarkId, benchmark.columns);
     }
 
     private async processCandidate(blob: string) {
         this.world.logger.log(`processCandidate ${blob}`);
         const candidate = await loadCandidate(blob, this.world.cloudStorage, false);
 
-        // // Ensure candidates table.
-        // await this.database.ensureTable(candidateTableName, candidateColumns);
-
         // Add to suites table.
-        // TODO: uniqueness constraint ensures that only first instance of
-        // benchmark is added. Could get one from the crawl and another from
+        // TODO: uniqueness constraint must ensure that only first instance of
+        // the candidate is added. Could get one from the crawl and another from
         // a blob creation event.
+        const candidateTableName = getCollectionTable(candidateCollection);
         this.addRow(candidateTableName, candidateColumns, candidate);
     }
 
@@ -286,28 +287,27 @@ export class Repository implements IRepository {
 
         // Add to runs table.
         this.addRow(
-            getCollectionTable('runs'),
+            getCollectionTable(runCollection),
             runColumns,
             run
         );
 
         // Ensure results table for this benchmark.
-        await this.database.ensureTable(benchmarkId, benchmark.columns);
+        const benchmarkTable = getResultsTable(benchmarkId);
+        await this.database.ensureTable(benchmarkTable, benchmark.columns);
 
-        this.addRow(benchmarkId, benchmark.columns, run);
+        this.addRow(benchmarkTable, benchmark.columns, run);
     }
 
     private async processSuite(blob: string) {
         this.world.logger.log(`processSuite ${blob}`);
         const suite = await loadSuite(blob, this.world.cloudStorage, false);
 
-        // // Ensure suites table.
-        // await this.database.ensureTable(suiteTableName, suiteColumns);
-
         // Add to suites table.
         // TODO: uniqueness constraint ensures that only first instance of
         // benchmark is added. Could get one from the crawl and another from
         // a blob creation event.
+        const suiteTableName = getCollectionTable(suiteCollection);
         this.addRow(suiteTableName, suiteColumns, suite);
     }
 
