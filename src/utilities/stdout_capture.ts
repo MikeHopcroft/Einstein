@@ -15,7 +15,8 @@ export class StdoutCapture {
             if (typeof chunk === 'string') {
                 context.output += chunk;
             }
-            return context.write(chunk as string, encoding, callback);
+            // tslint:disable-next-line:no-any
+            return context.write(chunk as string, encoding, callback as any);
         }
 
         // tslint:disable-next-line:no-any

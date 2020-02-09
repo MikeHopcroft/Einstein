@@ -21,7 +21,7 @@ Our first step is to get a copy of `Einstein`. Currently the only way to install
 written in [TypeScript](https://www.typescriptlang.org/).
 In order to use `Einstein` you must have
 [Node](https://nodejs.org/en/download/) installed on your machine.
-`Einstein` has been tested with Node version 10.15.3.
+`Einstein` has been tested with Node version [13.7.0](https://nodejs.org/download/release/v13.7.0/).
 
 Here are the steps for cloning and building `Einstein`:
 ~~~
@@ -471,7 +471,7 @@ whitelist:
 data:
   password:
     secret: >-
-      DsoqCEwAzrOXM34yN2nWWZC6LJgZRIE+q0L9YJnk6e1i5jS5L5s9HLEhBXNaeBK4jB2CrNRHkff1Z7Te1K79jwJEj6JKhFAfl5fgbc6/AXatvkixQF6BiJYVF/eUoIRG0Zrf+iQ769i85zdINLWFXP0Y6wjV5HzSaghJUpC6ui7X2/xxdayRk7V1aQrEnvtjp00bSEaIT7q0JcK7BC6rFaBFmTRGoXjrYqJNJka3okhvMmDaUObQH2KczF19UewWIgHDQ4yAlyQUN17xZHS4YNH6MPxs3aPNpeN/BRpC6f9yexdBRkMqdJ+5ElyUhMrDZxcQlYmy+53azRqp7xSnLZSJnfQL9B4lMzDzFcOLOVAYXKDEAp4sZI88xVMb/qgbx69ZRXkY7n3pAbHBlw7ORgaEntgLrRsQS7QkgYZ/CK20p109nXCB6rdJLhGqg3i+3esgMLs+IIVYmRzVcHJTWKOuJIebKHj8YzrSXavBrRiuyh3iTUz8/Fh4W6xR8MrhjOAJL2zR+6s0QpVzcMqr8EtcxVO7SwdbtPIl5DOQQcJKtDknShNhZXt7Ej3+BJklWaDwjhbaIWC0KyoF1yfHfh8Fycotn3fv8rSjB2i6gR4NqZtFQOWN9XP84iDAJqyqoa/kr7b3mxndXtwI2D9msBoLDKaH31FzGcXgOGNzumo=:rw/9/459/gyKMOKAGSMzkA==:0dDSdoSv0snmiMqY+HdLAA==
+      rlstIzB3v2DIV3bQQMNYhP9Uc0twftNPFEjmdxML61V7BSBje24cXy35Ixlx5Jehgf1vZQ5ASZl6GUlGlOawwm12bAZLqjRTKuze5B3gZFIzu79FA8A1rj9jBXLNWpWsqkcCUB9XNjEVkZmSGt4jkKM3tTHYZ0fuPTl7qvr2jwoEQw0AllAabo80/91RZmBbrN2VbcVofG6VqD39nSUk11w8cR0q+DrbPoGJzh6AaqK7FQc1fowBEeRvfDK3KktTbB1vcljJUvzSno+Dzxld///j7HMfiZrc/GPRE5t6OuNrz6NIV7ygvCOwX/G9FFJ+OH6m/cpIcBV8EAugFsY+reIJ+3iAriOG2qyZqvidhIHzPJU51sOiCgGh5h6DbJYFEyIS2TKUYAT3V3FBDLEcDC7KZuvww58MKe2nnNt+6ch7hkjcoWW94kMu+e7xpgHY/XZ/cmJOrMORbTGrfPdwvayQJJI1SuPgl/3rwo6bxU8zcbS9aIbiae8abOIin3V78myKnU3HDRSbCM54XV/5VrTZxS+sq+QcGGpo+2SzEuh/zsFOVidRuLE+pSXylwRfjdlXO1qL3QdapjPikfjm1BsMBMBxK7e3JznDKbFAxo3S1iF6no5xANRkr8DveJDWpZ2cKxAr4J/q//BVuZmlf5+xCFoT5rdezB1i114yrzU=:/+8W3s0gxQuoKhQZuIVBLg==:BxjtmHVgJqdOxPnf/tE9AA==
 ~~~
 
 Uploading the candidate:
@@ -518,9 +518,9 @@ name   candidateId   benchmarkId   suiteId   created
 einstein:/% # wait 20 seconds for run to complete ...
 einstein:/% einstein list runs
 name         candidateId                   benchmarkId                   suiteId         created                 
-445422927    alwaysTrue_candidate:1.0      true_or_false_benchmark:1.0   True_Or_False   2020-01-29T22:59:06.754Z
-4247377674   alwaysFalse_candidate:1.0     true_or_false_benchmark:1.0   True_Or_False   2020-01-29T22:59:06.755Z
-2606945875   true_or_false_candidate:1.0   true_or_false_benchmark:1.0   True_Or_False   2020-01-29T22:59:12.752Z
+3016880514   alwaysTrue_candidate:1.0      true_or_false_benchmark:1.0   True_Or_False   2020-02-09T20:46:52.285Z
+2303018419   alwaysFalse_candidate:1.0     true_or_false_benchmark:1.0   True_Or_False   2020-02-09T20:46:52.301Z
+2758950335   true_or_false_candidate:1.0   true_or_false_benchmark:1.0   True_Or_False   2020-02-09T20:46:57.281Z
 ~~~
 
 Examining run results:
@@ -529,9 +529,9 @@ Examining run results:
 ~~~
 einstein:/% einstein results true_or_false_benchmark:1.0
 candidateId                   suiteId         created                    passed   failed
-alwaysTrue_candidate:1.0      True_Or_False   2020-01-29T22:59:06.754Z   21       26    
-alwaysFalse_candidate:1.0     True_Or_False   2020-01-29T22:59:06.755Z   13       34    
-true_or_false_candidate:1.0   True_Or_False   2020-01-29T22:59:12.752Z   43       4     
+alwaysTrue_candidate:1.0      True_Or_False   2020-02-09T20:46:52.285Z   21       26    
+alwaysFalse_candidate:1.0     True_Or_False   2020-02-09T20:46:52.301Z   13       34    
+true_or_false_candidate:1.0   True_Or_False   2020-02-09T20:46:57.281Z   43       4     
 ~~~
 
 The result table was created by crawling the runs-blobs:
@@ -543,63 +543,63 @@ benchmarks/eht7atazdxt5ytk1dhtpaqv2cnq66u3dc5t6pehh5rr0
 candidates/c5p7erbted362v3kcnfp6rbechmp8rbmcmx32bhg
 candidates/c5p7erbteda74xb5bxhp2vk4d5j62x3578rjwc0
 candidates/eht7atazdxt5ytk1dhtpaqv3c5q68ub4c5u6aehh5rr0
-logs/b2606945875
-logs/b4247377674
-logs/b445422927
-logs/c2606945875
-logs/c4247377674
-logs/c445422927
+logs/b2303018419
+logs/b2758950335
+logs/b3016880514
+logs/c2303018419
+logs/c2758950335
+logs/c3016880514
 logs/lab
 logs/repository
-runs/r2606945875
-runs/r4247377674
-runs/r445422927
+runs/r2303018419
+runs/r2758950335
+runs/r3016880514
 suites/aht7ataz9xt5yhk1dhtpa
 
 einstein:/% cloud more runs/*
-=== Contents of /runs/r445422927 ===
+=== Contents of /runs/r3016880514 ===
 kind: Run
 apiVersion: 0.0.1
-runId: '445422927'
+runId: '3016880514'
 candidateId: 'alwaysTrue_candidate:1.0'
 suiteId: True_Or_False
 benchmarkId: 'true_or_false_benchmark:1.0'
-name: '445422927'
+name: '3016880514'
 description: foo
 owner: foo
-created: '2020-01-29T22:59:06.754Z'
+created: '2020-02-09T20:46:52.285Z'
 data:
   passed: 21
   failed: 26
 
 
-=== Contents of /runs/r4247377674 ===
+=== Contents of /runs/r2303018419 ===
 kind: Run
 apiVersion: 0.0.1
-runId: '4247377674'
+runId: '2303018419'
 candidateId: 'alwaysFalse_candidate:1.0'
 suiteId: True_Or_False
 benchmarkId: 'true_or_false_benchmark:1.0'
-name: '4247377674'
+name: '2303018419'
 description: foo
 owner: foo
-created: '2020-01-29T22:59:06.755Z'
+created: '2020-02-09T20:46:52.301Z'
 data:
   passed: 13
   failed: 34
 
 
-=== Contents of /runs/r2606945875 ===
+=== Contents of /runs/r2758950335 ===
 kind: Run
 apiVersion: 0.0.1
-runId: '2606945875'
+runId: '2758950335'
 candidateId: 'true_or_false_candidate:1.0'
 suiteId: True_Or_False
 benchmarkId: 'true_or_false_benchmark:1.0'
-name: '2606945875'
+name: '2758950335'
 description: foo
 owner: foo
-created: '2020-01-29T22:59:12.752Z'
+created: '2020-02-09T20:46:57.281Z'
 data:
   passed: 43
   failed: 4
@@ -624,17 +624,17 @@ benchmarks/eht7atazdxt5ytk1dhtpaqv2cnq66u3dc5t6pehh5rr0
 candidates/c5p7erbted362v3kcnfp6rbechmp8rbmcmx32bhg
 candidates/c5p7erbteda74xb5bxhp2vk4d5j62x3578rjwc0
 candidates/eht7atazdxt5ytk1dhtpaqv3c5q68ub4c5u6aehh5rr0
-logs/b2606945875
-logs/b4247377674
-logs/b445422927
-logs/c2606945875
-logs/c4247377674
-logs/c445422927
+logs/b2303018419
+logs/b2758950335
+logs/b3016880514
+logs/c2303018419
+logs/c2758950335
+logs/c3016880514
 logs/lab
 logs/repository
-runs/r2606945875
-runs/r4247377674
-runs/r445422927
+runs/r2303018419
+runs/r2758950335
+runs/r3016880514
 suites/aht7ataz9xt5yhk1dhtpa
 ~~~
 

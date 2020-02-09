@@ -1,9 +1,10 @@
 # TODO LIST
 
 ## Next
-* Upgrade node and fix passphrase issue
-  *  einstein:/% einstein run true_or_false_candidate:1.0 True_Or_False
-  * +Passphrase required for encrypted key
+* x Upgrade node and fix passphrase issue
+  * x einstein:/% einstein run true_or_false_candidate:1.0 True_Or_False
+  * x +Passphrase required for encrypted key
+* Prime number sample
 * Services like Laboratory should log exceptions
   * e.g. Invalid format for decryption.
 * Create a "no-symbols" suite

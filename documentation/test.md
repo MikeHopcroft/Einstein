@@ -21,7 +21,7 @@ Our first step is to get a copy of `Einstein`. Currently the only way to install
 written in [TypeScript](https://www.typescriptlang.org/).
 In order to use `Einstein` you must have
 [Node](https://nodejs.org/en/download/) installed on your machine.
-`Einstein` has been tested with Node version 10.15.3.
+`Einstein` has been tested with Node version [13.7.0](https://nodejs.org/download/release/v13.7.0/).
 
 Here are the steps for cloning and building `Einstein`:
 ~~~

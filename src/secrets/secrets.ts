@@ -58,6 +58,12 @@ import * as crypto from 'crypto';
  *     https://www.w3schools.com/nodejs/ref_crypto.asp
  */
 
+
+// DESIGN NOTE: this passphrase is used to decrypt the private key.
+// It can appear here in plaintext because the private key will always be
+// stored in a key registry.
+const passphrase = 'passphrase';
+
 export interface KeyPair {
     privateKey: string;
     publicKey: string;
@@ -76,7 +82,7 @@ export function generateKeys(): KeyPair {
                 type: 'pkcs1',
                 format: 'pem',
                 cipher: 'aes-256-cbc',
-                passphrase: '',
+                passphrase,
             },
         }
     );
@@ -164,7 +170,12 @@ function d3(text: string, privateKey: string): string {
     const iv = Buffer.from(parts[1], 'base64');
     const encryptedText = Buffer.from(parts[2], 'base64');
 
-    const key = crypto.privateDecrypt(privateKey, encryptedKey);
+    const pk = crypto.createPrivateKey({
+        key: privateKey,
+        format: 'pem',
+        passphrase,
+    });
+    const key = crypto.privateDecrypt(pk, encryptedKey);
     const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(key), iv);
     const dUpdate = decipher.update(encryptedText);
     const dFinal = decipher.final();
@@ -172,7 +183,7 @@ function d3(text: string, privateKey: string): string {
     return decrypted;
 }
 
-// Save for unit test
+// // Save for unit test
 // const sample = {
 //     version: '1.2.0',
 //     services: [
@@ -205,4 +216,4 @@ function d3(text: string, privateKey: string): string {
 //     console.log(yaml.safeDump(sample));
 // }
 
-// // go();
+// go();
