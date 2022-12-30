@@ -35,7 +35,7 @@
     "better-ajv-errors": "^0.6.7",
     "chai": "^4.2.0",
     "js-yaml": "^3.13.1",
-    "mocha": "^7.0.0",
+    "mocha": "^10.2.0",
     "murmurhash": "0.0.2",
     "strip-ansi": "^6.0.0",
     "uuid": "^3.3.3"
